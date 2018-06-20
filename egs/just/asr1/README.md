@@ -331,6 +331,8 @@ for k, v in wav_sets.items():
             u.write("{} {}\n".format(uttid, uttid))
 ```
 
+NOTE: As JSUT does not provide speaker information, we simply put uttrance-id as speaker-id in `spk2utt` and `utt2spk`.
+
 now the most difficult part is finished!
 
 ### stage 1. FBANK genearation
