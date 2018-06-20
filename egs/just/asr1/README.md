@@ -13,23 +13,21 @@ Before building ESPnet speech-to-text system, you need to prepare
 - speech: splitted as utterances, convertable to wav (via ffmpeg)
 - text: able to pair with speech utterances
 
-In this tutorial, these files are formatted into a kaldi's SCP style (key/value pairs) because ESPnet depends on [kaldi's IO mechanism](http://kaldi-asr.org/doc/io.html). Note that key (i.e., utt-id) should be matched between same speech and text. The value of speech (wav.scp) can be any shell command that need to write into stdout and end with `|`) or path like this.
+In this tutorial, these files are formatted into a kaldi's SCP style (key/value pairs) because ESPnet depends on [kaldi's IO mechanism](http://kaldi-asr.org/doc/io.html). Note that key (i.e., utt-id) should be matched between same speech and text values. The value of speech (wav.scp) can be any shell commands that pipe into stdout and end with `|`) or path to wav files like this.
 
 - data/train/wav.scp. 
 ```
-FILE001 ffmpeg -i /foo/bar.mp3 -ss 3.0 -t 1.0 -f wav -acodec pcm_s16le -ar 16000 -ac 1 - | 
-FILE002 ffmpeg -i /foo/bar.mp3 -ss 4.0 -t 2.1 -f wav -acodec pcm_s16le -ar 16000 -ac 1 - | 
+FILE001 ffmpeg -i /foo/bar.mp4 -ss 3.0 -t 1.0 -f wav -acodec pcm_s16le -ar 16000 -ac 1 - | 
+FILE002 /foo/bar2.wav
 ```
 
-I recommend you to use [ffmpeg](https://johnvansickle.com/ffmpeg/) because it can convert and extract any audio files like `ffmpeg -i <file-path> -ss <start-time-sec> -t <duration-sec> -f wav -acodec pcm_s16le -ar 16000 -ac 1`.
+To create wav files, I recommend you to use [ffmpeg](https://johnvansickle.com/ffmpeg/) because it can convert and extract any audio files like `ffmpeg -i <file-path> -ss <start-time-sec> -t <duration-sec> -f wav -acodec pcm_s16le -ar 16000 -ac 1`.
 
 - data/train/text
 ```
 FILE001 hi, can you hear me?
 FILE002 ESPnet is nice!
 ```
-
-and copy some existing recipes (e.g., espnet/egs/csj/asr1/run.sh) to process these two files for training and evaluation.
 
 ## step 1: get requirements
 
@@ -40,7 +38,7 @@ git clone https://github.com/ShigekiKarita/espnet -b jsut
 cd espnet/tools
 make -j6 -f conda.mk PYTHON_VERSION=3.6
 ```
-It takes very long time in kaldi build (around 15min). And sometimes give error but you can manually install them. do not give up. Once you finished installing ESPnet, you can test a small free dataset AN4.
+It takes very long time in kaldi build (around 15min). Make tries to install everything for ESPnet but we only need virtualenv, chainer and kaldi here. You can manually install them by looking inside Makefile and conda.mk. do not give up. Once you finished installing ESPnet, you can test a small free dataset AN4.
 
 ``` console
 $ cd egs/an4/asr1
