@@ -36,7 +36,7 @@ and copy some existing recipes (e.g., espnet/egs/csj/asr1/run.sh) to process the
 ### ESPnet
 
 ``` bash
-git clone https://github.com/espnet/espnet
+git clone https://github.com/ShigekiKarita/espnet -b jsut
 cd espnet/tools
 make -j6 -f conda.mk PYTHON_VERSION=3.6
 ```
