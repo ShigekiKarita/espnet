@@ -3,9 +3,9 @@
 
 ## abstract
 
-[ESPnet: End-to-End Speech Processing Toolkit](https://arxiv.org/abs/1804.00015) is a state-of-the-art toolkit. As ESPnet is **end-to-end** speech-to-text library. You can train/recognize your own speech/text pairs more easily than [other toolkits](http://kaldi-asr.org/doc/data_prep.html). This document provides how to add your own dataset in ESPnet in a very simple way. For practical example, we gonna add a brand new corpus [JSUT](https://sites.google.com/site/shinnosuketakamichi/publication/jsut) in this tutorial.
+[ESPnet: End-to-End Speech Processing Toolkit](https://arxiv.org/abs/1804.00015) is a state-of-the-art toolkit. As ESPnet is **end-to-end** speech-to-text library, you can train/recognize your own speech/text pairs more easily than [other toolkits](http://kaldi-asr.org/doc/data_prep.html). This document provides how to add your own dataset in ESPnet in a very simple way. For practical example, we gonna add a brand new corpus [JSUT](https://sites.google.com/site/shinnosuketakamichi/publication/jsut) in this tutorial.
 
-you can find the final speech recogntion scripts at https://github.com/ShigekiKarita/espnet/tree/jsut/egs/just/asr1
+You can find the final speech recogntion scripts at https://github.com/ShigekiKarita/espnet/tree/jsut/egs/just/asr1
 
 ## introduction
 
