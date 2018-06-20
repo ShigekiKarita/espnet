@@ -2,7 +2,7 @@
 
 ## 概要
 
-[ESPnet: End-to-End Speech Processing Toolkit](https://arxiv.org/abs/1804.00015) は最先端の音声認識ツールキットです．ESPnetは**End-to-End**なので，[従来のツールキット]((http://kaldi-asr.org/doc/data_prep.html))よりもずっと簡単に自分で音声/テキストペアを追加して，学習・認識させることができます．このチュートリアルでは実用的な例として，最近でたばかりの[JSUT](https://sites.google.com/site/shinnosuketakamichi/publication/jsut)コーパスを整備して，ESPnetによる音声認識をやってみようと思います.
+[ESPnet: End-to-End Speech Processing Toolkit](https://arxiv.org/abs/1804.00015) は最先端の音声認識ツールキットです．ESPnetは**End-to-End**なので，[従来のツールキット]((http://kaldi-asr.org/doc/data_prep.html))よりもずっと簡単に自分で音声/テキストペアを追加して，学習・認識させることができます．このチュートリアルでは実用的な例として，最近できたばかりの日本語音声のデータセットである[JSUT](https://sites.google.com/site/shinnosuketakamichi/publication/jsut)コーパスを整備して，ESPnetによる音声認識をやってみようと思います.
 
 最終的な音声認識スクリプトはこちらです https://github.com/ShigekiKarita/espnet/tree/jsut/egs/just/asr1/run.sh
 
