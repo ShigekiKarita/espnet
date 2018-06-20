@@ -394,7 +394,7 @@ hmm, it might be too early to stop. (you can find some experiment results like t
 
 ## step 4. extend this recipe
 
-As seen in the previous section, the results are not enough. You can tune up this `run.sh` as follows
+As seen in the previous section, the result is not great enough. You can tune up this `run.sh` as follows
 - run more epochs e.g., `$ ./run.sh --epochs 50` because it does not seem to be converged in 15 epochs
 - tweak optimizer parameters
 - tweak neural networks
