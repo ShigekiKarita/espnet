@@ -3,14 +3,14 @@
 
 ## abstract
 
-[ESPnet: End-to-End Speech Processing Toolkit](https://arxiv.org/abs/1804.00015) is a state-of-the-art toolkit. As ESPnet is **end-to-end** speech-to-text library, you can train/recognize your own speech/text pairs more easily than [other toolkits](http://kaldi-asr.org/doc/data_prep.html). This document provides how to add your own dataset in ESPnet in a very simple way. For practical example, we gonna add a brand new corpus [JSUT](https://sites.google.com/site/shinnosuketakamichi/publication/jsut) in this tutorial.
+[ESPnet: End-to-End Speech Processing Toolkit](https://arxiv.org/abs/1804.00015) is a state-of-the-art speech recognition toolkit. As ESPnet is **end-to-end**, you can train/recognize your own speech/text pairs more easily than [other toolkits](http://kaldi-asr.org/doc/data_prep.html). This tutorial describes how to prepare your own dataset in ESPnet in a very simple way. For practical example, we gonna format a brand new corpus [JSUT](https://sites.google.com/site/shinnosuketakamichi/publication/jsut).
 
-You can find the final speech recogntion scripts at https://github.com/ShigekiKarita/espnet/tree/jsut/egs/just/asr1
+You can find the final speech recogntion scripts at https://github.com/ShigekiKarita/espnet/tree/jsut/egs/just/asr1/run.sh
 
 ## introduction
 
 Before building ESPnet speech-to-text system, you need to prepare
-- speech: splitted as utterances. able to convert to wav (we use ffmpeg to convert here)
+- speech: splitted as utterances, convertable to wav (via ffmpeg)
 - text: able to pair with speech utterances
 
 In this tutorial, these files are formatted into a kaldi's SCP style (key/value pairs) because ESPnet depends on [kaldi's IO mechanism](http://kaldi-asr.org/doc/io.html). Note that key (i.e., utt-id) should be matched between same speech and text. The value of speech (wav.scp) can be any shell command that need to write into stdout and end with `|`) or path like this.
@@ -48,10 +48,10 @@ $ CUDA_VISIBLE_DEVICES=0 ./run.sh --ngpu 1
 ```
 if you do not have GPUs, use `$ ./run.sh`.
 
-You can check the training reports by  `tail -f ./exp/train_nodev_*/train.log`
+You can check the training reports by  `tail -f ./exp/train_nodev_*/train.log`.
 Finally, it would result in character-error-rate (CER) 18.2% in several minutes. Not so bad!
 
-Also you can see following dirs
+Now you find that current dir is organized like
 ``` console
 $ tree  -L 1
 .
@@ -70,8 +70,8 @@ $ tree  -L 1
 └── utils -> ../../../tools/kaldi/egs/wsj/s5/utils
 ```
 
-In this tutorial, we will format `data/` dir by making `local/` scripts.
-The final data/ should be organized as follows
+In this tutorial, we aim to format the raw dataset into `data/` dir by making `local/` scripts.
+The final data/ should be organized as same as an4
 
 ``` console
 $ tree data/ -L2                                                                                                                       
@@ -91,7 +91,9 @@ $ tree data/ -L2
 
 ### ffmpeg
 
-```
+do not forget to install ffmpeg
+
+``` bash
 wget https://johnvansickle.com/ffmpeg/releases/ffmpeg-release-64bit-static.tar.xz
 tar -xvf ffmpeg-release-64bit-static.tar.xz
 export PATH=`pwd`/ffmpeg-3.4-64bit-static:$PATH
@@ -99,13 +101,22 @@ export PATH=`pwd`/ffmpeg-3.4-64bit-static:$PATH
 
 ## step2: overview run.sh
 
-now making new JUST dir by copying [CSJ](http://pj.ninjal.ac.jp/corpus_center/csj/) dir because JUST and CSJ are japanese. (I recommned use WSJ for English, HKUST for Chinese, Voxforge for European)
+Let's copy CSJ](http://pj.ninjal.ac.jp/corpus_center/csj/) dir as JSUT dir. 
 
 ``` console
 $ cd espnet/egs
 $ cp -r csj just
 $ cd just/asr1
 ```
+
+As the existing recipes sometimes contain  some language/task specific preprocessing, I recommend them for a initial script
+- WSJ for reading English
+- Tedlium for English talk
+- Switchboard for English conversation
+- HKUST for Chinese
+- CSJ for Japanese
+- Voxforge for European or mixed languages
+- CHiME4/5 for noisy multi-channel speech
 
 now edit run.sh that contains the following steps
 
@@ -166,18 +177,18 @@ if [ ${stage} -le 5 ]; then
 fi
 ```
 
-### preliminaries
+### comments
 - Stage 1: In speech recognition, we use log Mel filterbank (a.k.a. FBANK) feature basically. see [this page](http://www.practicalcryptography.com/miscellaneous/machine-learning/guide-mel-frequency-cepstral-coefficients-mfccs/) for detail
 - Stage 2: ESPnet uses .json files to store training/evaluation informations (e.g., speaker, text, length, dim) except for speech features that stored as a kaldi format. The dictionary is just a list of all the characters appeared in the dataset. 
 - Stage 3: ESPnet also can integrate with language models during decoding to achieve higher accuracy but you can avoid it.
 - Stage 4: The training part of this recipe. I recommend to use pytorch backend because it is much faster. You can customize your models by rewriting `class E2E(torch.nn.Module)` in `espnet/src/nets/e2e_asr_attctc_th.py`
 - Stage 5: The evaluation part of this recipe. We omit language model scoring options here for simplicity.
 
-## step 3. writing run.sh
+## step 3. rewriting run.sh
 
-### stage 0. download JUST zip
+### stage 0. download JSUT zip
 
-nothing difficult
+nothing is difficult.
 
 ``` bash
 # data
@@ -200,17 +211,17 @@ if [ ${stage} -le 0 ]; then
 fi
 ```
 
-Next, what we have to do here
-- split train/dev/eval sets
+Next, we need to
+- split one dataset into train/dev/eval sets
 - create data/xxx/wav.scp for each sets
 - create data/xxx/text for each sets
 
 Unfortunately, JSUT does not provide official train/dev/eval sets.
-We decide to split them into 80/10/10 % in sorted order.
+Here we decide to split them into 80/10/10 % for each dirs in sorted order.
 
 ### stage 0. prepare text
 
-text is much easier because it already looks like scp
+text is much easier than wav.scp because it already looks like scp
 
 - txt path : downloads/jsut_ver1.1/basic5000/transcript_utf8.txt
 - txt content: 
@@ -227,8 +238,12 @@ BASIC5000_0009:無罪の人々は、もちろん放免された。
 BASIC5000_0010:末期試験に備えて、本当に気合いを入れて勉強しなきゃ。
 ...
 ```
+Do not afraid if there are no word boundaries, ESPnet is good at character-level speech recognition.
 
-I use python3 because it handles UTF8 texts nicely.
+Here I use python3 because it handles UTF8 texts nicely.
+
+- [local/jsut_prepare_text.py](local/jsut_prepare_text.py)
+
 
 ``` python
 #!/usr/bin/env python3
@@ -279,8 +294,9 @@ NOTE: you need to sorted uttid in scp files.
 
 ### stage 0. prepare wav.scp
 
-Wave files are already separated as unique utterances (and filename can be directly used as uttrance-id) but its sampling rate is 48kHz (good for TTS). We downsample it to 16kHz because it is too much for speech recognition. I also use python3 to format scp files as follows
+Wave files are already separated as unique utterances (and filename can be directly used as uttrance-id) but its sampling rate is 48kHz (good for TTS). We downsample it to 16kHz by ffmpeg because it is too much for speech recognition. I also use python3 to format scp files as follows
 
+- [local/jsut_prepare_wav.py](local/jsut_prepare_wav.py)
 
 ``` python
 #!/usr/bin/env python3
@@ -331,9 +347,9 @@ for k, v in wav_sets.items():
             u.write("{} {}\n".format(uttid, uttid))
 ```
 
-NOTE: As JSUT does not provide speaker information, we simply put uttrance-id as speaker-id in `spk2utt` and `utt2spk`.
+NOTE: As JSUT does not provide speaker information, we simply put uttrance-id as speaker-id in `spk2utt` and `utt2spk`. The speaker information is useful for speaker adaptation sometimes but ESPnet has no speaker adapation recipes yet.
 
-now the most difficult part is finished!
+now the most difficult part is **finished!**
 
 ### stage 1. FBANK genearation
 
@@ -404,6 +420,6 @@ As seen in the previous section, the result is not great enough. You can tune up
 - enable language modeling
 - apply data augumentation techniques (e.g., speed perturbation) because this dataset is small
 
-Fork [this](https://github.com/ShigekiKarita/espnet/tree/jsut/egs/just/asr1) and have fun!
+Fork [this](https://github.com/ShigekiKarita/espnet/tree/jsut/egs/just/asr1) and have fun! Then, give us PR if you got nice results:-)
 
 If you have questions, [you can ask here](https://github.com/espnet/espnet/issues).
