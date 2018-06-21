@@ -43,9 +43,9 @@ It takes very long time in kaldi build (around 15min). Make tries to install eve
 
 ``` console
 $ cd egs/an4/asr1
-$ CUDA_VISIBLE_DEVICES=0 ./run.sh --ngpu 1
+$ CUDA_VISIBLE_DEVICES=0 ./run.sh --ngpu 1 --backend pytorch --etype blstmp
 ```
-if you do not have GPUs, use `$ ./run.sh`.
+if you do not have GPUs, use `$ ./run.sh --backend pytorch --etype blstmp`. I recommend you to use pytorch backend instead of chainer becuase it is much faster.
 
 You can check the training reports by  `tail -f ./exp/train_nodev_*/train.log`.
 Finally, it would result in character-error-rate (CER) 18.2% in several minutes. Not so bad!
@@ -401,7 +401,7 @@ We have done!
 Everything is same to an4/asr1/run.sh
 
 ``` console
-CUDA_VISIBLE_DEVICES=0 ./run.sh --ngpu 1
+CUDA_VISIBLE_DEVICES=0 ./run.sh --backend pytorch --etype blstmp
 ```
 in my environment (gtx1080ti), it took 40 mins.
 
@@ -449,8 +449,10 @@ Eval:                 S               S   S
 ...
 ```
 
-In this result, the current system achieved character error rate 25.1%!. And you can see some kanji conversion errors. Therefore language model (LM) could improve these errors?
+In this result, the current system achieved character error rate 25.1%!. However, you can see some kanji conversion errors. Therefore language model (LM) could reduce these errors?
 
-Fork [this](https://github.com/ShigekiKarita/espnet/tree/jsut/egs/just/asr1) and have fun! Then, give us PR if you got nice results:-)
+## step 6. fork me 
+
+Finally you have mastered ESPnet. Fork [this](https://github.com/ShigekiKarita/espnet/tree/jsut/egs/just/asr1) and have fun! Then, give us PR if you got nice results:-)
 
 If you have questions, [you can ask here](https://github.com/espnet/espnet/issues).
