@@ -1,0 +1,8 @@
+- pytorch BLSTMP encoder for 50 epochs
+
+write a CER (or TER) result in exp/train_th0.4_blstmp/decode_dev_beam20_eacc.best_p0.0_len0.0-0.0_ctcw0.3_rnnlm0.3/result.txt                                                                                                               
+| SPKR                          | # Snt  # Wrd | Corr     Sub    Del     Ins    Err   S.Err |                         
+| Sum/Avg                       |  773   18869 | 78.0    19.5    2.5     3.1   25.1    96.2 | 
+write a CER (or TER) result in exp/train_th0.4_blstmp/decode_eval_beam20_eacc.best_p0.0_len0.0-0.0_ctcw0.3_rnnlm0.3/result.txt                     
+| SPKR                           | # Snt # Wrd  | Corr    Sub     Del    Ins     Err  S.Err  |                        
+| Sum/Avg                        |  768  28585  | 73.4   24.3     2.4    3.3    29.9   94.7  |
