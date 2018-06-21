@@ -37,10 +37,10 @@ n_ext = len(".wav")
 for k, v in wav_sets.items():
     os.makedirs("data/" + k, exist_ok=True)
     with open("data/" + k + "/wav.scp", "w") as w, \
-         open("data/" + k + "/spk2utt", "w") as s, \
          open("data/" + k + "/utt2spk", "w") as u:
         for wav in sorted(v):
+            # use dirname as speaker-id for error analysis
+            spkid = wav.split("/")[-3]
             uttid = os.path.basename(wav)[:-n_ext]
             w.write("{} ffmpeg -i {} -f wav -acodec pcm_s16le -ar 16000 -ac 1 - |\n".format(uttid, wav))
-            s.write("{} {}\n".format(uttid, uttid))
-            u.write("{} {}\n".format(uttid, uttid))
+            u.write("{} {}\n".format(uttid, spkid))

@@ -108,6 +108,9 @@ if [ ${stage} -le 0 ]; then
 
     local/jsut_prepare_text.py
     local/jsut_prepare_wav.py
+    for u in data/*/utt2spk; do
+        utils/utt2spk_to_spk2utt.pl $u > $(dirname $u)/spk2utt
+    done
 fi
 
 feat_tr_dir=${dumpdir}/${train_set}/delta${do_delta}; mkdir -p ${feat_tr_dir}
