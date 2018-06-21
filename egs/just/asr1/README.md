@@ -351,45 +351,9 @@ for k, v in wav_sets.items():
 
 NOTE: As JSUT does not provide speaker information, we simply put dirname as speaker-id.
 
-
-dumped json `data/train/deltafalse/data.json` is organized as follows
-```
-{
-    "utts": {
-        "BASIC5000_1698": {
-            "utt2spk": "basic5000", 
-            "input": [
-                {
-                    "shape": [
-                        384, 
-                        83
-                    ], 
-                    "feat": "/home/skarita/work/dev/espnet/egs/just/asr1/dump/train/deltafalse/feats.2.ark:5174113", 
-                    "name": "input1"
-                }
-            ], 
-            "output": [
-                {
-                    "text": "僕の片言の英語が、なんとか通じたのでほっとしました。", 
-                    "shape": [
-                        26, 
-                        2561
-                    ], 
-                    "name": "target1", 
-                    "token": "僕 の 片 言 の 英 語 が 、 な ん と か 通 じ た の で ほ っ と し ま し た 。", 
-                    "tokenid": "2157 85 2086 777 85 289 810 52 19 81 119 79 51 1684 64 71 85 78 98 74 79 63 101 63 71 20" 
-                }
-            ]
-        }, 
-        "BASIC5000_1699": {
-            "utt2spk": "basic5000", 
-            "input": [
-...
-```
-
 now the most difficult part is **finished!**
 
-### stage 1. FBANK genearation
+### stage 1. JSON and FBANK generation
 
 almost nothing to rewrite. just calling 3 commands
 1. `steps/make_fbank_pitch.sh` : create fbank (feat.scp) from wav.scp
@@ -429,6 +393,41 @@ if [ ${stage} -le 1 ]; then
             ${feat_recog_dir}
     done
 fi
+```
+
+dumped json `data/train/deltafalse/data.json` is organized as follows
+```
+{
+    "utts": {
+        "BASIC5000_1698": {
+            "utt2spk": "basic5000", 
+            "input": [
+                {
+                    "shape": [
+                        384, 
+                        83
+                    ], 
+                    "feat": "/home/skarita/work/dev/espnet/egs/just/asr1/dump/train/deltafalse/feats.2.ark:5174113", 
+                    "name": "input1"
+                }
+            ], 
+            "output": [
+                {
+                    "text": "僕の片言の英語が、なんとか通じたのでほっとしました。", 
+                    "shape": [
+                        26, 
+                        2561
+                    ], 
+                    "name": "target1", 
+                    "token": "僕 の 片 言 の 英 語 が 、 な ん と か 通 じ た の で ほ っ と し ま し た 。", 
+                    "tokenid": "2157 85 2086 777 85 289 810 52 19 81 119 79 51 1684 64 71 85 78 98 74 79 63 101 63 71 20" 
+                }
+            ]
+        }, 
+        "BASIC5000_1699": {
+            "utt2spk": "basic5000", 
+            "input": [
+...
 ```
 
 See https://github.com/ShigekiKarita/espnet/blob/jsut/egs/just/asr1/run.sh for the remaining part (only small changes from csj/asr1/run.sh).
