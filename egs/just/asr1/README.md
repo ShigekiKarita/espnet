@@ -489,6 +489,8 @@ Eval:                 S               S   S
 
 In this result, the current system achieved character error rate 25.1%!. However, you can see some kanji conversion errors. Therefore language model (LM) could reduce these errors?
 
+See [this document](http://www1.icsi.berkeley.edu/Speech/docs/sctk-1.2/sclite.htm#sclite_name_0) for detaiis of the error analysis tool.
+
 ## step 6. fork me 
 
 Finally you have mastered ESPnet. Fork [this](https://github.com/ShigekiKarita/espnet/tree/jsut/egs/just/asr1) and have fun! Then, give us PR if you got nice results:-)
