@@ -1,5 +1,6 @@
 # How to prepare dataset in ESPnet
 
+[(Japanese)](README.ja.md)
 
 ## abstract
 
@@ -417,6 +418,38 @@ As seen in the previous section, the result is not great enough. You can tune up
 - tweak decoding parameters
 - enable language modeling
 - apply data augumentation techniques (e.g., speed perturbation) because this dataset is small
+
+## step 5. error analysis
+
+when I changed epochs from 30 to 50, it works well.
+
+You can confirm ESPnet's recognition results in `exp/train_xxx/decode_yyy/results.txt` like
+
+```
+
+...
+| SPKR                          | # Snt  # Wrd | Corr     Sub    Del     Ins    Err   S.Err |
+....
+| Sum/Avg                       |  773   18869 | 78.0    19.5    2.5     3.1   25.1    96.2 |
+
+...
+Speaker sentences   0:  ut_paraphrase_sent291_phrase2   #utts: 1
+id: (ut_paraphrase_sent291_phrase2-ut-paraphrase-sent291-phrase2)
+Scores: (#C #S #D #I) 19 3 1 0
+REF:  前 よ り 面 倒 だ が 、 詳 細 が よ く 分 か る よ う に な っ た 。 
+HYP:  前 よ り 面 道 だ が 、 少 年 が よ く 分 *** る よ う に な っ た 。 
+Eval:                 S               S   S                   D                                   
+
+Speaker sentences   1:  ut_paraphrase_sent291_phrase1   #utts: 1
+id: (ut_paraphrase_sent291_phrase1-ut-paraphrase-sent291-phrase1)
+Scores: (#C #S #D #I) 20 3 0 0
+REF:  前 よ り 面 倒 だ が 、 明 細 が よ く 分 か る よ う に な っ た 。 
+HYP:  前 よ り 面 道 だ が 、 名 線 が よ く 分 か る よ う に な っ た 。 
+Eval:                 S               S   S                                                       
+...
+```
+
+In this result, the current system achieved character error rate 25.1%!. And you can see some kanji conversion errors. Therefore language model (LM) could improve these errors?
 
 Fork [this](https://github.com/ShigekiKarita/espnet/tree/jsut/egs/just/asr1) and have fun! Then, give us PR if you got nice results:-)
 
