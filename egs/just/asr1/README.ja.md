@@ -38,12 +38,12 @@ cd espnet/tools
 make -j6 -f conda.mk PYTHON_VERSION=3.6
 ```
 
-Kaldiのインストールには非常に時間がかかるでしょう．Makeはあらゆるものをインストールしようとしますが，このチュートリアルではvirtualenv, chainer および kaldi が必要なだけです．Makefileやconda.mkの中身を見て，それぞれ個別にインストールしてもかまいません．諦めないでください．
+Kaldiのインストールには非常に時間がかかるでしょう．Makeはあらゆるものをインストールしようとしますが，このチュートリアルではvirtualenv, chainer, pytorch および kaldi が必要なだけです．Makefileやconda.mkの中身を見て，それぞれ個別にインストールしてもかまいません．諦めないでください．
 
 ESPnetのインストールが終われば，とても小さいAN4データセットを試してみましょう．
 ``` console
 $ cd egs/an4/asr1
-$ CUDA_VISIBLE_DEVICES=0 ./run.sh --ngpu 1
+$ CUDA_VISIBLE_DEVICES=0 ./run.sh --ngpu 1 --backend pytorch
 ```
 もしGPUをもっていなければ`$ ./run.sh`として動かしましょう.
 
@@ -397,7 +397,7 @@ fi
 動かし方は全て an4/asr1/run.sh　のときと同じです．
 
 ``` console
-CUDA_VISIBLE_DEVICES=0 ./run.sh --ngpu 1
+CUDA_VISIBLE_DEVICES=0 ./run.sh --ngpu 1 --backend pytorch --etype blstmp
 ```
 私の環境 (gtx1080ti) では実行に40分くらいかかりました.以下が認識精度の経過グラフです．
 
