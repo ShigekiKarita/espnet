@@ -346,7 +346,7 @@ for k, v in wav_sets.items():
             spkid = wav.split("/")[-3]
             uttid = os.path.basename(wav)[:-n_ext]
             w.write("{} ffmpeg -i {} -f wav -acodec pcm_s16le -ar 16000 -ac 1 - |\n".format(uttid, wav))
-            u.write("{} {}\n".format(uttid, uttid))
+            u.write("{} {}\n".format(uttid, spkid))
 ```
 
 NOTE: As JSUT does not provide speaker information, we simply put dirname as speaker-id.
