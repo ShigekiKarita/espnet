@@ -46,6 +46,9 @@ maxlen_out=150 # if output length > maxlen_out, batchsize is automatically reduc
 # optimization related
 opt=adadelta
 epochs=15
+lr_init=1.0
+warmup_steps=12800
+dropout=0.0
 
 # decoding parameter
 beam_size=20
@@ -164,7 +167,7 @@ if [ ${stage} -le 2 ]; then
 fi
 
 if [ -z ${tag} ]; then
-    expdir=exp/${train_set}_${backend}_${ntype}_${etype}_e${elayers}_subsample${subsample}_unit${eunits}_proj${eprojs}_d${dlayers}_unit${dunits}_${atype}_aconvc${aconv_chans}_aconvf${aconv_filts}_mtlalpha${mtlalpha}_${opt}_sampprob${samp_prob}_bs${batchsize}_mli${maxlen_in}_mlo${maxlen_out}
+    expdir=exp/${train_set}_${backend}_${ntype}_${etype}_e${elayers}_subsample${subsample}_unit${eunits}_proj${eprojs}_d${dlayers}_unit${dunits}_${atype}_aconvc${aconv_chans}_aconvf${aconv_filts}_mtlalpha${mtlalpha}_${opt}_sampprob${samp_prob}_bs${batchsize}_lr${lr_init}_warmup${warmup_steps}_dropout${dropout}_mli${maxlen_in}_mlo${maxlen_out}
     if ${do_delta}; then
         expdir=${expdir}_delta
     fi
@@ -201,6 +204,9 @@ if [ ${stage} -le 3 ]; then
         --aconv-filts ${aconv_filts} \
         --mtlalpha ${mtlalpha} \
         --batch-size ${batchsize} \
+        --lr-init ${lr_init} \
+        --warmup-steps ${warmup_steps} \
+        --dropout-rate ${dropout} \
         --maxlen-in ${maxlen_in} \
         --maxlen-out ${maxlen_out} \
         --opt ${opt} \
