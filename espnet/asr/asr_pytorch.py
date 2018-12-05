@@ -209,7 +209,15 @@ def train(args):
         logging.info('Multitask learning mode')
 
     # specify model architecture
-    e2e = E2E(idim, odim, args)
+    logging.info('network type (ntype): ' + args.ntype)
+    if args.ntype == 'e2e':
+        from espnet.nets.e2e_asr_th import E2E
+        e2e = E2E(idim, odim, args)
+    elif args.ntype == 'transformer':
+        from espnet.nets.e2e_asr_transformer_th import E2E
+        e2e = E2E(idim, odim, args)
+    else:
+        raise ValueError('Incorrect type of architecture')
     model = Loss(e2e, args.mtlalpha)
 
     if args.rnnlm is not None:
@@ -300,8 +308,8 @@ def train(args):
     # Evaluate the model with the test dataset for each epoch
     trainer.extend(CustomEvaluator(model, valid_iter, reporter, converter, device))
 
-    # Save attention weight each epoch
-    if args.num_save_attention > 0 and args.mtlalpha != 1.0:
+    # Save attention weight each epoch FIXME: support transformer attention
+    if args.num_save_attention > 0 and args.mtlalpha != 1.0 and args.ntype != 'transformer':
         data = sorted(list(valid_json.items())[:args.num_save_attention],
                       key=lambda x: int(x[1]['input'][0]['shape'][1]), reverse=True)
         if hasattr(model, "module"):

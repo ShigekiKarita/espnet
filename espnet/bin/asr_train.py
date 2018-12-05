@@ -48,6 +48,9 @@ def main():
     parser.add_argument('--ntype', type=str, default='e2e',
                         choices=['e2e', 'transformer'],
                         help='Type of network architecture')
+    parser.add_argument('--ninit', type=str, default='none',
+                        # choices=['none', 'chainer', 'transformer'],
+                        help='Type of network initialization')
     # encoder
     parser.add_argument('--etype', default='blstmp', type=str,
                         choices=['blstm', 'blstmp', 'vggblstmp', 'vggblstm'],

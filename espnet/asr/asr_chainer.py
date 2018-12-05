@@ -239,6 +239,7 @@ def train(args):
         logging.info('Multitask learning mode')
 
     # specify model architecture
+    logging.info('network type (ntype): ' + args.ntype)
     if args.ntype == 'e2e':
         from espnet.nets.e2e_asr import E2E
         e2e = E2E(idim, odim, args)

@@ -175,9 +175,9 @@ class ConvolutionSentence(chainer.Chain):
 
         """
         if self.use_linear:
-            x = x.transpose(1, -1)  # (B, H, W, C)
+            x = F.swapaxes(x, 1, -1)  # (B, H, W, C)
             y = self.layer(x, n_batch_axes=x.ndim-1)
-            y = y.transpose(1, -1)  # (B, C, H, W)
+            y = F.swapaxes(y, 1, -1)  # (B, C, H, W)
         else:
             if x.ndim < 4:
                 x = F.expand_dims(x, axis=3)
@@ -188,6 +188,7 @@ class ConvolutionSentence(chainer.Chain):
 
 class E2E(chainer.Chain):
     def __init__(self, idim, odim, args):
+        logging.info("initializing transformer E2E")
         # def __init__(self, n_layers, n_source_vocab, n_target_vocab, n_units,
         #             h=8, dropout=0.1, max_length=500,
         #             use_label_smoothing=False,
@@ -715,8 +716,8 @@ class Encoder(chainer.Chain):
 
     def __call__(self, e, ilens):
         xp = self.xp
-        if self.verbose > 0:
-            logging.info('Input size convnet: ' + str(e.shape))
+        # if self.verbose > 0:
+        #     logging.info('Input size convnet: ' + str(e.shape))
         e = F.swapaxes(F.expand_dims(e, axis=3), 1, 3)
         e = F.relu(self.conv1_1(e))
         e = F.relu(self.conv1_2(e))
@@ -733,8 +734,8 @@ class Encoder(chainer.Chain):
 
         for i in range(len(self.layer_names)):
             name = self.layer_names[i]
-            if self.verbose > 0:
-                logging.info('Input size encoder {}: '.format(name) + str(e.shape))
+            # if self.verbose > 0:
+            #     logging.info('Input size encoder {}: '.format(name) + str(e.shape))
             batch, _, x_length = e.shape
 
             x_mask = np.zeros([batch, x_length])
@@ -766,8 +767,8 @@ class Decoder(chainer.Chain):
 
     def __call__(self, e, source, xy_mask, yy_mask):
         for name in self.layer_names:
-            if self.verbose > 0:
-                logging.info('Input size decoder {}: '.format(name) + str(e.shape))
+            # if self.verbose > 0:
+            #     logging.info('Input size decoder {}: '.format(name) + str(e.shape))
             e = getattr(self, name)(e, source, xy_mask, yy_mask)
         return e
 
