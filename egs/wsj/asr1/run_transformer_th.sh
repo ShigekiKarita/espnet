@@ -26,19 +26,19 @@ ninit=none
 # encoder related
 ntype=transformer
 etype=vggblstmp     # encoder architecture type
-elayers=4
-eunits=320
+elayers=6
+eunits=1024
 eprojs=320
 subsample=0 # skip every n frame from input to nth layers
 # decoder related
-dlayers=1
-dunits=300
+dlayers=6
+dunits=1024
 # attention related
 atype=location
 aconv_chans=10
 aconv_filts=100
 aheads=4
-adim=320
+adim=256
 
 # hybrid CTC/attention
 mtlalpha=0.0
@@ -48,8 +48,8 @@ lsm_type=unigram
 lsm_weight=0.05
 
 # minibatch related
-batchsize=30
-maxlen_in=800  # if input length  > maxlen_in, batchsize is automatically reduced
+batchsize=16
+maxlen_in=512  # if input length  > maxlen_in, batchsize is automatically reduced
 maxlen_out=150 # if output length > maxlen_out, batchsize is automatically reduced
 
 # optimization related
