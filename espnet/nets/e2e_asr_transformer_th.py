@@ -338,17 +338,20 @@ class E2E(torch.nn.Module):
 def _plot_and_save_attention(att_w, filename):
     # dynamically import matplotlib due to not found error
     import matplotlib.pyplot as plt
+    from matplotlib.ticker import MaxNLocator
     import os
+
     os.makedirs(os.path.dirname(filename), exist_ok=True)
-    aspect = float(att_w.size(1)) / att_w.size(0)
-    w, h = plt.figaspect(aspect / len(att_w))
-    fig = plt.Figure(figsize=(w, h))
+    w, h = plt.figaspect(1.0 / len(att_w))
+    fig = plt.Figure(figsize=(w * 2, h * 2))
     axes = fig.subplots(1, len(att_w))
     for ax, aw in zip(axes, att_w):
         # plt.subplot(1, len(att_w), h)
-        ax.imshow(aw, aspect=aspect) # "auto")
-        ax.set_xlabel("Input Index")
-        ax.set_ylabel("Output Index")
+        ax.imshow(aw, aspect="auto")
+        ax.set_xlabel("Input")
+        ax.set_ylabel("Output")
+        ax.xaxis.set_major_locator(MaxNLocator(integer=True))
+        ax.yaxis.set_major_locator(MaxNLocator(integer=True))
     fig.tight_layout()
     fig.savefig(filename)
 

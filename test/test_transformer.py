@@ -26,7 +26,7 @@ def test_transformer():
     from argparse import Namespace
     args = Namespace(
         adim=64,
-        aheads=4,
+        aheads=8,
         dropout_rate=0.,
         elayers=2,
         eunits=32,
@@ -38,24 +38,20 @@ def test_transformer():
     odim = 4
     model = T.E2E(idim, odim, args)
 
-    x = torch.randn(5, 7, idim)
-    ilens = [7, 5, 3, 3, 2]
+    x = torch.randn(5, 70, idim)
+    ilens = [70, 50, 30, 30, 20]
     y = (torch.rand(5, 10) * odim % odim).long()
     olens = [3, 9, 10, 2, 3]
     for i in range(x.size(0)):
         x[i, ilens[i]:] = 0
         y[i, olens[i]:] = model.ignore_id
 
-    # # test attention image
-    # from collections import OrderedDict
-    # data = []
-    # for i in range(x.size(0)):
-    #     data.append(("utt%d" % i, {
-    #         "input": [{"shape": [ilens[i], idim]}],
-    #         "output": [{"shape": [olens[i]]}]
-    #     }))
-    # attn_dict = model.calculate_all_attentions(x, ilens, y)
-    # T.plot_multi_head_attention(data, attn_dict, "/tmp/espnet-test")
+    data = []
+    for i in range(x.size(0)):
+        data.append(("utt%d" % i, {
+            "input": [{"shape": [ilens[i], idim]}],
+            "output": [{"shape": [olens[i]]}]
+        }))
 
     import logging
     logging.basicConfig(
@@ -74,6 +70,10 @@ def test_transformer():
         #     attn_dict = model.calculate_all_attentions(x, ilens, y)
         #     T.plot_multi_head_attention(data, attn_dict, "/tmp/espnet-test", "iter%d.png" % i)
     assert acc > 0.9
+
+    # test attention plot
+    attn_dict = model.calculate_all_attentions(x, ilens, y)
+    T.plot_multi_head_attention(data, attn_dict, "/tmp/espnet-test")
 
     # test beam search
     recog_args = Namespace(
