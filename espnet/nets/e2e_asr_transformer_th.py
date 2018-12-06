@@ -6,7 +6,7 @@ from torch import nn
 from torch.nn import LayerNorm
 
 from espnet.asr import asr_utils
-from espnet.nets.beam_search import BeamSearch
+from espnet.nets.beam_search import BeamSearch, ScoringBase
 
 
 class MultiSequential(torch.nn.Sequential):
@@ -314,64 +314,7 @@ class E2E(torch.nn.Module):
         return loss_ctc, loss_att, acc, cer, wer
 
     def recognize(self, feat, recog_args, char_list=None, rnnlm=None):
-        search = BeamSearch(self.encoder, [self.decoder])
-
-
-        # import six
-        # if rnnlm:
-        #     logging.warning("rnnlm is not supported now")
-
-        # logging.info('input lengths: ' + str(feat.shape))
-
-        # # forward encoder
-        # src = torch.as_tensor(feat).unsqueeze(0)
-        # src_mask = torch.ones(*src.shape[:2], dtype=torch.uint8, device=src.device)
-        # h, h_mask = self.encoder.forward(src, src_mask)
-        # h = h.squeeze(0)
-
-        # # search parms
-        # beam = recog_args.beam_size
-        # penalty = recog_args.penalty
-        # ctc_weight = recog_args.ctc_weight
-
-        # if recog_args.maxlenratio == 0:
-        #     maxlen = h.shape[0]
-        # else:
-        #     # maxlen >= 1
-        #     maxlen = max(1, int(recog_args.maxlenratio * h.size(0)))
-        # minlen = int(recog_args.minlenratio * h.size(0))
-        # logging.info('max output length: ' + str(maxlen))
-        # logging.info('min output length: ' + str(minlen))
-
-        # h = h.unsqueeze(0)
-        # y_mask_all = torch.ones(h.size(0), maxlen,
-        #                         dtype=torch.uint8, device=src.device)
-        # score = 0.0
-        # yseq = [self.sos]
-        # y = torch.tensor([yseq])
-        # global_best_scores = torch.zeros(beam)
-        # hyps = [{"score": 0.0, "yseq": [self.sos]}]
-        # ended_hyps = []
-        # # for i in six.moves.range(maxlen):
-        # #     logging.debug('position ' + str(i))
-
-        #     # y_mask = y_mask_all[:, :i+1]
-        #     # logging.info("{} {}".format(y.shape, y_mask.shape))
-        #     # pred, pred_mask = self.decoder.forward(y, y_mask, h, h_mask)
-        #     # log_prob = torch.log_softmax(pred[:, -1, :], dim=-1)
-        #     # # (beam/1, odim) -> (beam/1, beam)
-        #     # local_best_scores, local_best_ids = log_prob.topk(beam, dim=-1)
-        #     # # (beam/1,) -> (beam/1, beam)
-        #     # expanded_scores = global_best_scores.unsqueeze(1) + local_best_scores
-        #     # # (beam/1, beam) -> (beam,)
-        #     # global_best_scores, expanded_ids = expanded_scores.view(-1).topk(beam, dim=0)
-        #     # global_best_ids = local_best_ids.view(-1)[expanded_ids]
-        #     # global_prev_id = global_best_ids // beam
-        #     # global_next_id = expa % beam
-        #     # logging.info(global_prev_id)
-        #     # logging.info(global_next_id)
-        #     # # update hypothesis (beam, i) -> (beam, i+1)
-        #     # y = torch.cat((y[global_prev_id], global_next_id.unsqueeze(1)), dim=1)
+        search = BeamSearch(self.encoder, [self.decoder], {self.decoder: 1.0}, self.sos, self.eos)
 
     def calculate_all_attentions(self, xs_pad, ilens, ys_pad):
         '''E2E attention calculation

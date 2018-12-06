@@ -1,3 +1,5 @@
+import numpy
+
 # interface for Decoder, CTC, RNNLM, etc
 class ScoringBase(object):
     def score(self, token, enc_output, state):
@@ -62,7 +64,7 @@ class BeamSearch(object):
         enc_output = self.encoder(src, src_lengths)
 
         # prepare states
-        states = dict():
+        states = dict()
         for s in self.scorers:
             states[s] = s.init_state(src, src_lengths, enc_output, args)
 
