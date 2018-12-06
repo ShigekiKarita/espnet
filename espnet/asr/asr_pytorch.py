@@ -252,9 +252,12 @@ def train(args):
     # Setup an optimizer
     if args.opt == 'adadelta':
         optimizer = torch.optim.Adadelta(
-            model.parameters(), rho=0.95, eps=args.eps)
+            model.parameters(), lr=args.lr_init, rho=0.95, eps=args.eps)
     elif args.opt == 'adam':
-        optimizer = torch.optim.Adam(model.parameters())
+        optimizer = torch.optim.Adam(model.parameters(), lr=args.lr_init)
+    elif args.opt == 'noam':
+        from espnet.nets.e2e_asr_transformer_th import get_std_opt
+        optimizer = get_std_opt(model, args.adim, args.warmup_steps, args.lr_init)
 
     # FIXME: TOO DIRTY HACK
     setattr(optimizer, "target", reporter)

@@ -146,7 +146,7 @@ def main():
                         help='Number of processes of iterator')
     # optimization related
     parser.add_argument('--opt', default='adadelta', type=str,
-                        choices=['adadelta', 'adam'],
+                        choices=['adadelta', 'adam', 'noam'],
                         help='Optimizer')
     parser.add_argument('--eps', default=1e-8, type=float,
                         help='Epsilon constant for optimizer')
@@ -163,7 +163,7 @@ def main():
                         help='Gradient norm threshold to clip')
     parser.add_argument('--num-save-attention', default=3, type=int,
                         help='Number of samples of attention to be saved')
-    parser.add_argument('--lr-init', default=0.001, type=float,
+    parser.add_argument('--lr-init', default=1.0, type=float,
                         help='Initial value of learning rate')
     parser.add_argument('--warmup-steps', default=128000, type=int,
                         help='optimizer warmup steps')
