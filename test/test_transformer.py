@@ -22,15 +22,14 @@ def test_mask():
     m = T.subsequent_mask(3)
     assert m.tolist() == [[[1, 1, 1], [0, 1, 1], [0, 0, 1]]]
 
-
-def test_init():
+def test_transformer():
     from argparse import Namespace
     args = Namespace(
         adim=64,
-        aheads=8,
-        dropout_rate=0.1,
+        aheads=4,
+        dropout_rate=0.,
         elayers=2,
-        eunits=64,
+        eunits=32,
         dlayers=2,
         dunits=32,
         ninit="none"
@@ -41,10 +40,29 @@ def test_init():
 
     x = torch.randn(5, 7, idim)
     ilens = [7, 5, 3, 3, 2]
-    for i in range(x.size(0)):
-        x[i, ilens[i]:] = model.ignore_id
     y = (torch.rand(5, 10) * odim % odim).long()
+    olens = [3, 9, 10, 2, 3]
+    for i in range(x.size(0)):
+        x[i, ilens[i]:] = 0
+        y[i, olens[i]:] = model.ignore_id
 
+    # # test attention image
+    # from collections import OrderedDict
+    # data = []
+    # for i in range(x.size(0)):
+    #     data.append(("utt%d" % i, {
+    #         "input": [{"shape": [ilens[i], idim]}],
+    #         "output": [{"shape": [olens[i]]}]
+    #     }))
+    # attn_dict = model.calculate_all_attentions(x, ilens, y)
+    # T.plot_multi_head_attention(data, attn_dict, "/tmp/espnet-test")
+
+    import logging
+    logging.basicConfig(
+        level=logging.INFO, format='%(asctime)s (%(module)s:%(lineno)d) %(levelname)s: %(message)s')
+
+
+    # test acc is almost 100%
     optim = torch.optim.Adam(model.parameters(), 0.01)
     for i in range(10):
         loss_ctc, loss_att, acc, cer, wer = model(x, ilens, y)
@@ -52,6 +70,21 @@ def test_init():
         loss_att.backward()
         optim.step()
         print(loss_att, acc)
+        # if __name__ == "__main__":
+        #     attn_dict = model.calculate_all_attentions(x, ilens, y)
+        #     T.plot_multi_head_attention(data, attn_dict, "/tmp/espnet-test", "iter%d.png" % i)
+    assert acc > 0.9
+
+    # test beam search
+    recog_args = Namespace(
+        beam_size=3,
+        penalty=0.1,
+        ctc_weight=0.0,
+        maxlenratio=0,
+        minlenratio=0,
+    )
+    with torch.no_grad():
+        model.recognize(x[0, :ilens[0]].numpy(), recog_args)
 
 if __name__ == "__main__":
-    test_init()
+    test_transformer()

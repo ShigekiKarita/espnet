@@ -28,7 +28,6 @@ from espnet.asr.asr_utils import CompareValueTrigger
 from espnet.asr.asr_utils import get_model_conf
 from espnet.asr.asr_utils import load_inputs_and_targets
 from espnet.asr.asr_utils import make_batchset
-from espnet.asr.asr_utils import PlotAttentionReport
 from espnet.asr.asr_utils import restore_snapshot
 from espnet.asr.asr_utils import torch_load
 from espnet.asr.asr_utils import torch_resume
@@ -212,12 +211,11 @@ def train(args):
     logging.info('network type (ntype): ' + args.ntype)
     if args.ntype == 'e2e':
         from espnet.nets.e2e_asr_th import E2E
-        e2e = E2E(idim, odim, args)
     elif args.ntype == 'transformer':
         from espnet.nets.e2e_asr_transformer_th import E2E
-        e2e = E2E(idim, odim, args)
     else:
         raise ValueError('Incorrect type of architecture')
+    e2e = E2E(idim, odim, args)
     model = Loss(e2e, args.mtlalpha)
 
     if args.rnnlm is not None:
@@ -309,13 +307,17 @@ def train(args):
     trainer.extend(CustomEvaluator(model, valid_iter, reporter, converter, device))
 
     # Save attention weight each epoch FIXME: support transformer attention
-    if args.num_save_attention > 0 and args.mtlalpha != 1.0 and args.ntype != 'transformer':
+    if args.num_save_attention > 0 and args.mtlalpha != 1.0:
         data = sorted(list(valid_json.items())[:args.num_save_attention],
                       key=lambda x: int(x[1]['input'][0]['shape'][1]), reverse=True)
         if hasattr(model, "module"):
             att_vis_fn = model.module.predictor.calculate_all_attentions
         else:
             att_vis_fn = model.predictor.calculate_all_attentions
+        if args.ntype == 'transformer':
+            from espnet.nets.e2e_asr_transformer_th import PlotAttentionReport
+        else:
+            from espnet.asr.asr_utils import PlotAttentionReport
         trainer.extend(PlotAttentionReport(
             att_vis_fn, data, args.outdir + "/att_ws",
             converter=converter, device=device), trigger=(1, 'epoch'))
