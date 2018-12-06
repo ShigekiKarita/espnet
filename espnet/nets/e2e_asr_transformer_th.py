@@ -30,33 +30,34 @@ class NoamOpt:
         self._rate = rate
         self.optimizer.step()
 
-    def zero_grad(self):
-        self.optimizer.zero_grad()
-
-    def state_dict(self):
-        return {
-            "_step": self._step,
-            "warmup": self.warmup,
-            "factor": self.factor,
-            "model_size": self.model_size,
-            "_rate": self._rate,
-            "base": self.optimizer.state_dict()
-        }
-
-    def load_state_dict(self, state_dict):
-        for key, value in state_dict.items():
-            if key == "base":
-                self.base.load_state_dict(state_dict["base"])
-            else:
-                setattr(self, key, value)
-
     def rate(self, step = None):
         "Implement `lrate` above"
         if step is None:
             step = self._step
         return self.factor * \
             (self.model_size ** (-0.5) *
-            min(step ** (-0.5), step * self.warmup ** (-1.5)))
+             min(step ** (-0.5), step * self.warmup ** (-1.5)))
+
+    def zero_grad(self):
+        self.optimizer.zero_grad()
+
+    def state_dict(self):
+        ret = dict()
+        return {
+            "_step": self._step,
+            "warmup": self.warmup,
+            "factor": self.factor,
+            "model_size": self.model_size,
+            "_rate": self._rate,
+            "optimizer": self.optimizer.state_dict()
+        }
+
+    def load_state_dict(self, state_dict):
+        for key, value in state_dict.items():
+            if key == "optimizer":
+                self.optimizer.load_state_dict(state_dict["optimizer"])
+            else:
+                setattr(self, key, value)
 
 
 def get_std_opt(model, d_model, warmup, factor):
