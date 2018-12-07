@@ -18,9 +18,17 @@ def test_sequential():
         assert len(f(x.cuda(), m.cuda())) == 2
 
 
+def subsequent_mask(size):
+    # http://nlp.seas.harvard.edu/2018/04/03/attention.html
+    "Mask out subsequent positions."
+    attn_shape = (1, size, size)
+    subsequent_mask = np.triu(np.ones(attn_shape), k=1).astype('uint8')
+    return torch.from_numpy(subsequent_mask) == 0
+
 def test_mask():
     m = T.subsequent_mask(3)
-    assert m.tolist() == [[[1, 1, 1], [0, 1, 1], [0, 0, 1]]]
+    assert (m.unsqueeze(0) == subsequent_mask(3)).all()
+    # assert m.tolist() == [[[1, 1, 1], [0, 1, 1], [0, 0, 1]]]
 
 def test_transformer():
     from argparse import Namespace
@@ -87,4 +95,5 @@ def test_transformer():
         model.recognize(x[0, :ilens[0]].numpy(), recog_args)
 
 if __name__ == "__main__":
-    test_transformer()
+    # test_transformer()
+    test_mask()

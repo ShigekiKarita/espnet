@@ -138,12 +138,12 @@ def subsequent_mask(size, device="cpu", dtype=torch.uint8):
     :param torch.dtype dtype: result dtype
     :rtype: torch.Tensor
     >>> subsequent_mask(3)
-    [[[1, 1, 1],
-      [0, 1, 1],
-      [0, 0, 1]]]
+    [[1, 0, 0],
+     [1, 1, 0],
+     [1, 1, 1]]
     """
     ret = torch.ones(size, size, device=device, dtype=dtype)
-    return torch.triu(ret, out=ret).unsqueeze(0)
+    return torch.triu(ret, out=ret)
 
 
 import numpy
@@ -349,7 +349,7 @@ class E2E(torch.nn.Module):
         # forward decoder
         ys_in_pad, ys_out_pad = self.add_sos_eos(ys_pad)
         ys_mask = ys_in_pad != self.ignore_id
-        m = subsequent_mask(ys_mask.size(-1), device=ys_mask.device)
+        m = subsequent_mask(ys_mask.size(-1), device=ys_mask.device).unsqueeze(0)
         ys_mask = ys_mask.unsqueeze(-2) & m
         pred_pad, pred_mask = self.decoder(ys_in_pad, ys_mask, hs_pad, hs_mask)
 
