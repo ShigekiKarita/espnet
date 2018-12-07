@@ -183,6 +183,7 @@ class MultiHeadedAttention(nn.Module):
         scores = torch.matmul(q, k.transpose(-2, -1)) / math.sqrt(self.d_k)
         if mask is not None:
             mask = mask.unsqueeze(1)
+            logging.debug("score {}, mask {}".format(scores.shape, mask.shape))
             scores = scores.masked_fill(mask == 0, MIN_VALUE)
         self.attn = torch.softmax(scores, dim = -1)
 
@@ -229,7 +230,10 @@ class Encoder(torch.nn.Module):
         super(Encoder, self).__init__()
         self.input_layer = torch.nn.Sequential(
             torch.nn.Linear(idim, args.adim),
-            PositionalEncoding(args.adim, args.dropout_rate)
+            torch.nn.Dropout(args.dropout_rate),
+            torch.nn.ReLU()
+            # NOTE maybe required? but not converged
+            # PositionalEncoding(args.adim, args.dropout_rate)
         )
         self.encoders = repeat(
             args.elayers,
@@ -343,6 +347,7 @@ class E2E(torch.nn.Module):
         from espnet.nets.e2e_asr_th import make_pad_mask, pad_list, th_accuracy
 
         # forward encoder
+        xs_pad = xs_pad[:, :max(ilens)]  # for data parallel
         src_mask = (~make_pad_mask(ilens)).to(xs_pad.device).unsqueeze(-2)
         hs_pad, hs_mask = self.encoder(xs_pad, src_mask)
 
@@ -364,6 +369,11 @@ class E2E(torch.nn.Module):
 
         # TODO(karita) show predected text
         # TODO(karita) calculate these stats
+        device = xs_pad.device
+        # acc = torch.as_tensor(acc).to(device)
+        # loss_ctc = torch.as_tensor(0.0).to(device)
+        # cer = torch.as_tensor(0.0).to(device)
+        # wer = torch.as_tensor(0.0).to(device)
         loss_ctc = None
         cer, wer = 0.0, 0.0
         return loss_ctc, loss_att, acc, cer, wer
