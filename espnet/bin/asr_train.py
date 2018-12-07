@@ -51,6 +51,9 @@ def main():
     parser.add_argument('--ninit', type=str, default='none',
                         # choices=['none', 'chainer', 'transformer'],
                         help='Type of network initialization')
+    parser.add_argument('--input-layer', type=str, default='conv2d',
+                        choices=['linear', 'conv2d'],
+                        help='Transformer input layer')
     # encoder
     parser.add_argument('--etype', default='blstmp', type=str,
                         choices=['blstm', 'blstmp', 'vggblstmp', 'vggblstm'],

@@ -225,16 +225,48 @@ class PositionalEncoding(nn.Module):
             return self.dropout(x)
 
 
+class Conv2dSubsampling(torch.nn.Module):
+    def __init__(self, dim, dropout):
+        super(Conv2dSubsampling, self).__init__()
+        self.conv = torch.nn.Sequential(
+            torch.nn.Conv2d(1, dim, 3, 2),
+            torch.nn.Dropout(dropout),
+            torch.nn.ReLU(),
+            torch.nn.Conv2d(dim, dim, 3, 2),
+            torch.nn.Dropout(dropout),
+            torch.nn.ReLU()
+        )
+        self.out = torch.nn.Sequential(
+            torch.nn.Linear(dim * (83 // 4), dim),
+            PositionalEncoding(dim, dropout)
+        )
+
+    def forward(self, x, x_mask):
+        x = x.unsqueeze(1)  # (b, c, t, f)
+        x = self.conv(x)
+        b, c, t, f = x.size()
+        x = self.out(x.transpose(1, 2).contiguous().view(b, t, c * f))
+        # logging.warning("x {} mask {}".format(x.shape, x_mask.shape))
+        return x, x_mask[:, :, :-2:2][:, :, :-2:2]
+
+
 class Encoder(torch.nn.Module):
     def __init__(self, idim, args):
         super(Encoder, self).__init__()
-        self.input_layer = torch.nn.Sequential(
-            torch.nn.Linear(idim, args.adim),
-            torch.nn.Dropout(args.dropout_rate),
-            torch.nn.ReLU()
-            # NOTE maybe required? but not converged
-            # PositionalEncoding(args.adim, args.dropout_rate)
-        )
+        if args.input_layer == "linear":
+            self.input_layer = torch.nn.Sequential(
+                torch.nn.Linear(idim, args.adim),
+                torch.nn.Dropout(args.dropout_rate),
+                torch.nn.ReLU(),
+                PositionalEncoding(args.adim, args.dropout_rate)
+                # NOTE maybe required? but not converged
+            )
+        elif args.input_layer == "conv2d":
+            self.input_layer = Conv2dSubsampling(args.adim, args.dropout_rate)
+        else:
+            raise ValueError("unknown input_layer: " + args.input_layer)
+
+
         self.encoders = repeat(
             args.elayers,
             lambda : EncoderLayer(
@@ -247,7 +279,10 @@ class Encoder(torch.nn.Module):
         self.norm = LayerNorm(args.adim)
 
     def forward(self, x, mask):
-        x = self.input_layer(x)
+        if isinstance(self.input_layer, Conv2dSubsampling):
+            x, mask = self.input_layer(x, mask)
+        else:
+            x = self.input_layer(x)
         return self.encoders(x, mask)
 
 

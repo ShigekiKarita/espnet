@@ -48,9 +48,10 @@ def prepare():
         eunits=32,
         dlayers=2,
         dunits=32,
-        ninit="none"
+        ninit="none",
+        input_layer="conv2d"
     )
-    idim = 3
+    idim = 83
     odim = 4
     model = T.E2E(idim, odim, args)
 
