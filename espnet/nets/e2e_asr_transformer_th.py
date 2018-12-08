@@ -318,6 +318,29 @@ class Decoder(torch.nn.Module, ScoringBase):
         return torch.log_softmax(y[:, -1, :])
 
 
+class LabelSmoothing(nn.Module):
+    def __init__(self, size, padding_idx, smoothing):
+        super(LabelSmoothing, self).__init__()
+        self.criterion = nn.KLDivLoss(reduce=False)
+        self.padding_idx = padding_idx
+        self.confidence = 1.0 - smoothing
+        self.smoothing = smoothing
+        self.size = size
+        self.true_dist = None
+
+    def forward(self, x, target):
+        assert x.size(1) == self.size
+        with torch.no_grad():
+            true_dist = x.clone()
+            true_dist.fill_(self.smoothing / (self.size - 1))
+            ignore = target == self.padding_idx  # (B,)
+            total = len(target) - ignore.sum().item()
+            target = target.masked_fill(ignore, 0)  # avoid -1 index
+            true_dist.scatter_(1, target.unsqueeze(1), self.confidence)
+        kl = self.criterion(torch.log_softmax(x, dim=1), true_dist)
+        return kl.masked_fill(ignore.unsqueeze(1), 0).sum()  / total
+
+
 class E2E(torch.nn.Module):
     def __init__(self, idim, odim, args):
         super(E2E, self).__init__()
@@ -328,6 +351,13 @@ class E2E(torch.nn.Module):
         self.odim = odim
         self.ignore_id = -1
         self.subsample = [0]
+        # self.lsm_weight = a
+        if args.lsm_weight > 0:
+            logging.warning("use label smoothing")
+            self.criterion = LabelSmoothing(self.odim, self.ignore_id, args.lsm_weight)
+        else:
+            self.criterion = nn.CrossEntropyLoss(ignore_index=self.ignore_id,
+                                                 size_average=True)
         # self.char_list = args.char_list
         # self.verbose = args.verbose
         self.reset_parameters(args)
@@ -395,11 +425,9 @@ class E2E(torch.nn.Module):
         pred_pad, pred_mask = self.decoder(ys_in_pad, ys_mask, hs_pad, hs_mask)
 
         # compute loss
-        loss_att = torch.nn.functional.cross_entropy(
+        loss_att = self.criterion(
             pred_pad.view(-1, self.odim),
-            ys_out_pad.view(-1),
-            ignore_index=self.ignore_id,
-            size_average=True)
+            ys_out_pad.view(-1))
         acc = th_accuracy(pred_pad.view(-1, self.odim), ys_out_pad,
                           ignore_label=self.ignore_id)
 

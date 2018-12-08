@@ -26,6 +26,7 @@ ninit=none
 # encoder related
 ntype=transformer
 etype=vggblstmp     # encoder architecture type
+input_layer=linear
 elayers=6
 eunits=1024
 eprojs=320
@@ -58,6 +59,8 @@ epochs=15
 lr_init=1.0
 warmup_steps=12800
 dropout=0.0
+accum_grad=1
+grad_clip=5
 
 # rnnlm related
 use_wordlm=true     # false means to train/use a character LM
@@ -250,7 +253,7 @@ fi
 
 
 if [ -z ${tag} ]; then
-    expdir=exp/${train_set}_${backend}_${ntype}_${etype}_e${elayers}_subsample${subsample}_unit${eunits}_proj${eprojs}_d${dlayers}_unit${dunits}_${atype}_aheads${aheads}_adim${adim}_mtlalpha${mtlalpha}_${opt}_sampprob${samp_prob}_bs${batchsize}_lr${lr_init}_warmup${warmup_steps}_dropout${dropout}_mli${maxlen_in}_mlo${maxlen_out}_ninit_${ninit}_epochs${epochs}
+    expdir=exp/${train_set}_${backend}_${ntype}_${input_layer}_e${elayers}_subsample${subsample}_unit${eunits}_d${dlayers}_unit${dunits}_aheads${aheads}_adim${adim}_mtlalpha${mtlalpha}_${opt}_clip${grad_clip}_sampprob${samp_prob}_bs${batchsize}_lr${lr_init}_warmup${warmup_steps}_dropout${dropout}_mli${maxlen_in}_mlo${maxlen_out}_ninit_${ninit}_epochs${epochs}_accum${accum_grad}
     if [ "${lsm_type}" != "" ]; then
         expdir=${expdir}_lsm${lsm_type}${lsm_weight}
     fi
@@ -267,6 +270,8 @@ if [ ${stage} -le 4 ]; then
     echo "stage 4: Network Training"
     ${cuda_cmd} --gpu ${ngpu} ${expdir}/train.log \
         asr_train.py \
+        --input-layer ${input_layer} \
+        --accum-grad ${accum_grad} \
         --ngpu ${ngpu} \
         --ntype ${ntype} \
         --backend ${backend} \
@@ -297,9 +302,11 @@ if [ ${stage} -le 4 ]; then
         --maxlen-in ${maxlen_in} \
         --maxlen-out ${maxlen_out} \
         --opt ${opt} \
+        --grad-clip ${grad_clip} \
         --sampling-probability ${samp_prob} \
         --epochs ${epochs} \
-        --ninit ${ninit}
+        --ninit ${ninit} \
+        --lsm-weight ${lsm_weight}
 fi
 
 if [ ${stage} -le 5 ]; then
