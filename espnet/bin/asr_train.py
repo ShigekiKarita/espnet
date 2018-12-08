@@ -151,6 +151,8 @@ def main():
     parser.add_argument('--opt', default='adadelta', type=str,
                         choices=['adadelta', 'adam', 'noam'],
                         help='Optimizer')
+    parser.add_argument('--accum-grad', default=1, type=int,
+                        help='Number of gradient accumuration')
     parser.add_argument('--eps', default=1e-8, type=float,
                         help='Epsilon constant for optimizer')
     parser.add_argument('--eps-decay', default=0.01, type=float,

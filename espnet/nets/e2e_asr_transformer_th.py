@@ -238,6 +238,7 @@ class Conv2dSubsampling(torch.nn.Module):
         )
         self.out = torch.nn.Sequential(
             torch.nn.Linear(dim * (83 // 4), dim),
+            # NOTE maybe required? but not converged?
             PositionalEncoding(dim, dropout)
         )
 
@@ -258,8 +259,8 @@ class Encoder(torch.nn.Module):
                 torch.nn.Linear(idim, args.adim),
                 torch.nn.Dropout(args.dropout_rate),
                 torch.nn.ReLU(),
-                PositionalEncoding(args.adim, args.dropout_rate)
                 # NOTE maybe required? but not converged
+                PositionalEncoding(args.adim, args.dropout_rate)
             )
         elif args.input_layer == "conv2d":
             self.input_layer = Conv2dSubsampling(args.adim, args.dropout_rate)

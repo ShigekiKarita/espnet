@@ -96,18 +96,21 @@ class CustomUpdater(training.StandardUpdater):
     '''Custom updater for pytorch'''
 
     def __init__(self, model, grad_clip_threshold, train_iter,
-                 optimizer, converter, device, ngpu):
+                 optimizer, converter, device, ngpu, accum_grad):
         super(CustomUpdater, self).__init__(train_iter, optimizer)
         self.model = model
         self.grad_clip_threshold = grad_clip_threshold
         self.converter = converter
         self.device = device
         self.ngpu = ngpu
+        self.count = 0
+        self.accum_grad = accum_grad
 
     # The core part of the update routine can be customized by overriding.
     def update_core(self):
         # When we pass one iterator and optimizer to StandardUpdater.__init__,
         # they are automatically named 'main'.
+        self.count += 1
         train_iter = self.get_iterator('main')
         optimizer = self.get_optimizer('main')
 
@@ -116,7 +119,6 @@ class CustomUpdater(training.StandardUpdater):
         x = self.converter(batch, self.device)
 
         # Compute the loss at this time step and accumulate it
-        optimizer.zero_grad()  # Clear the parameter gradients
         if self.ngpu > 1:
             loss = self.model(*x).mean()
             loss.backward()  # Backprop
@@ -132,8 +134,9 @@ class CustomUpdater(training.StandardUpdater):
         logging.info('grad norm={}'.format(grad_norm))
         if math.isnan(grad_norm):
             logging.warning('grad norm is nan. Do not update model.')
-        else:
+        elif self.count % self.accum_grad == 0:
             optimizer.step()
+            optimizer.zero_grad()  # Clear the parameter gradients
 
 
 class CustomConverter(object):
@@ -299,7 +302,8 @@ def train(args):
 
     # Set up a trainer
     updater = CustomUpdater(
-        model, args.grad_clip, train_iter, optimizer, converter, device, args.ngpu)
+        model, args.grad_clip, train_iter, optimizer, converter, device,
+        args.ngpu, args.accum_grad)
     trainer = training.Trainer(
         updater, (args.epochs, 'epoch'), out=args.outdir)
 
