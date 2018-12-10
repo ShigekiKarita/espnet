@@ -7,6 +7,7 @@ from torch.nn import LayerNorm
 
 from espnet.asr import asr_utils
 from espnet.nets.beam_search import BeamSearch, ScoringBase
+from espnet.nets.e2e_asr_th import make_pad_mask, pad_list, th_accuracy
 
 
 # TODO make this serializable
@@ -225,15 +226,28 @@ class PositionalEncoding(nn.Module):
             return self.dropout(x)
 
 
+class Conv2dLayerNorm(torch.nn.Module):
+    def __init__(self, nin, nout, kernel, stride, **kwargs):
+        super(Conv2dLayerNorm, self).__init__()
+        self.conv = torch.nn.Conv2d(nin, nout, kernel, stride, **kwargs)
+        self.norm = LayerNorm(nout)
+
+    def forward(self, x):
+        x = self.conv(x)  # (b, c, w, h)
+        return self.norm(x.transpose(1, 3)).transpose(3, 1)
+
+
 class Conv2dSubsampling(torch.nn.Module):
     def __init__(self, dim, dropout):
         super(Conv2dSubsampling, self).__init__()
         self.conv = torch.nn.Sequential(
+            # Conv2dLayerNorm(1, dim, 3, 2),
             torch.nn.Conv2d(1, dim, 3, 2),
-            torch.nn.Dropout(dropout),
+            # torch.nn.Dropout(dropout),
             torch.nn.ReLU(),
+            # Conv2dLayerNorm(dim, dim, 3, 2),
             torch.nn.Conv2d(dim, dim, 3, 2),
-            torch.nn.Dropout(dropout),
+            # torch.nn.Dropout(dropout),
             torch.nn.ReLU()
         )
         self.out = torch.nn.Sequential(
@@ -284,7 +298,8 @@ class Encoder(torch.nn.Module):
             x, mask = self.input_layer(x, mask)
         else:
             x = self.input_layer(x)
-        return self.encoders(x, mask)
+        x, mask = self.encoders(x, mask)
+        return self.norm(x), mask
 
 
 class Decoder(torch.nn.Module, ScoringBase):
@@ -313,9 +328,15 @@ class Decoder(torch.nn.Module, ScoringBase):
         x = self.output_layer(self.output_norm(x))
         return x, tgt_mask
 
+    def init_state(self, h, enc_state, args):
+        return enc_state
+
+    def select_state(self, state, index):
+        return {"mask": enc_state.index_select(0, index)}
+
     def score(self, token, enc_output, state):
-        y, _ = self.forward(token, None, *enc_output)
-        return torch.log_softmax(y[:, -1, :])
+        y, _ = self.forward(token, None, enc_output, state["mask"])
+        return torch.log_softmax(y[:, -1, :], dim=-1), state
 
 
 class LabelSmoothing(nn.Module):
@@ -410,8 +431,6 @@ class E2E(torch.nn.Module):
         :return: accuracy in attention decoder
         :rtype: float
         '''
-        from espnet.nets.e2e_asr_th import make_pad_mask, pad_list, th_accuracy
-
         # forward encoder
         xs_pad = xs_pad[:, :max(ilens)]  # for data parallel
         src_mask = (~make_pad_mask(ilens)).to(xs_pad.device).unsqueeze(-2)
@@ -443,7 +462,30 @@ class E2E(torch.nn.Module):
         return loss_ctc, loss_att, acc, cer, wer
 
     def recognize(self, feat, recog_args, char_list=None, rnnlm=None):
-        search = BeamSearch(self.encoder, [self.decoder], {self.decoder: 1.0}, self.sos, self.eos)
+        '''E2E beam search
+
+        :param ndarray x: input acouctic feature (B, T, D) or (T, D)
+        :param namespace recog_args: argment namespace contraining options
+        :param list char_list: list of characters
+        :param torch.nn.Module rnnlm: language model module
+        :return: N-best decoding results
+        :rtype: list
+        '''
+        assert feat.ndim == 2, "only single minibatch is supported in this method"
+
+        prev = self.training
+        self.eval()
+        feat = torch.as_tensor(feat).unsqueeze(0)
+        feat_len = [feat.size(1)]
+        mask = (~make_pad_mask(feat_len)).to(feat.device).unsqueeze(-2)
+        enc_output, mask = self.encoder(feat, mask)
+
+        # TODO(karita) support CTC, LM, lpz
+        search = BeamSearch([self.decoder], {self.decoder: 1.0}, self.sos, self.eos)
+        y = search.recognize(enc_output, {"mask": mask}, recog_args, feat.device, char_list)
+        self.training = prev
+        return y
+
 
     def calculate_all_attentions(self, xs_pad, ilens, ys_pad):
         '''E2E attention calculation
@@ -474,6 +516,8 @@ def _plot_and_save_attention(att_w, filename):
     w, h = plt.figaspect(1.0 / len(att_w))
     fig = plt.Figure(figsize=(w * 2, h * 2))
     axes = fig.subplots(1, len(att_w))
+    if len(att_w) == 1:
+        axes = [axes]
     for ax, aw in zip(axes, att_w):
         # plt.subplot(1, len(att_w), h)
         ax.imshow(aw, aspect="auto")

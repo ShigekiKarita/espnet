@@ -49,7 +49,8 @@ def prepare():
         dlayers=2,
         dunits=32,
         ninit="none",
-        input_layer="conv2d"
+        input_layer="conv2d",
+        lsm_weight=0.1
     )
     idim = 83
     odim = 4
