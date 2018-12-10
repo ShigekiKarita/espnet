@@ -253,7 +253,7 @@ fi
 
 
 if [ -z ${tag} ]; then
-    expdir=exp/${train_set}_${backend}_${ntype}_${input_layer}_e${elayers}_subsample${subsample}_unit${eunits}_d${dlayers}_unit${dunits}_aheads${aheads}_adim${adim}_mtlalpha${mtlalpha}_${opt}_clip${grad_clip}_sampprob${samp_prob}_bs${batchsize}_lr${lr_init}_warmup${warmup_steps}_dropout${dropout}_mli${maxlen_in}_mlo${maxlen_out}_ninit_${ninit}_epochs${epochs}_accum${accum_grad}
+    expdir=exp/${train_set}_${backend}_${ntype}_${input_layer}_e${elayers}_subsample${subsample}_unit${eunits}_d${dlayers}_unit${dunits}_aheads${aheads}_adim${adim}_mtlalpha${mtlalpha}_${opt}_clip${grad_clip}_sampprob${samp_prob}_ngpu${ngpu}_bs${batchsize}_lr${lr_init}_warmup${warmup_steps}_dropout${dropout}_mli${maxlen_in}_mlo${maxlen_out}_ninit_${ninit}_epochs${epochs}_accum${accum_grad}
     if [ "${lsm_type}" != "" ]; then
         expdir=${expdir}_lsm${lsm_type}${lsm_weight}
     fi
