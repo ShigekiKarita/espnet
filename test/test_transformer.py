@@ -45,20 +45,21 @@ def prepare():
         aheads=8,
         dropout_rate=0.,
         elayers=2,
-        eunits=32,
+        eunits=64,
         dlayers=2,
-        dunits=32,
+        dunits=64,
         ninit="none",
         input_layer="conv2d",
         lsm_weight=0.1
     )
     idim = 83
-    odim = 4
+    odim = 5
     model = T.E2E(idim, odim, args)
 
     x = torch.randn(5, 70, idim)
     ilens = [70, 50, 30, 30, 20]
-    y = (torch.rand(5, 10) * odim % odim).long()
+    n_token = odim - 1
+    y = (torch.rand(5, 10) * n_token % n_token).long()
     olens = [3, 9, 10, 2, 3]
     for i in range(x.size(0)):
         x[i, ilens[i]:] = 0
@@ -73,12 +74,12 @@ def prepare():
     return model, x, ilens, y, data
 
 
-def test_transformer():
+def test_transformer_synth():
     model, x, ilens, y, data = prepare()
 
     # test acc is almost 100%
     optim = torch.optim.Adam(model.parameters(), 0.01)
-    for i in range(10):
+    for i in range(30):
         loss_ctc, loss_att, acc, cer, wer = model(x, ilens, y)
         optim.zero_grad()
         loss_att.backward()
@@ -94,15 +95,89 @@ def test_transformer():
 
     # test beam search
     recog_args = Namespace(
-        beam_size=3,
-        penalty=0.1,
+        beam_size=1,
+        penalty=0.0,
         ctc_weight=0.0,
         maxlenratio=0,
         minlenratio=0,
         nbest=1
     )
     with torch.no_grad():
-        model.recognize(x[0, :ilens[0]].numpy(), recog_args)
+        nbest = model.recognize(x[0, :ilens[0]].numpy(), recog_args)
+        print(y[0])
+        print(nbest[0]["yseq"][1:-1])
+
+
+def prepare_copy_task(d_model, d_ff=128):
+    idim = 10
+    odim = idim
+
+    if d_model:
+        args = Namespace(
+            adim=d_model,
+            aheads=1,
+            dropout_rate=0.,
+            elayers=1,
+            eunits=d_ff,
+            dlayers=1,
+            dunits=d_ff,
+            ninit="none",
+            input_layer="embed",
+            lsm_weight=0.
+        )
+        model = T.E2E(idim, odim, args)
+    else:
+        model = None
+
+    x = torch.randint(1, idim - 1, size=(64, 20)).long()
+    ilens = torch.full((x.size(0),), x.size(1)).long().tolist() # [10, 10, 10, 10, 10]
+    n_token = odim - 1
+    data = []
+    for i in range(x.size(0)):
+        data.append(("utt%d" % i, {
+            "input": [{"shape": [ilens[i], idim]}],
+            "output": [{"shape": [ilens[i], idim]}]
+        }))
+    return model, x, ilens, x, data
+
+
+def test_transformer():
+    # copy task defined in http://nlp.seas.harvard.edu/2018/04/03/attention.html#results
+    d_model = 32
+    model, x, ilens, y, data = prepare_copy_task(d_model)
+    model.train()
+    # test acc is almost 100%
+    optim = T.get_std_opt(model, d_model, 200, 4)
+    for i in range(500):
+        _, x, ilens, y, data = prepare_copy_task(None)
+        loss_ctc, loss_att, acc, cer, wer = model(x, ilens, y)
+        optim.zero_grad()
+        loss_att.backward()
+        optim.step()
+        print(loss_att, acc)
+        # attn_dict = model.calculate_all_attentions(x, ilens, y)
+        # T.plot_multi_head_attention(data, attn_dict, "/tmp/espnet-test", "iter%d.png" % i)
+    # assert acc > 0.9
+
+    # # test attention plot
+    attn_dict = model.calculate_all_attentions(x[:3], ilens[:3], y[:3])
+    T.plot_multi_head_attention(data, attn_dict, "/tmp/espnet-test")
+
+    # test beam search
+    recog_args = Namespace(
+        beam_size=1,
+        penalty=0.0,
+        ctc_weight=0.0,
+        maxlenratio=0,
+        minlenratio=0,
+        nbest=1
+    )
+    with torch.no_grad():
+        for i in range(10):
+            nbest = model.recognize(x[i, :ilens[i]].numpy(), recog_args)
+            print("gold:", y[i].tolist())
+            print("pred:", nbest[0]["yseq"][1:-1])
+
 
 
 def test_transformer_parallel():

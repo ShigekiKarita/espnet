@@ -186,12 +186,12 @@ class MultiHeadedAttention(nn.Module):
             mask = mask.unsqueeze(1)
             logging.debug("score {}, mask {}".format(scores.shape, mask.shape))
             scores = scores.masked_fill(mask == 0, MIN_VALUE)
-        self.attn = torch.softmax(scores, dim = -1)
+        self.attn = torch.softmax(scores, dim = -1)  # (batch, head, time1, time2)
 
         p_attn = self.dropout(self.attn)
-        x = torch.matmul(p_attn, v)
-        x = x.transpose(1, 2).contiguous().view(n_batch, -1, self.h * self.d_k)
-        return self.linear_out(x)
+        x = torch.matmul(p_attn, v)  # (batch, head, time1, d_k)
+        x = x.transpose(1, 2).contiguous().view(n_batch, -1, self.h * self.d_k)  # (batch, time1, d_model)
+        return self.linear_out(x) # (batch, time1, d_model)
 
 
 class PositionwiseFeedForward(nn.Module):
@@ -278,9 +278,13 @@ class Encoder(torch.nn.Module):
             )
         elif args.input_layer == "conv2d":
             self.input_layer = Conv2dSubsampling(args.adim, args.dropout_rate)
+        elif args.input_layer == "embed":
+            self.input_layer = torch.nn.Sequential(
+                torch.nn.Embedding(idim, args.adim),
+                PositionalEncoding(args.adim, args.dropout_rate)
+            )
         else:
             raise ValueError("unknown input_layer: " + args.input_layer)
-
 
         self.encoders = repeat(
             args.elayers,
@@ -374,7 +378,6 @@ class E2E(torch.nn.Module):
         self.subsample = [0]
         # self.lsm_weight = a
         if args.lsm_weight > 0:
-            logging.warning("use label smoothing")
             self.criterion = LabelSmoothing(self.odim, self.ignore_id, args.lsm_weight)
         else:
             self.criterion = nn.CrossEntropyLoss(ignore_index=self.ignore_id,
@@ -472,8 +475,6 @@ class E2E(torch.nn.Module):
         :return: N-best decoding results
         :rtype: list
         '''
-        assert feat.ndim == 2, "only single minibatch is supported in this method"
-
         prev = self.training
         self.eval()
         feat = torch.as_tensor(feat).unsqueeze(0)
@@ -482,8 +483,27 @@ class E2E(torch.nn.Module):
         enc_output, mask = self.encoder(feat, mask)
 
         # TODO(karita) support CTC, LM, lpz
-        search = BeamSearch([self.decoder], {self.decoder: 1.0}, self.sos, self.eos)
-        y = search.recognize(enc_output, {"mask": mask}, recog_args, feat.device, char_list)
+        if recog_args.beam_size == 1:
+            logging.info("use greedy search implementation")
+            ys = torch.full((1, 1), self.sos).long()
+            score = torch.zeros(1)
+            maxlen = feat.size(1) + 1
+            for step in range(maxlen):
+                ys_mask = subsequent_mask(step + 1).unsqueeze(0)
+                out, _ = self.decoder(ys, ys_mask, enc_output, mask)
+                prob = torch.log_softmax(out[:, -1], dim=-1)  # (batch, token)
+                max_prob, next_id = prob.max(dim=1)  # (batch, token)
+                score += max_prob
+                if step == maxlen - 1:
+                    next_id[0] = self.eos
+
+                ys = torch.cat((ys, next_id.unsqueeze(1)), dim=1)
+                if next_id[0].item() == self.eos:
+                    break
+            y = [{"score": score, "yseq": ys[0].tolist()}]
+        else:
+            search = BeamSearch([self.decoder], {self.decoder: 1.0}, self.sos, self.eos)
+            y = search.recognize(enc_output, {"mask": mask}, recog_args, feat.device, char_list)
         self.training = prev
         return y
 
