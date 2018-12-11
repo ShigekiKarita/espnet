@@ -97,17 +97,6 @@ class BeamSearch(object):
         ended_mask = torch.full((n_batch, n_beam), False, dtype=torch.uint8, device=device)
         return global_best_token, global_best_score, ended_mask
 
-    # pytorch implementation
-
-    # pytorch implementation
-    def append_tokens(self, global_best_token_id, global_best_tokens, eos_mask):
-        cpu_best_token_id = global_best_token_id.cpu().numpy()
-        cpu_eos_mask = eos_mask.cpu().numpy()
-        for batch, beam_tokens in enumerate(global_best_tokens):
-            for beam, tokens in enumerate(beam_tokens):
-                if not cpu_eos_mask[batch, beam].item():
-                    tokens.append(int(cpu_best_token_id[batch, beam]))
-
     def recognize(self, enc_output, enc_states, args, device, char_list=None):
         '''E2E beam search
 
@@ -128,7 +117,7 @@ class BeamSearch(object):
 
         n_batch, maxlen_in, n_feat = h.shape
         n_beam = args.beam_size
-        global_best_token_seq = [[[] for _ in range(n_beam)] for _ in range(n_batch)]
+        global_best_token_seq = [[[self.sos] for _ in range(n_beam)] for _ in range(n_batch)]
         global_prev_token, global_best_score, eos_mask = self.init_state(n_batch, n_beam, device)
         h = h.unsqueeze(1).expand(n_batch, n_beam, maxlen_in, n_feat)  # (n_batch, n_hyp, maxlen_in, n_feat)
 
@@ -141,7 +130,6 @@ class BeamSearch(object):
         # prefix search
         ended_hyps = []
         for step in range(1, maxlen_out):
-            print(step)
             # forward scorers
             local_score = 0
             new_scores = dict()
@@ -161,8 +149,6 @@ class BeamSearch(object):
                 = prune(n_beam, global_best_score, local_score, eos_mask)
 
             # update results
-            # self.append_tokens(global_best_token, global_best_token_seq, eos_mask)
-            # print(global_best_hyp_id)
             # TODO(karita) batch support
             for i in range(n_batch):
                 h[i] = h[i].index_select(0, global_best_hyp_id[i])
@@ -180,6 +166,10 @@ class BeamSearch(object):
                     token = global_best_token[ba, be].item()
                     seq = global_best_token_seq[ba][be]
                     seq.append(token)
+                    if be == 0 and char_list is not None:
+                        logging.debug(
+                            'best hypo: ' + ''.join([char_list[int(x)] for x in seq[1:]]))
+
                     if token == self.eos and step >= minlen:
                         score = global_best_score[ba, be] + step * args.penalty
                         ended_hyps.append({"yseq": seq, "score": score})

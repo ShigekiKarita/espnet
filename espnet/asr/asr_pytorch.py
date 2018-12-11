@@ -403,6 +403,13 @@ def recog(args):
 
     # load trained model parameters
     logging.info('reading model parameters from ' + args.model)
+    logging.info('network type (ntype): ' + train_args.ntype)
+    if train_args.ntype == 'e2e':
+        from espnet.nets.e2e_asr_th import E2E
+    elif train_args.ntype == 'transformer':
+        from espnet.nets.e2e_asr_transformer_th import E2E
+    else:
+        raise ValueError('Incorrect type of architecture')
     e2e = E2E(idim, odim, train_args)
     model = Loss(e2e, train_args.mtlalpha)
     torch_load(args.model, model)
@@ -450,7 +457,7 @@ def recog(args):
         js = json.load(f)['utts']
     new_js = {}
 
-    if args.batchsize is None:
+    if args.batchsize is None or train_args.ntype == "transformer":
         with torch.no_grad():
             for idx, name in enumerate(js.keys(), 1):
                 logging.info('(%d/%d) decoding ' + name, idx, len(js.keys()))

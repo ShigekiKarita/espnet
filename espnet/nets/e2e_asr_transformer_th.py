@@ -243,11 +243,11 @@ class Conv2dSubsampling(torch.nn.Module):
         self.conv = torch.nn.Sequential(
             # Conv2dLayerNorm(1, dim, 3, 2),
             torch.nn.Conv2d(1, dim, 3, 2),
-            # torch.nn.Dropout(dropout),
+            torch.nn.Dropout(dropout),
             torch.nn.ReLU(),
             # Conv2dLayerNorm(dim, dim, 3, 2),
             torch.nn.Conv2d(dim, dim, 3, 2),
-            # torch.nn.Dropout(dropout),
+            torch.nn.Dropout(dropout),
             torch.nn.ReLU()
         )
         self.out = torch.nn.Sequential(
@@ -382,6 +382,7 @@ class E2E(torch.nn.Module):
         # self.char_list = args.char_list
         # self.verbose = args.verbose
         self.reset_parameters(args)
+        self.recog_args = None  # unused
 
     def reset_parameters(self, args):
         if args.ninit == "none":
