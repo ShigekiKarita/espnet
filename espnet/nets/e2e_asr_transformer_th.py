@@ -332,7 +332,7 @@ class Decoder(torch.nn.Module, ScoringBase):
         return enc_state
 
     def select_state(self, state, index):
-        return {"mask": enc_state.index_select(0, index)}
+        return state
 
     def score(self, token, enc_output, state):
         y, _ = self.forward(token, None, enc_output, state["mask"])

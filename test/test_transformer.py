@@ -6,7 +6,7 @@ import espnet.nets.e2e_asr_transformer_th as T
 from argparse import Namespace
 import logging
 logging.basicConfig(
-    level=logging.DEBUG, format='%(asctime)s (%(module)s:%(lineno)d) %(levelname)s: %(message)s')
+    level=logging.INFO, format='%(asctime)s (%(module)s:%(lineno)d) %(levelname)s: %(message)s')
 
 
 def test_sequential():
@@ -99,6 +99,7 @@ def test_transformer():
         ctc_weight=0.0,
         maxlenratio=0,
         minlenratio=0,
+        nbest=1
     )
     with torch.no_grad():
         model.recognize(x[0, :ilens[0]].numpy(), recog_args)
@@ -133,7 +134,6 @@ def test_transformer_parallel():
         # attn_dict = model.calculate_all_attentions(x, ilens, y)
         # T.plot_multi_head_attention(data, attn_dict, "/tmp/espnet-test", "iter%d.png" % i)
     assert acc > 0.9
-
 
 
 if __name__ == "__main__":

@@ -16,6 +16,8 @@ import sys
 import numpy as np
 
 
+is_python2 = sys.version_info[0] == 2
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('json', type=str,
@@ -37,7 +39,7 @@ if __name__ == '__main__':
 
     # load json and split keys
     j = json.load(open(args.json))
-    utt_ids = j['utts'].keys()
+    utt_ids = list(j['utts'].keys())
     logging.info("number of utterances = %d" % len(utt_ids))
     if len(utt_ids) < args.parts:
         logging.error("#utterances < #splits. Use smaller split number.")
@@ -52,8 +54,12 @@ if __name__ == '__main__':
         jsonstring = json.dumps({'utts': new_dic},
                                 indent=4,
                                 ensure_ascii=False,
-                                sort_keys=True).encode('utf_8')
+                                sort_keys=True)
         fl = '{}/{}.{}.json'.format(dirname, filename, i + 1)
-        sys.stdout = open(fl, "wb+")
-        print(jsonstring)
+        if is_python2:
+            sys.stdout = open(fl, "wb+")
+            print(jsonstring.encode('utf_8'))
+        else:
+            sys.stdout = open(fl, "w+")
+            print(jsonstring)
         sys.stdout.close()
