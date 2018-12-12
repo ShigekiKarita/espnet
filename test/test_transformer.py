@@ -108,28 +108,28 @@ def test_transformer_synth():
         print(nbest[0]["yseq"][1:-1])
 
 
-def prepare_copy_task(d_model, d_ff=128):
-    idim = 10
+def prepare_copy_task(d_model, d_ff=2048, n=2):
+    idim = 11
     odim = idim
 
     if d_model:
         args = Namespace(
             adim=d_model,
-            aheads=1,
-            dropout_rate=0.,
-            elayers=1,
+            aheads=8,
+            dropout_rate=0.1,
+            elayers=n,
             eunits=d_ff,
-            dlayers=1,
+            dlayers=n,
             dunits=d_ff,
             ninit="none",
             input_layer="embed",
-            lsm_weight=0.
+            lsm_weight=0.1
         )
         model = T.E2E(idim, odim, args)
     else:
         model = None
 
-    x = torch.randint(1, idim - 1, size=(64, 20)).long()
+    x = torch.randint(1, idim - 1, size=(30, 10)).long()
     ilens = torch.full((x.size(0),), x.size(1)).long().tolist() # [10, 10, 10, 10, 10]
     n_token = odim - 1
     data = []
@@ -143,14 +143,15 @@ def prepare_copy_task(d_model, d_ff=128):
 
 def test_transformer():
     # copy task defined in http://nlp.seas.harvard.edu/2018/04/03/attention.html#results
-    d_model = 32
+    d_model = 512
     model, x, ilens, y, data = prepare_copy_task(d_model)
     model.train()
+    model.cuda()
     # test acc is almost 100%
-    optim = T.get_std_opt(model, d_model, 200, 4)
+    optim = T.get_std_opt(model, d_model, 400, 1)
     for i in range(500):
         _, x, ilens, y, data = prepare_copy_task(None)
-        loss_ctc, loss_att, acc, cer, wer = model(x, ilens, y)
+        loss_ctc, loss_att, acc, cer, wer = model(x.cuda(), ilens, y.cuda())
         optim.zero_grad()
         loss_att.backward()
         optim.step()
@@ -158,11 +159,8 @@ def test_transformer():
         # attn_dict = model.calculate_all_attentions(x, ilens, y)
         # T.plot_multi_head_attention(data, attn_dict, "/tmp/espnet-test", "iter%d.png" % i)
     # assert acc > 0.9
-
-    # # test attention plot
-    attn_dict = model.calculate_all_attentions(x[:3], ilens[:3], y[:3])
-    T.plot_multi_head_attention(data, attn_dict, "/tmp/espnet-test")
-
+    model.cpu()
+    model.eval()
     # test beam search
     recog_args = Namespace(
         beam_size=1,
@@ -177,6 +175,9 @@ def test_transformer():
             nbest = model.recognize(x[i, :ilens[i]].numpy(), recog_args)
             print("gold:", y[i].tolist())
             print("pred:", nbest[0]["yseq"][1:-1])
+    # test attention plot
+    attn_dict = model.calculate_all_attentions(x[:3], ilens[:3], y[:3])
+    T.plot_multi_head_attention(data, attn_dict, "/tmp/espnet-test")
 
 
 
