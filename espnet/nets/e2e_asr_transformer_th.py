@@ -176,16 +176,17 @@ class MultiHeadedAttention(nn.Module):
              weighted by the query dot key attention (batch, head, time1, time2)
         """
         n_batch = query.size(0)
-        # (batch, head, time1/2, d_k)
-        q = self.linear_q(query).view(n_batch, self.h, -1, self.d_k)
-        k = self.linear_k(key).view(n_batch, self.h, -1, self.d_k)
-        v = self.linear_v(value).view(n_batch, self.h, -1, self.d_k)
+        q = self.linear_q(query).view(n_batch, -1, self.h, self.d_k)  # (batch, head, time1, d_k)
+        k = self.linear_k(key).view(n_batch, -1, self.h, self.d_k)    # (batch, head, time2, d_k)
+        v = self.linear_v(value).view(n_batch, -1, self.h, self.d_k)  # (batch, head, time2, d_k)
+        q = q.transpose(1, 2)
+        k = k.transpose(1, 2)
+        v = v.transpose(1, 2)
 
-        scores = torch.matmul(q, k.transpose(-2, -1)) / math.sqrt(self.d_k)
-        if mask is not None:
-            mask = mask.unsqueeze(1)
-            logging.debug("score {}, mask {}".format(scores.shape, mask.shape))
-            scores = scores.masked_fill(mask == 0, MIN_VALUE)
+        scores = torch.matmul(q, k.transpose(-2, -1)) / math.sqrt(self.d_k)  # (batch, head, time1, time2)
+        mask = mask.unsqueeze(1)
+        logging.debug("score {}, mask {}".format(scores.shape, mask.shape))
+        scores = scores.masked_fill(mask == 0, MIN_VALUE)
         self.attn = torch.softmax(scores, dim = -1)  # (batch, head, time1, time2)
 
         p_attn = self.dropout(self.attn)
@@ -327,6 +328,16 @@ class Decoder(torch.nn.Module, ScoringBase):
         self.output_layer = torch.nn.Linear(args.adim, odim)
 
     def forward(self, tgt, tgt_mask, memory, memory_mask):
+        """
+        :param torch.Tensor tgt: input token ids, int64 (batch, maxlen_out)
+        :param torch.Tensor tgt_mask: input token mask, uint8  (batch, maxlen_out)
+        :param torch.Tensor memory_mask: encoded memory, float32  (batch, maxlen_in, feat)
+        :param torch.Tensor memory_mask: encoded memory mask, uint8  (batch, maxlen_in)
+        :return x: decoded token score before softmax (batch, maxlen_out, token)
+        :rtype: torch.Tensor
+        :return tgt_mask: score mask before softmax (batch, maxlen_out)
+        :rtype: torch.Tensor
+        """
         x = self.embed(tgt)
         x, tgt_mask, memory, memory_mask = self.decoders(x, tgt_mask, memory, memory_mask)
         x = self.output_layer(self.output_norm(x))
@@ -422,6 +433,11 @@ class E2E(torch.nn.Module):
         ys_out = [torch.cat([y, eos], dim=0) for y in ys]
         return pad_list(ys_in, self.eos), pad_list(ys_out, self.ignore_id)
 
+    def target_mask(self, ys_in_pad):
+        ys_mask = ys_in_pad != self.ignore_id
+        m = subsequent_mask(ys_mask.size(-1), device=ys_mask.device).unsqueeze(0)
+        return ys_mask.unsqueeze(-2) & m
+
     def forward(self, xs_pad, ilens, ys_pad):
         '''E2E forward
 
@@ -439,13 +455,13 @@ class E2E(torch.nn.Module):
         xs_pad = xs_pad[:, :max(ilens)]  # for data parallel
         src_mask = (~make_pad_mask(ilens)).to(xs_pad.device).unsqueeze(-2)
         hs_pad, hs_mask = self.encoder(xs_pad, src_mask)
+        self.hs_pad = hs_pad
 
         # forward decoder
         ys_in_pad, ys_out_pad = self.add_sos_eos(ys_pad)
-        ys_mask = ys_in_pad != self.ignore_id
-        m = subsequent_mask(ys_mask.size(-1), device=ys_mask.device).unsqueeze(0)
-        ys_mask = ys_mask.unsqueeze(-2) & m
+        ys_mask = self.target_mask(ys_in_pad)
         pred_pad, pred_mask = self.decoder(ys_in_pad, ys_mask, hs_pad, hs_mask)
+        self.pred_pad = pred_pad
 
         # compute loss
         loss_att = self.criterion(

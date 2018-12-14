@@ -1,3 +1,5 @@
+import math
+
 import numpy
 import torch
 
@@ -31,6 +33,7 @@ def subsequent_mask(size):
     subsequent_mask = numpy.triu(numpy.ones(attn_shape), k=1).astype('uint8')
     return torch.from_numpy(subsequent_mask) == 0
 
+
 def test_mask():
     m = T.subsequent_mask(3)
     print(m)
@@ -42,7 +45,7 @@ def test_mask():
 def prepare():
     args = Namespace(
         adim=64,
-        aheads=8,
+        aheads=2,
         dropout_rate=0.,
         elayers=2,
         eunits=64,
@@ -62,7 +65,7 @@ def prepare():
     y = (torch.rand(5, 10) * n_token % n_token).long()
     olens = [3, 9, 10, 2, 3]
     for i in range(x.size(0)):
-        x[i, ilens[i]:] = 0
+        x[i, ilens[i]:] = float("nan") # 0
         y[i, olens[i]:] = model.ignore_id
 
     data = []
@@ -72,6 +75,22 @@ def prepare():
             "output": [{"shape": [olens[i]]}]
         }))
     return model, x, ilens, y, data
+
+
+def test_transformer_mask():
+    model, x, ilens, y, data = prepare()
+    # _, loss, _, _, _ = model(x, ilens, y)
+    # print(loss)
+    # assert not numpy.isnan(float(loss))
+    yi, yo = model.add_sos_eos(y)
+    y_mask = model.target_mask(yi)
+    y = model.decoder.embed(yi)
+    y[0, 3:] = float("nan")
+    a = model.decoder.decoders[0].self_attn
+    h = a(y, y, y, y_mask)
+    print(a.attn[0])
+    print(a.attn[0, :, :3, :3])
+    print(a.attn.shape)
 
 
 def test_transformer_synth():
@@ -213,7 +232,8 @@ def test_transformer_parallel():
 
 
 if __name__ == "__main__":
-    test_transformer()
+    # test_transformer()
+    test_transformer_mask()
     # test_mask()
     # # test_transformer_parallel()
 
