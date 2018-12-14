@@ -176,12 +176,12 @@ class MultiHeadedAttention(nn.Module):
              weighted by the query dot key attention (batch, head, time1, time2)
         """
         n_batch = query.size(0)
-        q = self.linear_q(query).view(n_batch, -1, self.h, self.d_k)  # (batch, head, time1, d_k)
-        k = self.linear_k(key).view(n_batch, -1, self.h, self.d_k)    # (batch, head, time2, d_k)
-        v = self.linear_v(value).view(n_batch, -1, self.h, self.d_k)  # (batch, head, time2, d_k)
-        q = q.transpose(1, 2)
-        k = k.transpose(1, 2)
-        v = v.transpose(1, 2)
+        q = self.linear_q(query).view(n_batch, -1, self.h, self.d_k)
+        k = self.linear_k(key).view(n_batch, -1, self.h, self.d_k)
+        v = self.linear_v(value).view(n_batch, -1, self.h, self.d_k)
+        q = q.transpose(1, 2)  # (batch, head, time1, d_k)
+        k = k.transpose(1, 2)  # (batch, head, time2, d_k)
+        v = v.transpose(1, 2)  # (batch, head, time2, d_k)
 
         scores = torch.matmul(q, k.transpose(-2, -1)) / math.sqrt(self.d_k)  # (batch, head, time1, time2)
         mask = mask.unsqueeze(1)

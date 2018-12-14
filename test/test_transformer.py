@@ -88,9 +88,7 @@ def test_transformer_mask():
     y[0, 3:] = float("nan")
     a = model.decoder.decoders[0].self_attn
     h = a(y, y, y, y_mask)
-    print(a.attn[0])
-    print(a.attn[0, :, :3, :3])
-    print(a.attn.shape)
+    assert not numpy.isnan(a.attn[0, :, :3, :3].detach().numpy()).any()
 
 
 def test_transformer_synth():
