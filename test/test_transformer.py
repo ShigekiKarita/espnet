@@ -125,7 +125,7 @@ def test_transformer_synth():
         print(nbest[0]["yseq"][1:-1])
 
 
-def prepare_copy_task(d_model, d_ff=2048, n=2):
+def prepare_copy_task(d_model, d_ff=2048, n=3):
     idim = 11
     odim = idim
 
@@ -138,9 +138,9 @@ def prepare_copy_task(d_model, d_ff=2048, n=2):
             eunits=d_ff,
             dlayers=n,
             dunits=d_ff,
-            ninit="none",
+            ninit="xavier_uniform",
             input_layer="embed",
-            lsm_weight=0.1
+            lsm_weight=0.0
         )
         model = T.E2E(idim, odim, args)
     else:
@@ -158,7 +158,7 @@ def prepare_copy_task(d_model, d_ff=2048, n=2):
     return model, x, ilens, x, data
 
 
-def test_transformer():
+def test_transformer_copy():
     # copy task defined in http://nlp.seas.harvard.edu/2018/04/03/attention.html#results
     d_model = 512
     model, x, ilens, y, data = prepare_copy_task(d_model)
@@ -166,7 +166,7 @@ def test_transformer():
     model.cuda()
     # test acc is almost 100%
     optim = T.get_std_opt(model, d_model, 400, 1)
-    for i in range(500):
+    for i in range(1000):
         _, x, ilens, y, data = prepare_copy_task(None)
         loss_ctc, loss_att, acc, cer, wer = model(x.cuda(), ilens, y.cuda())
         optim.zero_grad()
@@ -230,8 +230,8 @@ def test_transformer_parallel():
 
 
 if __name__ == "__main__":
-    # test_transformer()
-    test_transformer_mask()
+    test_transformer_copy()
+    # test_transformer_mask()
     # test_mask()
     # # test_transformer_parallel()
 
