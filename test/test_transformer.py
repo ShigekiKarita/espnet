@@ -125,7 +125,7 @@ def test_transformer_synth():
         print(nbest[0]["yseq"][1:-1])
 
 
-def prepare_copy_task(d_model, d_ff=2048, n=3):
+def prepare_copy_task(d_model, d_ff=2048, n=1):
     idim = 11
     odim = idim
 
@@ -140,7 +140,7 @@ def prepare_copy_task(d_model, d_ff=2048, n=3):
             dunits=d_ff,
             ninit="xavier_uniform",
             input_layer="embed",
-            lsm_weight=0.0
+            lsm_weight=0.1
         )
         model = T.E2E(idim, odim, args)
     else:
@@ -163,16 +163,21 @@ def test_transformer_copy():
     d_model = 512
     model, x, ilens, y, data = prepare_copy_task(d_model)
     model.train()
-    model.cuda()
+    if torch.cuda.is_available():
+        model.cuda()
     # test acc is almost 100%
-    optim = T.get_std_opt(model, d_model, 400, 1)
+    # optim = T.get_std_opt(model, d_model, 200, 1)
+    optim = torch.optim.Adam(model.parameters(), 0.005)
     for i in range(1000):
         _, x, ilens, y, data = prepare_copy_task(None)
-        loss_ctc, loss_att, acc, cer, wer = model(x.cuda(), ilens, y.cuda())
+        if torch.cuda.is_available():
+            x = x.cuda()
+            y = y.cuda()
+        loss_ctc, loss_att, acc, cer, wer = model(x, ilens, y)
         optim.zero_grad()
         loss_att.backward()
         optim.step()
-        print(loss_att, acc)
+        print(i, loss_att.item(), acc)
         # attn_dict = model.calculate_all_attentions(x, ilens, y)
         # T.plot_multi_head_attention(data, attn_dict, "/tmp/espnet-test", "iter%d.png" % i)
     # assert acc > 0.9
@@ -187,6 +192,9 @@ def test_transformer_copy():
         minlenratio=0,
         nbest=1
     )
+    if torch.cuda.is_available():
+        x = x.cpu()
+        y = y.cpu()
     with torch.no_grad():
         for i in range(10):
             nbest = model.recognize(x[i, :ilens[i]].numpy(), recog_args)

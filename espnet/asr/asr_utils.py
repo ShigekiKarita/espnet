@@ -203,27 +203,27 @@ def _restore_snapshot(model, snapshot, load_fn=chainer.serializers.load_npz):
     logging.info('restored from ' + str(snapshot))
 
 
-def adadelta_eps_decay(eps_decay):
+def optimizer_decay(decay_rate, attr):
     '''Extension to perform adadelta eps decay'''
     @training.make_extension(trigger=(1, 'epoch'))
-    def adadelta_eps_decay(trainer):
-        _adadelta_eps_decay(trainer, eps_decay)
+    def _decay(trainer):
+        _optimizer_decay(trainer, decay_rate, attr)
 
-    return adadelta_eps_decay
+    return _decay
 
 
-def _adadelta_eps_decay(trainer, eps_decay):
+def _optimizer_decay(trainer, decay_rate, attr):
     optimizer = trainer.updater.get_optimizer('main')
     # for chainer
-    if hasattr(optimizer, 'eps'):
-        current_eps = optimizer.eps
-        setattr(optimizer, 'eps', current_eps * eps_decay)
-        logging.info('adadelta eps decayed to ' + str(optimizer.eps))
+    if hasattr(optimizer, attr):
+        current = getattr(optimizer, attr)
+        setattr(optimizer, attr, current * decay_rate)
+        logging.info(attr + ' decayed to ' + str(current * decay_rate))
     # pytorch
     else:
         for p in optimizer.param_groups:
-            p["eps"] *= eps_decay
-            logging.info('adadelta eps decayed to ' + str(p["eps"]))
+            p[attr] *= decay_rate
+            logging.info(attr + ' decayed to ' + str(p[attr]))
 
 
 def torch_snapshot(savefun=torch.save,

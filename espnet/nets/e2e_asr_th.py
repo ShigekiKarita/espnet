@@ -165,13 +165,16 @@ def index_select_lm_state(rnnlm_state, dim, vidx):
 
 class Reporter(chainer.Chain):
     def report(self, loss_ctc, loss_att, acc, cer, wer, mtl_loss):
-        reporter.report({'loss_ctc': loss_ctc}, self)
-        reporter.report({'loss_att': loss_att}, self)
-        reporter.report({'acc': acc}, self)
-        reporter.report({'cer': cer}, self)
-        reporter.report({'wer': wer}, self)
-        logging.info('mtl loss:' + str(mtl_loss))
-        reporter.report({'loss': mtl_loss}, self)
+        self.new('loss_ctc', loss_ctc)
+        self.new('loss_att', loss_att)
+        self.new('acc', acc)
+        self.new('cer', cer)
+        self.new('wer', wer)
+        logging.info('mtl loss,' + str(mtl_loss))
+        self.new('loss', mtl_loss)
+
+    def new(self, key, value):
+        reporter.report({key: value}, self)
 
 
 # TODO(watanabe) merge Loss and E2E: there is no need to make these separately

@@ -3,7 +3,7 @@ import math
 import chainer
 import torch
 from torch import nn
-from torch.nn import LayerNorm
+# from torch.nn import LayerNorm
 
 from espnet.asr import asr_utils
 from espnet.nets.beam_search import BeamSearch, ScoringBase
@@ -21,6 +21,10 @@ class NoamOpt:
         self.factor = factor
         self.model_size = model_size
         self._rate = 0
+
+    @property
+    def param_groups(self):
+        return self.optimizer.param_groups
 
     def step(self):
         "Update parameters and rate"
@@ -184,9 +188,10 @@ class MultiHeadedAttention(nn.Module):
         v = v.transpose(1, 2)  # (batch, head, time2, d_k)
 
         scores = torch.matmul(q, k.transpose(-2, -1)) / math.sqrt(self.d_k)  # (batch, head, time1, time2)
-        mask = mask.unsqueeze(1)
-        logging.debug("score {}, mask {}".format(scores.shape, mask.shape))
-        scores = scores.masked_fill(mask == 0, MIN_VALUE)
+        if mask is not None:
+            mask = mask.unsqueeze(1)
+            logging.debug("score {}, mask {}".format(scores.shape, mask.shape))
+            scores = scores.masked_fill(mask == 0, MIN_VALUE)
         self.attn = torch.softmax(scores, dim = -1)  # (batch, head, time1, time2)
 
         p_attn = self.dropout(self.attn)
@@ -227,28 +232,30 @@ class PositionalEncoding(nn.Module):
             return self.dropout(x)
 
 
-class Conv2dLayerNorm(torch.nn.Module):
-    def __init__(self, nin, nout, kernel, stride, **kwargs):
-        super(Conv2dLayerNorm, self).__init__()
-        self.conv = torch.nn.Conv2d(nin, nout, kernel, stride, **kwargs)
-        self.norm = LayerNorm(nout)
+class LayerNorm(torch.nn.Module):
+    def __init__(self, nout, dim=-1):
+        super(LayerNorm, self).__init__()
+        self.dim = dim
+        self.norm = torch.nn.LayerNorm(nout)
 
     def forward(self, x):
-        x = self.conv(x)  # (b, c, w, h)
-        return self.norm(x.transpose(1, 3)).transpose(3, 1)
+        if self.dim == -1:
+            return self.norm(x)
+        return self.norm(x.transpose(1, -1)).transpose(1, -1)
 
 
 class Conv2dSubsampling(torch.nn.Module):
     def __init__(self, dim, dropout):
         super(Conv2dSubsampling, self).__init__()
         self.conv = torch.nn.Sequential(
-            # Conv2dLayerNorm(1, dim, 3, 2),
+            # NOTE: maybe faster converge and computation without LayrNorm or Dropout
             torch.nn.Conv2d(1, dim, 3, 2),
-            torch.nn.Dropout(dropout),
+            # LayerNorm(dim, 1),
+            # torch.nn.Dropout(dropout),
             torch.nn.ReLU(),
-            # Conv2dLayerNorm(dim, dim, 3, 2),
             torch.nn.Conv2d(dim, dim, 3, 2),
-            torch.nn.Dropout(dropout),
+            # LayerNorm(dim, 1),
+            # torch.nn.Dropout(dropout),
             torch.nn.ReLU()
         )
         self.out = torch.nn.Sequential(
@@ -272,6 +279,7 @@ class Encoder(torch.nn.Module):
         if args.input_layer == "linear":
             self.input_layer = torch.nn.Sequential(
                 torch.nn.Linear(idim, args.adim),
+                torch.nn.LayerNorm(args.adim),
                 torch.nn.Dropout(args.dropout_rate),
                 torch.nn.ReLU(),
                 # NOTE maybe required? but not converged

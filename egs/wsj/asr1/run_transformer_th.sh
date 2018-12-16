@@ -46,7 +46,7 @@ mtlalpha=0.0
 
 # label smoothing
 lsm_type=unigram
-lsm_weight=0.05
+lsm_weight=0.1
 
 # minibatch related
 batchsize=16
@@ -55,10 +55,10 @@ maxlen_out=150 # if output length > maxlen_out, batchsize is automatically reduc
 
 # optimization related
 opt=adadelta
-epochs=15
-lr_init=1.0
-warmup_steps=12800
-dropout=0.0
+epochs=40
+lr_init=10.0
+warmup_steps=0
+dropout=0.1
 accum_grad=1
 grad_clip=5
 

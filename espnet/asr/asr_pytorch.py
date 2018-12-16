@@ -22,7 +22,7 @@ from chainer.training import extensions
 import torch
 
 # espnet related
-from espnet.asr.asr_utils import adadelta_eps_decay
+from espnet.asr.asr_utils import optimizer_decay
 from espnet.asr.asr_utils import add_results_to_json
 from espnet.asr.asr_utils import CompareValueTrigger
 from espnet.asr.asr_utils import get_model_conf
@@ -132,6 +132,7 @@ class CustomUpdater(training.StandardUpdater):
         grad_norm = torch.nn.utils.clip_grad_norm_(
             self.model.parameters(), self.grad_clip_threshold)
         logging.info('grad norm={}'.format(grad_norm))
+        self.model.reporter.new("grad_norm", grad_norm)
         if math.isnan(grad_norm):
             logging.warning('grad norm is nan. Do not update model.')
         elif self.count % self.accum_grad == 0:
@@ -222,6 +223,10 @@ def train(args):
         raise ValueError('Incorrect type of architecture')
     e2e = E2E(idim, odim, args)
     model = Loss(e2e, args.mtlalpha)
+
+    if args.tensorboard is not None:
+        from tensorboardX import SummaryWriter
+        writer = SummaryWriter(args.outdir + "/tensorboard")
 
     if args.rnnlm is not None:
         rnnlm_args = get_model_conf(args.rnnlm, args.rnnlm_conf)
@@ -338,6 +343,8 @@ def train(args):
                                          'epoch', file_name='loss.png'))
     trainer.extend(extensions.PlotReport(['main/acc', 'validation/main/acc'],
                                          'epoch', file_name='acc.png'))
+    trainer.extend(extensions.PlotReport(['main/grad_norm'],
+                                         'epoch', file_name='grad_norm.png'))
 
     # Save best models
     trainer.extend(extensions.snapshot_object(model, 'model.loss.best', savefun=torch_save),
@@ -351,12 +358,17 @@ def train(args):
 
     # epsilon decay in the optimizer
     if args.opt == 'adadelta':
+        decay_attr = 'eps'
+    else:
+        decay_attr = 'lr'
+
+    if args.opt != 'noam':
         if args.criterion == 'acc' and mtl_mode is not 'ctc':
             trainer.extend(restore_snapshot(model, args.outdir + '/model.acc.best', load_fn=torch_load),
                            trigger=CompareValueTrigger(
                                'validation/main/acc',
                                lambda best_value, current_value: best_value > current_value))
-            trainer.extend(adadelta_eps_decay(args.eps_decay),
+            trainer.extend(optimizer_decay(args.eps_decay, decay_attr),
                            trigger=CompareValueTrigger(
                                'validation/main/acc',
                                lambda best_value, current_value: best_value > current_value))
@@ -365,7 +377,7 @@ def train(args):
                            trigger=CompareValueTrigger(
                                'validation/main/loss',
                                lambda best_value, current_value: best_value < current_value))
-            trainer.extend(adadelta_eps_decay(args.eps_decay),
+            trainer.extend(optimizer_decay(args.eps_decay, decay_attr),
                            trigger=CompareValueTrigger(
                                'validation/main/loss',
                                lambda best_value, current_value: best_value < current_value))
@@ -374,12 +386,11 @@ def train(args):
     trainer.extend(extensions.LogReport(trigger=(REPORT_INTERVAL, 'iteration')))
     report_keys = ['epoch', 'iteration', 'main/loss', 'main/loss_ctc', 'main/loss_att',
                    'validation/main/loss', 'validation/main/loss_ctc', 'validation/main/loss_att',
-                   'main/acc', 'validation/main/acc', 'elapsed_time']
-    if args.opt == 'adadelta':
-        trainer.extend(extensions.observe_value(
-            'eps', lambda trainer: trainer.updater.get_optimizer('main').param_groups[0]["eps"]),
-            trigger=(REPORT_INTERVAL, 'iteration'))
-        report_keys.append('eps')
+                   'main/acc', 'validation/main/acc', 'elapsed_time', 'main/grad_norm']
+    trainer.extend(extensions.observe_value(
+        decay_attr, lambda trainer: trainer.updater.get_optimizer('main').param_groups[0][decay_attr]),
+        trigger=(REPORT_INTERVAL, 'iteration'))
+    report_keys.append(decay_attr)
     if args.report_cer:
         report_keys.append('validation/main/cer')
     if args.report_wer:

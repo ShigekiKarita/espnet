@@ -27,7 +27,7 @@ from chainer.training.updaters.multiprocess_parallel_updater import gather_param
 from chainer.training.updaters.multiprocess_parallel_updater import scatter_grads
 
 # espnet related
-from espnet.asr.asr_utils import adadelta_eps_decay
+from espnet.asr.asr_utils import optimizer_decay
 from espnet.asr.asr_utils import add_results_to_json
 from espnet.asr.asr_utils import chainer_load
 from espnet.asr.asr_utils import CompareValueTrigger
@@ -420,7 +420,7 @@ def train(args):
                            trigger=CompareValueTrigger(
                                'validation/main/acc',
                                lambda best_value, current_value: best_value > current_value))
-            trainer.extend(adadelta_eps_decay(args.eps_decay),
+            trainer.extend(optimizer_decay(args.eps_decay, 'eps'),
                            trigger=CompareValueTrigger(
                                'validation/main/acc',
                                lambda best_value, current_value: best_value > current_value))
@@ -429,7 +429,7 @@ def train(args):
                            trigger=CompareValueTrigger(
                                'validation/main/loss',
                                lambda best_value, current_value: best_value < current_value))
-            trainer.extend(adadelta_eps_decay(args.eps_decay),
+            trainer.extend(optimizer_decay(args.eps_decay, 'eps'),
                            trigger=CompareValueTrigger(
                                'validation/main/loss',
                                lambda best_value, current_value: best_value < current_value))
