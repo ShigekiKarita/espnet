@@ -311,7 +311,7 @@ fi
 
 if [ ${stage} -le 5 ]; then
     echo "stage 5: Decoding"
-    nj=32
+    nj=3
 
     for rtask in ${recog_set}; do
     (
