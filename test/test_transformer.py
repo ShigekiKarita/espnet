@@ -165,7 +165,7 @@ def test_transformer_copy():
     # test acc is almost 100%
     # optim = T.get_std_opt(model, d_model, 200, 1)
     import os
-    save_path = "/tmp/espnet-test/model.t"
+    save_path = "model.t"
     if os.path.exists(save_path):
         model.load_state_dict(torch.load(save_path))
     else:
@@ -210,7 +210,8 @@ def test_transformer_copy():
             print("gold:", y[i].tolist())
             print("pred:", nbest[0]["yseq"][1:-1])
         print("===== beam search decoding =====")
-        recog_args.beam_size=4
+        recog_args.beam_size = 4
+        recog_args.nbest = 4
         for i in range(10):
             nbest = model.recognize(x[i, :ilens[i]].numpy(), recog_args)
             print("gold:", y[i].tolist())

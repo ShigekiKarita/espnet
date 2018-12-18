@@ -529,55 +529,61 @@ class E2E(torch.nn.Module):
                     break
             y = [{"score": score, "yseq": ys[0].tolist()}]
         else:
+            # TODO generalize this implementation into BeamSearch class
             # search = BeamSearch([self.decoder], {self.decoder: 1.0}, self.sos, self.eos)
             # y = search.recognize(enc_output, {"mask": mask}, recog_args, feat.device, char_list)
             # TODO maxlen minlen
             logging.info("use beam search implementation")
             from espnet.nets.beam_search import local_prune, prune
+
+            # TODO batch decoding
             n_beam = recog_args.beam_size
             enc_output = enc_output.expand(n_beam, *enc_output.shape)
             ys = torch.full((n_beam, 1), self.sos, dtype=torch.int64)
             score = torch.zeros(n_beam)
             if recog_args.maxlenratio == 0:
-                maxlen = feat.size(1)
+                maxlen = feat.size(1) + 1
             else:
                 maxlen = max(1, int(recog_args.maxlenratio * feat.size(1)))
             minlen = int(recog_args.minlenratio * feat.size(1))
             logging.info('max output length: ' + str(maxlen))
             logging.info('min output length: ' + str(minlen))
 
-            ended = torch.full((n_beam,), False).byte()
-            yseq = [[self.sos] for i in range(n_beam)]
+            # TODO GPU decoding (I think it is almost ready)
+            ended = torch.full((n_beam,), False, dtype=torch.uint8)
+            ys = torch.full((n_beam, maxlen + 1), self.eos, dtype=torch.int64)
+            ys[:, 0] = self.sos
             for step in range(maxlen):
+                # forward
                 ys_mask = subsequent_mask(step + 1).unsqueeze(0)
-                out, _ = self.decoder(ys, ys_mask, enc_output, mask)
+                out, _ = self.decoder(ys[:, :step + 1], ys_mask, enc_output, mask)
                 prob = torch.log_softmax(out[:, -1], dim=-1)  # (beam, token)
                 prob = prob.masked_fill(ended.unsqueeze(-1), MIN_VALUE)
-                local_score, local_id = prob.topk(n_beam, dim=1)  # (beam, beam)
 
+                # prune
+                local_score, local_id = prob.topk(n_beam, dim=1)  # (beam, beam)
                 global_score = score.unsqueeze(-1) + local_score  # (beam, beam)
                 global_score, global_id = global_score.view(-1).topk(n_beam)  # (beam)
+                local_hyp = global_id % n_beam  # NOTE assume global_score is contiguous
+                prev_hyp = global_id // n_beam  # NOTE ditto
+                top_tokens = local_id[prev_hyp, local_hyp]  # (beam)
 
-                local_hyp = global_id % n_beam
-                prev_hyp = global_id // n_beam
-                next_y = torch.full((n_beam,), self.eos, dtype=torch.int64)
-                # FIXME do not use for/if here
-                for i in range(n_beam):
-                    top_token = local_id[prev_hyp[i], local_hyp[i]]
-                    if not ended[i].item():
-                        score[i] += prob[prev_hyp[i], top_token]
-                        yseq[i].append(int(top_token))
-                        next_y[i] = top_token
-                        if top_token == self.eos and step + i > minlen:
-                            ended[i] = 1  # True
-                            score[i] += recog_args.penalty * (i + 1)
-                        elif step == maxlen - 1:
-                            yseq[i].append(self.eos)
-                            score[i] += recog_args.penalty * (i + 1)
-
-                ys = torch.cat((ys, next_y.unsqueeze(1)), dim=1)
+                # update stats
+                score += prob.masked_fill(ended.unsqueeze(-1), 0)[prev_hyp, top_tokens]
+                score += (~ended).float() * recog_args.penalty
+                ys[:, step + 1] = top_tokens.masked_fill(ended, self.eos)
+                if step > minlen:
+                    ended |= top_tokens == self.eos
                 if ended.all():
                     break
+
+            ys[:, -1] = self.eos
+            yseq = [[self.sos] for i in range(n_beam)]
+            for i in range(n_beam):
+                for y in ys[i, 1:]:
+                    yseq[i].append(int(y))
+                    if y == self.eos:
+                        break
             y = [{"score": score[i].item(), "yseq": yseq[i]} for i in range(n_beam)]
             y = sorted(y, key=lambda x: x["score"], reverse=True)[:min(len(y), recog_args.nbest)]
         self.training = prev
