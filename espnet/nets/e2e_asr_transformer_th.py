@@ -429,7 +429,10 @@ class E2E(torch.nn.Module):
         for p in self.parameters():
             if p.dim() == 1:
                 p.data.zero_()
-        # embedding init
+        # # embedding init
+        # for m in self.modules():
+        #     if isinstance(m, torch.nn.Embedding):
+        #         m.weight.data.normal_(0, 1)
         self.decoder.embed[0].weight.data.normal_(0, 1)
 
     def add_sos_eos(self, ys_pad):
@@ -526,8 +529,46 @@ class E2E(torch.nn.Module):
                     break
             y = [{"score": score, "yseq": ys[0].tolist()}]
         else:
-            search = BeamSearch([self.decoder], {self.decoder: 1.0}, self.sos, self.eos)
-            y = search.recognize(enc_output, {"mask": mask}, recog_args, feat.device, char_list)
+            # search = BeamSearch([self.decoder], {self.decoder: 1.0}, self.sos, self.eos)
+            # y = search.recognize(enc_output, {"mask": mask}, recog_args, feat.device, char_list)
+            logging.info("use beam search implementation")
+            from espnet.nets.beam_search import local_prune, prune
+            n_beam = recog_args.beam_size
+            enc_output = enc_output.expand(n_beam, *enc_output.shape)
+            ys = torch.full((n_beam, 1), self.sos, dtype=torch.int64)
+            score = torch.zeros(n_beam)
+            maxlen = feat.size(1) + 1
+            ended = torch.full((n_beam,), False).byte()
+            yseq = [[self.sos] for i in range(n_beam)]
+            for step in range(maxlen):
+                ys_mask = subsequent_mask(step + 1).unsqueeze(0)
+                out, _ = self.decoder(ys, ys_mask, enc_output, mask)
+                prob = torch.log_softmax(out[:, -1], dim=-1)  # (beam, token)
+                prob = prob.masked_fill(ended.unsqueeze(-1), MIN_VALUE)
+                local_score, local_id = prob.topk(n_beam, dim=1)  # (beam, beam)
+
+                global_score = score.unsqueeze(-1) + local_score  # (beam, beam)
+                global_score, global_id = global_score.view(-1).topk(n_beam)  # (beam)
+
+                local_hyp = global_id % n_beam
+                prev_hyp = global_id // n_beam
+                next_y = torch.full((n_beam,), self.eos, dtype=torch.int64)
+                # FIXME do not use for/if here
+                for i in range(n_beam):
+                    top_token = local_id[prev_hyp[i], local_hyp[i]]
+                    if not ended[i].item():
+                        score[i] += prob[prev_hyp[i], top_token]
+                        yseq[i].append(int(top_token))
+                        next_y[i] = top_token
+                        if top_token == self.eos:
+                            ended[i] = 1  # True
+                        elif step == maxlen - 1:
+                            yseq[i].append(self.eos)
+
+                ys = torch.cat((ys, next_y.unsqueeze(1)), dim=1)
+                if ended.all():
+                    break
+            y = [{"score": score[i], "yseq": yseq[i]} for i in range(n_beam)]
         self.training = prev
         return y
 

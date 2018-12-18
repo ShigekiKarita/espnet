@@ -162,25 +162,32 @@ def test_transformer_copy():
     # copy task defined in http://nlp.seas.harvard.edu/2018/04/03/attention.html#results
     d_model = 512
     model, x, ilens, y, data = prepare_copy_task(d_model)
-    model.train()
-    if torch.cuda.is_available():
-        model.cuda()
     # test acc is almost 100%
     # optim = T.get_std_opt(model, d_model, 200, 1)
-    optim = torch.optim.Adam(model.parameters(), 0.005)
-    for i in range(1000):
-        _, x, ilens, y, data = prepare_copy_task(None)
+    import os
+    save_path = "/tmp/espnet-test/model.t"
+    if os.path.exists(save_path):
+        model.load_state_dict(torch.load(save_path))
+    else:
+        model.train()
         if torch.cuda.is_available():
-            x = x.cuda()
-            y = y.cuda()
-        loss_ctc, loss_att, acc, cer, wer = model(x, ilens, y)
-        optim.zero_grad()
-        loss_att.backward()
-        optim.step()
-        print(i, loss_att.item(), acc)
-        # attn_dict = model.calculate_all_attentions(x, ilens, y)
-        # T.plot_multi_head_attention(data, attn_dict, "/tmp/espnet-test", "iter%d.png" % i)
-    # assert acc > 0.9
+            model.cuda()
+        optim = torch.optim.Adam(model.parameters(), 0.01)
+        for i in range(1000):
+            _, x, ilens, y, data = prepare_copy_task(None)
+            if torch.cuda.is_available():
+                x = x.cuda()
+                y = y.cuda()
+            loss_ctc, loss_att, acc, cer, wer = model(x, ilens, y)
+            optim.zero_grad()
+            loss_att.backward()
+            optim.step()
+            print(i, loss_att.item(), acc)
+            # attn_dict = model.calculate_all_attentions(x, ilens, y)
+            # T.plot_multi_head_attention(data, attn_dict, "/tmp/espnet-test", "iter%d.png" % i)
+        # assert acc > 0.9
+        torch.save(model.state_dict(), save_path)
+
     model.cpu()
     model.eval()
     # test beam search
@@ -195,14 +202,22 @@ def test_transformer_copy():
     if torch.cuda.is_available():
         x = x.cpu()
         y = y.cpu()
+
     with torch.no_grad():
+        print("===== greedy decoding =====")
         for i in range(10):
             nbest = model.recognize(x[i, :ilens[i]].numpy(), recog_args)
             print("gold:", y[i].tolist())
             print("pred:", nbest[0]["yseq"][1:-1])
-    # test attention plot
-    attn_dict = model.calculate_all_attentions(x[:3], ilens[:3], y[:3])
-    T.plot_multi_head_attention(data, attn_dict, "/tmp/espnet-test")
+        print("===== beam search decoding =====")
+        recog_args.beam_size=4
+        for i in range(10):
+            nbest = model.recognize(x[i, :ilens[i]].numpy(), recog_args)
+            print("gold:", y[i].tolist())
+            print("pred:", [n["yseq"][1:-1] for n in nbest])
+    # # test attention plot
+    # attn_dict = model.calculate_all_attentions(x[:3], ilens[:3], y[:3])
+    # T.plot_multi_head_attention(data, attn_dict, "/tmp/espnet-test")
 
 
 
