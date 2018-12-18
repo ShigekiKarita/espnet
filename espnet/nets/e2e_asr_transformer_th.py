@@ -531,13 +531,21 @@ class E2E(torch.nn.Module):
         else:
             # search = BeamSearch([self.decoder], {self.decoder: 1.0}, self.sos, self.eos)
             # y = search.recognize(enc_output, {"mask": mask}, recog_args, feat.device, char_list)
+            # TODO maxlen minlen
             logging.info("use beam search implementation")
             from espnet.nets.beam_search import local_prune, prune
             n_beam = recog_args.beam_size
             enc_output = enc_output.expand(n_beam, *enc_output.shape)
             ys = torch.full((n_beam, 1), self.sos, dtype=torch.int64)
             score = torch.zeros(n_beam)
-            maxlen = feat.size(1) + 1
+            if recog_args.maxlenratio == 0:
+                maxlen = feat.size(1)
+            else:
+                maxlen = max(1, int(recog_args.maxlenratio * feat.size(1)))
+            minlen = int(recog_args.minlenratio * feat.size(1))
+            logging.info('max output length: ' + str(maxlen))
+            logging.info('min output length: ' + str(minlen))
+
             ended = torch.full((n_beam,), False).byte()
             yseq = [[self.sos] for i in range(n_beam)]
             for step in range(maxlen):
@@ -560,15 +568,18 @@ class E2E(torch.nn.Module):
                         score[i] += prob[prev_hyp[i], top_token]
                         yseq[i].append(int(top_token))
                         next_y[i] = top_token
-                        if top_token == self.eos:
+                        if top_token == self.eos and step + i > minlen:
                             ended[i] = 1  # True
+                            score[i] += recog_args.penalty * (i + 1)
                         elif step == maxlen - 1:
                             yseq[i].append(self.eos)
+                            score[i] += recog_args.penalty * (i + 1)
 
                 ys = torch.cat((ys, next_y.unsqueeze(1)), dim=1)
                 if ended.all():
                     break
-            y = [{"score": score[i], "yseq": yseq[i]} for i in range(n_beam)]
+            y = [{"score": score[i].item(), "yseq": yseq[i]} for i in range(n_beam)]
+            y = sorted(y, key=lambda x: x["score"], reverse=True)[:min(len(y), recog_args.nbest)]
         self.training = prev
         return y
 
