@@ -227,16 +227,16 @@ class PositionalEncoding(nn.Module):
         self.register_buffer('pe', pe)
 
     def forward(self, x):
-        with torch.no_grad():
-            x = x * self.xscale + self.pe[:, :x.size(1)]
-            return self.dropout(x)
+        # with torch.no_grad():
+        x = x * self.xscale + self.pe[:, :x.size(1)]
+        return self.dropout(x)
 
 
 class LayerNorm(torch.nn.Module):
     def __init__(self, nout, dim=-1):
         super(LayerNorm, self).__init__()
         self.dim = dim
-        self.norm = torch.nn.LayerNorm(nout)
+        self.norm = torch.nn.LayerNorm(nout, eps=1e-12)
 
     def forward(self, x):
         if self.dim == -1:
