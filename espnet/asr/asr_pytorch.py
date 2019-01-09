@@ -120,7 +120,7 @@ class CustomUpdater(training.StandardUpdater):
 
         # Compute the loss at this time step and accumulate it
         if self.ngpu > 1:
-            loss = self.model(*x).mean()
+            loss = self.model(*x).mean() / self.accum_grad
             loss.backward()  # Backprop
             # loss = 1. / self.ngpu * self.model(*x)
             # loss.backward(loss.new_ones(self.ngpu))  # Backprop
@@ -358,7 +358,8 @@ def train(args):
                        trigger=training.triggers.MaxValueTrigger('validation/main/acc'))
 
     # save snapshot which contains model and optimizer states
-    trainer.extend(torch_snapshot(), trigger=(1, 'epoch'))
+    if args.opt != 'noam':
+        trainer.extend(torch_snapshot(), trigger=(1, 'epoch'))
 
     # epsilon decay in the optimizer
     if args.opt == 'adadelta':

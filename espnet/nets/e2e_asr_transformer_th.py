@@ -7,7 +7,8 @@ from torch import nn
 
 from espnet.asr import asr_utils
 from espnet.nets.beam_search import BeamSearch, ScoringBase
-from espnet.nets.e2e_asr_th import make_pad_mask, pad_list, th_accuracy
+from espnet.nets.e2e_asr_th import make_pad_mask, pad_list, th_accuracy, CTC
+
 
 
 # TODO make this serializable
@@ -363,7 +364,7 @@ class Decoder(torch.nn.Module, ScoringBase):
 
 
 class LabelSmoothing(nn.Module):
-    def __init__(self, size, padding_idx, smoothing):
+    def __init__(self, size, padding_idx, smoothing, normalize_length=False):
         super(LabelSmoothing, self).__init__()
         self.criterion = nn.KLDivLoss(reduce=False)
         self.padding_idx = padding_idx
@@ -371,9 +372,13 @@ class LabelSmoothing(nn.Module):
         self.smoothing = smoothing
         self.size = size
         self.true_dist = None
+        self.normalize_length = False
 
     def forward(self, x, target):
-        assert x.size(1) == self.size
+        assert x.size(2) == self.size
+        batch_size = x.size(0)
+        x = x.view(-1, self.size)
+        target = target.view(-1)
         with torch.no_grad():
             true_dist = x.clone()
             true_dist.fill_(self.smoothing / (self.size - 1))
@@ -382,7 +387,8 @@ class LabelSmoothing(nn.Module):
             target = target.masked_fill(ignore, 0)  # avoid -1 index
             true_dist.scatter_(1, target.unsqueeze(1), self.confidence)
         kl = self.criterion(torch.log_softmax(x, dim=1), true_dist)
-        return kl.masked_fill(ignore.unsqueeze(1), 0).sum()  / total
+        denom = total if self.normalize_length else batch_size
+        return kl.masked_fill(ignore.unsqueeze(1), 0).sum() / denom
 
 
 class E2E(torch.nn.Module):
@@ -405,6 +411,11 @@ class E2E(torch.nn.Module):
         # self.verbose = args.verbose
         self.reset_parameters(args)
         self.recog_args = None  # unused
+        self.adim = args.adim
+        if args.mtlalpha > 0.0:
+            self.ctc = CTC(odim, args.adim, args.dropout_rate)
+        else:
+            self.ctc = None
 
     def reset_parameters(self, args):
         if args.ninit == "none":
@@ -475,21 +486,19 @@ class E2E(torch.nn.Module):
         self.pred_pad = pred_pad
 
         # compute loss
-        loss_att = self.criterion(
-            pred_pad.view(-1, self.odim),
-            ys_out_pad.view(-1))
+        loss_att = self.criterion(pred_pad, ys_out_pad)
         acc = th_accuracy(pred_pad.view(-1, self.odim), ys_out_pad,
                           ignore_label=self.ignore_id)
 
         # TODO(karita) show predected text
         # TODO(karita) calculate these stats
-        device = xs_pad.device
-        # acc = torch.as_tensor(acc).to(device)
-        # loss_ctc = torch.as_tensor(0.0).to(device)
-        # cer = torch.as_tensor(0.0).to(device)
-        # wer = torch.as_tensor(0.0).to(device)
-        loss_ctc = None
         cer, wer = 0.0, 0.0
+        if self.ctc is None:
+            loss_ctc = None
+        else:
+            batch_size = xs_pad.size(0)
+            hs_len = hs_mask.view(batch_size, -1).sum(1)
+            loss_ctc = self.ctc(hs_pad.view(batch_size, -1, self.adim), hs_len, ys_pad)
         return loss_ctc, loss_att, acc, cer, wer
 
     def recognize(self, feat, recog_args, char_list=None, rnnlm=None):
