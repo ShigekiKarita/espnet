@@ -23,7 +23,8 @@ python: venv cupy.done chainer_patch.done warp-ctc.done chainer_ctc.done
 
 extra: nkf.done sentencepiece.done mecab.done moses.done
 
-ifeq (($shell which nvcc),) # No 'nvcc' found
+
+ifeq (($shell which nvidia-smi),) # No 'nvcc' found
 CONDA_PYTORCH := pytorch=$(TH_VERSION) cudatoolkit=$(CUDA_VERSION)
 else
 CONDA_PYTORCH := pytorch-cpu=$(TH_VERSION)
