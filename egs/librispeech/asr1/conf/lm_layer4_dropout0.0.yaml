@@ -1,0 +1,9 @@
+batchsize: 1024
+dropout: 0.0
+epoch: 20
+layer: 4
+maxlen: 40
+opt: sgd
+patience: 3
+sortagrad: 0
+unit: 1024
