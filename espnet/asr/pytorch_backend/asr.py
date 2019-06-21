@@ -314,6 +314,7 @@ def train(args):
     # make minibatch list (variable length)
     train = make_batchset(train_json, args.batch_size,
                           args.maxlen_in, args.maxlen_out, args.minibatches,
+                          batch_sort_key=args.batch_sort_key,
                           min_batch_size=args.ngpu if args.ngpu > 1 else 1,
                           shortest_first=use_sortagrad,
                           count=args.batch_count,
@@ -323,6 +324,7 @@ def train(args):
                           batch_frames_inout=args.batch_frames_inout)
     valid = make_batchset(valid_json, args.batch_size,
                           args.maxlen_in, args.maxlen_out, args.minibatches,
+                          batch_sort_key=args.batch_sort_key,
                           min_batch_size=args.ngpu if args.ngpu > 1 else 1,
                           count=args.batch_count,
                           batch_bins=args.batch_bins,

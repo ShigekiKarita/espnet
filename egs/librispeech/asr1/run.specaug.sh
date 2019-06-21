@@ -20,6 +20,7 @@ resume=        # Resume the training from snapshot
 # feature configurationb
 do_delta=false
 
+preprocess_config=conf/specaug.yaml
 train_config=conf/train.yaml
 lm_config=conf/lm.yaml
 decode_config=conf/decode.yaml
@@ -195,7 +196,7 @@ if [ ${stage} -le 3 ] && [ ${stop_stage} -ge 3 ]; then
 fi
 
 if [ -z ${tag} ]; then
-    expname=${train_set}_${backend}_nbpe${nbpe}_ngpu${ngpu}_$(basename ${train_config%.*})
+    expname=${train_set}_${backend}_nbpe${nbpe}_ngpu${ngpu}_$(basename ${train_config%.*})_$(basename ${preprocess_config%.*})
     if ${do_delta}; then
         expname=${expname}_delta
     fi
@@ -209,6 +210,7 @@ if [ ${stage} -le 4 ] && [ ${stop_stage} -ge 4 ]; then
     echo "stage 4: Network Training"
     ${cuda_cmd} --gpu ${ngpu} ${expdir}/train.log \
         asr_train.py \
+        --preprocess-conf ${preprocess_config} \
         --config ${train_config} \
         --ngpu ${ngpu} \
         --backend ${backend} \

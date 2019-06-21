@@ -1,0 +1,8 @@
+batchsize: 1024
+epoch: 20
+layer: 2
+maxlen: 40
+opt: sgd
+patience: 3
+sortagrad: 0
+unit: 1024

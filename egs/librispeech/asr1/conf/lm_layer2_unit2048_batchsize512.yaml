@@ -1,0 +1,8 @@
+batchsize: 512
+epoch: 20
+layer: 2
+maxlen: 40
+opt: sgd
+patience: 3
+sortagrad: 0
+unit: 2048

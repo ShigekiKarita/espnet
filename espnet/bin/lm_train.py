@@ -72,6 +72,8 @@ def main(args):
                         help="Number of epochs to wait without improvement before stopping the training")
     parser.add_argument('--gradclip', '-c', type=float, default=5,
                         help='Gradient norm threshold to clip')
+    parser.add_argument('--dropout', type=float, default=0.5,
+                        help='dropout probability')
     parser.add_argument('--type', type=str, default="lstm", nargs='?', choices=['lstm', 'gru'],
                         help="Which type of RNN to use")
     parser.add_argument('--layer', '-l', type=int, default=2,
