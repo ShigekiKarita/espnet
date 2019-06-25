@@ -71,14 +71,14 @@ bpemodel=data/lang_char/${train_set}_${bpemode}${nbpe}
 echo "dictionary: ${dict}"
 
 echo "stage 5: Decoding"
-if [[ $(get_yaml.py ${train_config} model-module) = *transformer* ]]; then
-    recog_model=model_${tag}.last${n_average}.avg.best
-    average_checkpoints.py \
-        --backend ${backend} \
-        --snapshots ${expdir}/results/snapshot.ep.* \
-        --out ${expdir}/results/${recog_model} \
-        --num ${n_average}
-fi
+# if [[ $(get_yaml.py ${train_config} model-module) = *transformer* ]]; then
+recog_model=model_${tag}.last${n_average}.avg.best
+average_checkpoints.py \
+    --backend ${backend} \
+    --snapshots ${expdir}/results/snapshot.ep.* \
+    --out ${expdir}/results/${recog_model} \
+    --num ${n_average}
+# fi
 
 pids=() # initialize pids
 for rtask in ${recog_set}; do
