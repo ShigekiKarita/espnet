@@ -18,11 +18,14 @@ def f(nbpe):
 
         acc = 0
         epoch = 0
+        best_epoch = 0
         for l in log:
             if score in l:
                 epoch += 1
-                acc = max(acc, l[score])
-        results.append(dict(path=path, acc=acc, epoch=epoch))
+                if acc < l[score]:
+                    acc = l[score]
+                    best_epoch = epoch
+        results.append(dict(path=path, acc=acc, best_epoch=best_epoch, curr_epoch=epoch))
 
     print(f"[INFO] total {len(results)} log found")
     for l in sorted(results, key=lambda x: -x["acc"])[:topk]:
