@@ -11,7 +11,6 @@ import argparse
 import codecs
 import json
 import logging
-import os
 import sys
 
 from espnet.utils.cli_utils import get_commandline_args
@@ -58,19 +57,18 @@ if __name__ == '__main__':
         for jsons in jsons_list:
             js = []
             for x in jsons:
-                if os.path.isfile(x):
-                    with codecs.open(x, encoding="utf-8") as f:
-                        j = json.load(f)
-                    ks = list(j['utts'].keys())
-                    logging.info(x + ': has ' + str(len(ks)) + ' utterances')
-                    if intersec_ks is not None:
-                        intersec_ks = intersec_ks.intersection(set(ks))
-                        if len(intersec_ks) == 0:
-                            logging.warning("No intersection")
-                            break
-                    else:
-                        intersec_ks = set(ks)
-                    js.append(j)
+                with codecs.open(x, encoding="utf-8") as f:
+                    j = json.load(f)
+                ks = list(j['utts'].keys())
+                logging.info(x + ': has ' + str(len(ks)) + ' utterances')
+                if intersec_ks is not None:
+                    intersec_ks = intersec_ks.intersection(set(ks))
+                    if len(intersec_ks) == 0:
+                        logging.warning("No intersection")
+                        break
+                else:
+                    intersec_ks = set(ks)
+                js.append(j)
             js_dict[jtype].append(js)
     logging.info('new json has ' + str(len(intersec_ks)) + ' utterances')
 

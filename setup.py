@@ -58,7 +58,7 @@ requirements = {
         'autopep8>=1.3.3',
         'jsondiff'],
     'doc': [
-        'Sphinx==2.1.2',
+        'Sphinx==1.7.4',
         'sphinx-rtd-theme>=0.2.4',
         'sphinx-argparse>=0.2.5',
         'commonmark==0.8.1',

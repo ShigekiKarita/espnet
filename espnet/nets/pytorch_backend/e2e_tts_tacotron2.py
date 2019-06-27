@@ -12,7 +12,6 @@ import numpy as np
 import torch
 import torch.nn.functional as F
 
-from espnet.nets.pytorch_backend.nets_utils import make_non_pad_mask
 from espnet.nets.pytorch_backend.rnn.attentions import AttForward
 from espnet.nets.pytorch_backend.rnn.attentions import AttForwardTA
 from espnet.nets.pytorch_backend.rnn.attentions import AttLoc
@@ -22,19 +21,37 @@ from espnet.nets.pytorch_backend.tacotron2.encoder import Encoder
 from espnet.nets.tts_interface import TTSInterface
 
 
+def make_non_pad_mask(lengths):
+    """Function to make tensor mask containing indices of the non-padded part
+
+    e.g.: lengths = [5, 3, 2]
+          mask = [[1, 1, 1, 1 ,1],
+                  [1, 1, 1, 0, 0],
+                  [1, 1, 0, 0, 0]]
+
+    :param list lengths: list of lengths (B)
+    :return: mask tensor containing indices of non-padded part (B, Tmax)
+    :rtype: torch.Tensor
+    """
+    if not isinstance(lengths, list):
+        lengths = lengths.tolist()
+    bs = int(len(lengths))
+    maxlen = int(max(lengths))
+    seq_range = torch.arange(0, maxlen, dtype=torch.int64)
+    seq_range_expand = seq_range.unsqueeze(0).expand(bs, maxlen)
+    seq_length_expand = seq_range_expand.new(lengths).unsqueeze(-1)
+    return seq_range_expand < seq_length_expand
+
+
 class GuidedAttentionLoss(torch.nn.Module):
-    """Guided attention loss function module.
+    """Guided attention loss function
 
-    This module calculates the guided attention loss described in `Efficiently Trainable Text-to-Speech System Based
-    on Deep Convolutional Networks with Guided Attention`_, which forces the attention to be diagonal.
+    Reference:
+        Efficiently Trainable Text-to-Speech System Based on Deep Convolutional Networks with Guided Attention
+        (https://arxiv.org/abs/1710.08969)
 
-    Args:
-        sigma (float, optional): Standard deviation to control how close attention to a diagonal.
-        reset_always (bool, optional): Whether to always reset masks.
-
-    .. _`Efficiently Trainable Text-to-Speech System Based on Deep Convolutional Networks with Guided Attention`:
-        https://arxiv.org/abs/1710.08969
-
+    :param float sigma: standard deviation to control how close attention to a diagonal
+    :param bool reset_always: whether to always reset masks
     """
 
     def __init__(self, sigma=0.4, reset_always=True):
@@ -44,21 +61,17 @@ class GuidedAttentionLoss(torch.nn.Module):
         self.guided_attn_masks = None
         self.masks = None
 
-    def _reset_masks(self):
+    def reset_masks(self):
         self.guided_attn_masks = None
         self.masks = None
 
     def forward(self, att_ws, ilens, olens):
-        """Calculate forward propagation.
+        """GuidedAttentionLoss forward calculation
 
-        Args:
-            att_ws (Tensor): Batch of attention weights (B, T_max_out, T_max_in).
-            ilens (LongTensor): Batch of input lenghts (B,).
-            olens (LongTensor): Batch of output lenghts (B,).
-
-        Returns:
-            Tensor: Guided attention loss value.
-
+        :param torch.Tenosr att_ws: batch of attention weights (B, T_max_out, T_max_in)
+        :param torch.Tensor ilens: batch of input lenghts (B,)
+        :param torch.Tensor olens: batch of output lenghts (B,)
+        :return torch.tensor: guided attention loss value
         """
         if self.guided_attn_masks is None:
             self.guided_attn_masks = self._make_guided_attention_masks(ilens, olens).to(att_ws.device)
@@ -67,7 +80,7 @@ class GuidedAttentionLoss(torch.nn.Module):
         losses = self.guided_attn_masks * att_ws
         loss = torch.mean(losses.masked_select(self.masks))
         if self.reset_always:
-            self._reset_masks()
+            self.reset_masks()
         return loss
 
     def _make_guided_attention_masks(self, ilens, olens):
@@ -81,29 +94,27 @@ class GuidedAttentionLoss(torch.nn.Module):
 
     @staticmethod
     def _make_guided_attention_mask(ilen, olen, sigma):
-        """Make guided attention mask.
+        """Make guided attention mask
 
-        Examples:
-            >>> guided_attn_mask =_make_guided_attention(5, 5, 0.4)
-            >>> guided_attn_mask.shape
-            torch.Size([5, 5])
-            >>> guided_attn_mask
-            tensor([[0.0000, 0.1175, 0.3935, 0.6753, 0.8647],
-                    [0.1175, 0.0000, 0.1175, 0.3935, 0.6753],
-                    [0.3935, 0.1175, 0.0000, 0.1175, 0.3935],
-                    [0.6753, 0.3935, 0.1175, 0.0000, 0.1175],
-                    [0.8647, 0.6753, 0.3935, 0.1175, 0.0000]])
-            >>> guided_attn_mask =_make_guided_attention(3, 6, 0.4)
-            >>> guided_attn_mask.shape
-            torch.Size([6, 3])
-            >>> guided_attn_mask
-            tensor([[0.0000, 0.2934, 0.7506],
-                    [0.0831, 0.0831, 0.5422],
-                    [0.2934, 0.0000, 0.2934],
-                    [0.5422, 0.0831, 0.0831],
-                    [0.7506, 0.2934, 0.0000],
-                    [0.8858, 0.5422, 0.0831]])
-
+        >>> guided_attn_mask =_make_guided_attention(5, 5, 0.4)
+        >>> guided_attn_mask.shape
+        torch.Size([5, 5])
+        >>> guided_attn_mask
+        tensor([[0.0000, 0.1175, 0.3935, 0.6753, 0.8647],
+                [0.1175, 0.0000, 0.1175, 0.3935, 0.6753],
+                [0.3935, 0.1175, 0.0000, 0.1175, 0.3935],
+                [0.6753, 0.3935, 0.1175, 0.0000, 0.1175],
+                [0.8647, 0.6753, 0.3935, 0.1175, 0.0000]])
+        >>> guided_attn_mask =_make_guided_attention(3, 6, 0.4)
+        >>> guided_attn_mask.shape
+        torch.Size([6, 3])
+        >>> guided_attn_mask
+        tensor([[0.0000, 0.2934, 0.7506],
+                [0.0831, 0.0831, 0.5422],
+                [0.2934, 0.0000, 0.2934],
+                [0.5422, 0.0831, 0.0831],
+                [0.7506, 0.2934, 0.0000],
+                [0.8858, 0.5422, 0.0831]])
         """
         grid_x, grid_y = torch.meshgrid(torch.arange(olen), torch.arange(ilen))
         grid_x, grid_y = grid_x.float(), grid_y.float()
@@ -111,29 +122,27 @@ class GuidedAttentionLoss(torch.nn.Module):
 
     @staticmethod
     def _make_masks(ilens, olens):
-        """Make masks indicating non-padded part.
+        """Make masks
 
-        Examples:
-            >>> ilens, olens = [5, 2], [8, 5]
-            >>> _make_mask(ilens, olens)
-            tensor([[[1, 1, 1, 1, 1],
-                     [1, 1, 1, 1, 1],
-                     [1, 1, 1, 1, 1],
-                     [1, 1, 1, 1, 1],
-                     [1, 1, 1, 1, 1],
-                     [1, 1, 1, 1, 1],
-                     [1, 1, 1, 1, 1],
-                     [1, 1, 1, 1, 1]],
+        >>> ilens, olens = [5, 2], [8, 5]
+        >>> _make_mask(ilens, olens)
+        tensor([[[1, 1, 1, 1, 1],
+                 [1, 1, 1, 1, 1],
+                 [1, 1, 1, 1, 1],
+                 [1, 1, 1, 1, 1],
+                 [1, 1, 1, 1, 1],
+                 [1, 1, 1, 1, 1],
+                 [1, 1, 1, 1, 1],
+                 [1, 1, 1, 1, 1]],
 
-                    [[1, 1, 0, 0, 0],
-                     [1, 1, 0, 0, 0],
-                     [1, 1, 0, 0, 0],
-                     [1, 1, 0, 0, 0],
-                     [1, 1, 0, 0, 0],
-                     [0, 0, 0, 0, 0],
-                     [0, 0, 0, 0, 0],
-                     [0, 0, 0, 0, 0]]], dtype=torch.uint8)
-
+                [[1, 1, 0, 0, 0],
+                 [1, 1, 0, 0, 0],
+                 [1, 1, 0, 0, 0],
+                 [1, 1, 0, 0, 0],
+                 [1, 1, 0, 0, 0],
+                 [0, 0, 0, 0, 0],
+                 [0, 0, 0, 0, 0],
+                 [0, 0, 0, 0, 0]]], dtype=torch.uint8)
         """
         in_masks = make_non_pad_mask(ilens)  # (B, T_in)
         out_masks = make_non_pad_mask(olens)  # (B, T_out)
@@ -141,12 +150,10 @@ class GuidedAttentionLoss(torch.nn.Module):
 
 
 class CBHGLoss(torch.nn.Module):
-    """Loss function module for CBHG.
+    """Loss function for CBHG module
 
-    Args:
-        args (Namespace):
-            - use_masking (bool): Whether to mask padded part in loss calculation
-
+    :param Namespace args: argments containing following attributes
+        (bool) use_masking: whether to mask padded part in loss calculation
     """
 
     def __init__(self, args):
@@ -155,17 +162,15 @@ class CBHGLoss(torch.nn.Module):
         self.use_masking = args.use_masking
 
     def forward(self, cbhg_outs, spcs, olens):
-        """Calculate forward propagation.
+        """CBHG loss forward computation
 
-        Args:
-            cbhg_outs (Tensor): Batch of CBHG outputs (B, Lmax, spc_dim).
-            spcs (Tensor): Batch of groundtruth of spectrogram (B, Lmax, spc_dim).
-            olens (LongTensor): Batch of the lengths of each sequence (B,).
-
-        Returns:
-            Tensor: L1 loss value
-            Tensor: Mean square error loss value.
-
+        :param torch.Tensor cbhg_outs: cbhg outputs (B, Lmax, spc_dim)
+        :param torch.Tensor before_outs: groundtruth of spectrogram (B, Lmax, spc_dim)
+        :param list olens: batch of the lengths of each target (B)
+        :return: l1 loss value
+        :rtype: torch.Tensor
+        :return: mean square error loss value
+        :rtype: torch.Tensor
         """
         # perform masking for padded values
         if self.use_masking:
@@ -181,13 +186,11 @@ class CBHGLoss(torch.nn.Module):
 
 
 class Tacotron2Loss(torch.nn.Module):
-    """Loss function module for Tacotron2.
+    """Tacotron2 loss function
 
-    Args:
-        args (Namespace):
-            - use_masking (bool): Whether to mask padded part in loss calculation.
-            - bce_pos_weight (float): Weight of positive sample of stop token (only for use_masking=True).
-
+    :param Namespace args: argments containing following attributes
+        (bool) use_masking: whether to mask padded part in loss calculation
+        (float) bce_pos_weight: weight of positive sample of stop token (only for use_masking=True)
     """
 
     def __init__(self, args):
@@ -196,21 +199,20 @@ class Tacotron2Loss(torch.nn.Module):
         self.bce_pos_weight = args.bce_pos_weight
 
     def forward(self, after_outs, before_outs, logits, ys, labels, olens):
-        """Calculate forward propagation.
+        """Tacotron2 loss forward computation
 
-        Args:
-            after_outs (Tensor): Batch of outputs after postnets (B, Lmax, odim).
-            before_outs (Tensor): Batch of outputs before postnets (B, Lmax, odim).
-            logits (Tensor): Batch of stop logits (B, Lmax).
-            ys (Tensor): Batch of padded target features (B, Lmax, odim).
-            labels (LongTensor): Batch of the sequences of stop token labels (B, Lmax).
-            olens (LongTensor): Batch of the lengths of each target (B,).
-
-        Returns:
-            Tensor: L1 loss value.
-            Tensor: Mean square error loss value.
-            Tensor: Binary cross entropy loss value.
-
+        :param torch.Tensor after_outs: outputs with postnets (B, Lmax, odim)
+        :param torch.Tensor before_outs: outputs without postnets (B, Lmax, odim)
+        :param torch.Tensor logits: stop logits (B, Lmax)
+        :param torch.Tensor ys: batch of padded target features (B, Lmax, odim)
+        :param torch.Tensor labels: batch of the sequences of stop token labels (B, Lmax)
+        :param list olens: batch of the lengths of each target (B)
+        :return: l1 loss value
+        :rtype: torch.Tensor
+        :return: mean square error loss value
+        :rtype: torch.Tensor
+        :return: binary cross entropy loss value
+        :rtype: torch.Tensor
         """
         # perform masking for padded values
         if self.use_masking:
@@ -231,59 +233,53 @@ class Tacotron2Loss(torch.nn.Module):
 
 
 class Tacotron2(TTSInterface, torch.nn.Module):
-    """Tacotron2 module for end-to-end text-to-speech (E2E-TTS).
+    """Tacotron2 based Seq2Seq converts chars to features
 
-    This is a module of Spectrogram prediction network in Tacotron2 described in `Natural TTS Synthesis
-    by Conditioning WaveNet on Mel Spectrogram Predictions`_, which converts the sequence of characters
-    into the sequence of Mel-filterbanks.
+    Reference:
+       Natural TTS Synthesis by Conditioning WaveNet on Mel Spectrogram Predictions
+       (https://arxiv.org/abs/1712.05884)
 
-    Args:
-        idim (int): Dimension of the inputs.
-        odim (int): Dimension of the outputs.
-        args (Namespace):
-            - spk_embed_dim (int): Dimension of the speaker embedding.
-            - embed_dim (int): Dimension of character embedding.
-            - elayers (int): The number of encoder blstm layers.
-            - eunits (int): The number of encoder blstm units.
-            - econv_layers (int): The number of encoder conv layers.
-            - econv_filts (int): The number of encoder conv filter size.
-            - econv_chans (int): The number of encoder conv filter channels.
-            - dlayers (int): The number of decoder lstm layers.
-            - dunits (int): The number of decoder lstm units.
-            - prenet_layers (int): The number of prenet layers.
-            - prenet_units (int): The number of prenet units.
-            - postnet_layers (int): The number of postnet layers.
-            - postnet_filts (int): The number of postnet filter size.
-            - postnet_chans (int): The number of postnet filter channels.
-            - output_activation (int): The name of activation function for outputs.
-            - adim (int): The number of dimension of mlp in attention.
-            - aconv_chans (int): The number of attention conv filter channels.
-            - aconv_filts (int): The number of attention conv filter size.
-            - cumulate_att_w (bool): Whether to cumulate previous attention weight.
-            - use_batch_norm (bool): Whether to use batch normalization.
-            - use_concate (int): Whether to concatenate encoder embedding with decoder lstm outputs.
-            - dropout_rate (float): Dropout rate.
-            - zoneout_rate (float): Zoneout rate.
-            - reduction_factor (int): Reduction factor.
-            - use_cbhg (bool): Whether to use CBHG module.
-            - cbhg_conv_bank_layers (int): The number of convoluional banks in CBHG.
-            - cbhg_conv_bank_chans (int): The number of channels of convolutional bank in CBHG.
-            - cbhg_proj_filts (int): The number of filter size of projection layeri in CBHG.
-            - cbhg_proj_chans (int): The number of channels of projection layer in CBHG.
-            - cbhg_highway_layers (int): The number of layers of highway network in CBHG.
-            - cbhg_highway_units (int): The number of units of highway network in CBHG.
-            - cbhg_gru_units (int): The number of units of GRU in CBHG.
-            - use_masking (bool): Whether to mask padded part in loss calculation.
-            - bce_pos_weight (float): Weight of positive sample of stop token (only for use_masking=True).
-
-    .. _`Natural TTS Synthesis by Conditioning WaveNet on Mel Spectrogram Predictions`:
-       https://arxiv.org/abs/1712.05884
-
+    :param int idim: dimension of the inputs
+    :param int odim: dimension of the outputs
+    :param Namespace args: argments containing following attributes
+        (int) spk_embed_dim: dimension of the speaker embedding
+        (int) embed_dim: dimension of character embedding
+        (int) elayers: the number of encoder blstm layers
+        (int) eunits: the number of encoder blstm units
+        (int) econv_layers: the number of encoder conv layers
+        (int) econv_filts: the number of encoder conv filter size
+        (int) econv_chans: the number of encoder conv filter channels
+        (int) dlayers: the number of decoder lstm layers
+        (int) dunits: the number of decoder lstm units
+        (int) prenet_layers: the number of prenet layers
+        (int) prenet_units: the number of prenet units
+        (int) postnet_layers: the number of postnet layers
+        (int) postnet_filts: the number of postnet filter size
+        (int) postnet_chans: the number of postnet filter channels
+        (str) output_activation: the name of activation function for outputs
+        (int) adim: the number of dimension of mlp in attention
+        (int) aconv_chans: the number of attention conv filter channels
+        (int) aconv_filts: the number of attention conv filter size
+        (bool) cumulate_att_w: whether to cumulate previous attention weight
+        (bool) use_batch_norm: whether to use batch normalization
+        (bool) use_concate: whether to concatenate encoder embedding with decoder lstm outputs
+        (float) dropout_rate: dropout rate
+        (float) zoneout_rate: zoneout rate
+        (int) reduction_factor: reduction factor
+        (bool) use_cbhg: whether to use CBHG module
+        (int) cbhg_conv_bank_layers: the number of convoluional banks in CBHG
+        (int) cbhg_conv_bank_chans: the number of channels of convolutional bank in CBHG
+        (int) cbhg_proj_filts: the number of filter size of projection layeri in CBHG
+        (int) cbhg_proj_chans: the number of channels of projection layer in CBHG
+        (int) cbhg_highway_layers: the number of layers of highway network in CBHG
+        (int) cbhg_highway_units: the number of units of highway network in CBHG
+        (int) cbhg_gru_units: the number of units of GRU in CBHG
+        (bool) use_masking: whether to mask padded part in loss calculation
+        (float) bce_pos_weight: weight of positive sample of stop token (only for use_masking=True)
     """
 
     @staticmethod
     def add_arguments(parser):
-        """Add model-specific arguments to the parser."""
         # encoder
         parser.add_argument('--embed-dim', default=512, type=int,
                             help='Number of dimension of embedding')
@@ -464,19 +460,16 @@ class Tacotron2(TTSInterface, torch.nn.Module):
             self.cbhg_loss = CBHGLoss(args)
 
     def forward(self, xs, ilens, ys, labels, olens, spembs=None, spcs=None, *args, **kwargs):
-        """Calculate forward propagation.
+        """Tacotron2 forward computation
 
-        Args:
-            xs (Tensor): Batch of padded character ids (B, Tmax).
-            ilens (LongTensor): Batch of lengths of each input batch (B,).
-            ys (Tensor): Batch of padded target features (B, Lmax, odim).
-            olens (LongTensor): Batch of the lengths of each target (B,).
-            spembs (Tensor, optional): Batch of speaker embedding vectors (B, spk_embed_dim).
-            spcs (Tensor, optional): Batch of groundtruth spectrograms (B, Lmax, spc_dim).
-
-        Returns:
-            Tensor: Loss value.
-
+        :param torch.Tensor xs: batch of padded character ids (B, Tmax)
+        :param torch.Tensor ilens: list of lengths of each input batch (B)
+        :param torch.Tensor ys: batch of padded target features (B, Lmax, odim)
+        :param torch.Tensor olens: batch of the lengths of each target (B)
+        :param torch.Tensor spembs: batch of speaker embedding vector (B, spk_embed_dim)
+        :param torch.Tensor spcs: batch of groundtruth spectrogram (B, Lmax, spc_dim)
+        :return: loss value
+        :rtype: torch.Tensor
         """
         # remove unnecessary padded part (for multi-gpus)
         max_in = max(ilens)
@@ -541,21 +534,20 @@ class Tacotron2(TTSInterface, torch.nn.Module):
         return loss
 
     def inference(self, x, inference_args, spemb=None, *args, **kwargs):
-        """Generate the sequence of features given the sequences of characters.
+        """Generates the sequence of features given the sequences of characters
 
-        Args:
-            x (Tensor): Input sequence of characters (T,).
-            inference_args (Namespace):
-                - threshold (float): Threshold in inference.
-                - minlenratio (float): Minimum length ratio in inference.
-                - maxlenratio (float): Maximum length ratio in inference.
-            spemb (Tensor, optional): Speaker embedding vector (spk_embed_dim).
-
-        Returns:
-            Tensor: Output sequence of features (L, odim).
-            Tensor: Output sequence of stop probabilities (L,).
-            Tensor: Attention weights (L, T).
-
+        :param torch.Tensor x: the sequence of characters (T)
+        :param Namespace inference_args: argments containing following attributes
+            (float) threshold: threshold in inference
+            (float) minlenratio: minimum length ratio in inference
+            (float) maxlenratio: maximum length ratio in inference
+        :param torch.Tensor spemb: speaker embedding vector (spk_embed_dim)
+        :return: the sequence of features (L, odim)
+        :rtype: torch.Tensor
+        :return: the sequence of stop probabilities (L)
+        :rtype: torch.Tensor
+        :return: the sequence of attention weight (L, T)
+        :rtype: torch.Tensor
         """
         # get options
         threshold = inference_args.threshold
@@ -576,18 +568,14 @@ class Tacotron2(TTSInterface, torch.nn.Module):
             return outs, probs, att_ws
 
     def calculate_all_attentions(self, xs, ilens, ys, spembs=None, *args, **kwargs):
-        """Calculate all of the attention weights.
+        """Tacotron2 attention weight computation
 
-        Args:
-            xs (Tensor): Batch of padded character ids (B, Tmax).
-            ilens (LongTensor): Batch of lengths of each input batch (B,).
-            ys (Tensor): Batch of padded target features (B, Lmax, odim).
-            olens (LongTensor): Batch of the lengths of each target (B,).
-            spembs (Tensor, optional): Batch of speaker embedding vectors (B, spk_embed_dim).
-
-        Returns:
-            numpy.ndarray: Batch of attention weights (B, Lmax, Tmax).
-
+        :param torch.Tensor xs: batch of padded character ids (B, Tmax)
+        :param torch.Tensor ilens: list of lengths of each input batch (B)
+        :param torch.Tensor ys: batch of padded target features (B, Lmax, odim)
+        :param torch.Tensor spembs: batch of speaker embedding vector (B, spk_embed_dim)
+        :return: attention weights (B, Lmax, Tmax)
+        :rtype: numpy array
         """
         # check ilens type (should be list of int)
         if isinstance(ilens, torch.Tensor) or isinstance(ilens, np.ndarray):
@@ -606,14 +594,12 @@ class Tacotron2(TTSInterface, torch.nn.Module):
 
     @property
     def base_plot_keys(self):
-        """Return base key names to plot during training. keys should match what `chainer.reporter` reports.
+        """base key names to plot during training. keys should match what `chainer.reporter` reports
 
-        If you add the key `loss`, the reporter will report `main/loss` and `validation/main/loss` values.
+        if you add the key `loss`, the reporter will report `main/loss` and `validation/main/loss` values.
         also `loss.png` will be created as a figure visulizing `main/loss` and `validation/main/loss` values.
 
-        Returns:
-            list: List of strings which are base keys to plot during training.
-
+        :rtype list[str] plot_keys: base keys to plot during training
         """
         plot_keys = ['loss', 'l1_loss', 'mse_loss', 'bce_loss']
         if self.use_guided_attn_loss:
