@@ -20,6 +20,7 @@ resume=        # Resume the training from snapshot
 # feature configuration
 do_delta=false
 
+preprocess_config=conf/specaug.yaml
 train_config=conf/train.yaml
 lm_config=conf/lm.yaml
 decode_config=conf/decode.yaml
@@ -142,7 +143,7 @@ if [ ${stage} -le 2 ] && [ ${stop_stage} -ge 2 ]; then
 fi
 
 if [ -z ${tag} ]; then
-    expname=${train_set}_${backend}_nbpe${nbpe}_ngpu${ngpu}_$(basename ${train_config%.*})
+    expname=${train_set}_${backend}_nbpe${nbpe}_ngpu${ngpu}_$(basename ${train_config%.*})_$(basename ${preprocess_config%.*})
     if ${do_delta}; then
         expname=${expname}_delta
     fi
@@ -184,7 +185,7 @@ if [ ${stage} -le 3 ] && [ ${stop_stage} -ge 3 ]; then
         --train-label ${lmdatadir}/train.txt \
         --valid-label ${lmdatadir}/valid.txt \
         --resume ${lm_resume} \
-        --dict ${dict} &
+        --dict ${dict}
 fi
 
 if [ ${stage} -le 4 ] && [ ${stop_stage} -ge 4 ]; then
@@ -192,6 +193,7 @@ if [ ${stage} -le 4 ] && [ ${stop_stage} -ge 4 ]; then
     ${cuda_cmd} --gpu ${ngpu} ${expdir}/train.log \
         asr_train.py \
         --ngpu ${ngpu} \
+        --preprocess-conf ${preprocess_config} \
         --config ${train_config} \
         --backend ${backend} \
         --outdir ${expdir}/results \
@@ -205,7 +207,7 @@ if [ ${stage} -le 4 ] && [ ${stop_stage} -ge 4 ]; then
         --train-json ${feat_tr_dir}/data_${bpemode}${nbpe}.json \
         --valid-json ${feat_dt_dir}/data_${bpemode}${nbpe}.json
 fi
-wait
+
 if [ ${stage} -le 5 ] && [ ${stop_stage} -ge 5 ]; then
     echo "stage 5: Decoding"
     nj=32

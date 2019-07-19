@@ -8,7 +8,7 @@
 
 # general configuration
 backend=pytorch
-stage=0        # start from 0 if you need to start from data preparation
+stage=3        # start from 0 if you need to start from data preparation
 stop_stage=100
 ngpu=1         # number of gpus ("0" uses cpu, otherwise use gpu)
 debugmode=1
@@ -158,28 +158,32 @@ if [ ${stage} -le 3 ] && [ ${stop_stage} -ge 3 ]; then
     if [ ${use_wordlm} = true ]; then
         lmdatadir=data/local/wordlm_train
         lmdict=${lmdatadir}/wordlist_${lm_vocabsize}.txt
-        mkdir -p ${lmdatadir}
-        cut -f 2- -d" " data/${train_set}/text > ${lmdatadir}/train_trans.txt
-        zcat ${wsj1}/13-32.1/wsj1/doc/lng_modl/lm_train/np_data/{87,88,89}/*.z \
+        if [ ! -e ${lmdatadir} ]; then
+            mkdir -p ${lmdatadir}
+            cut -f 2- -d" " data/${train_set}/text > ${lmdatadir}/train_trans.txt
+            zcat ${wsj1}/13-32.1/wsj1/doc/lng_modl/lm_train/np_data/{87,88,89}/*.z \
                 | grep -v "<" | tr "[:lower:]" "[:upper:]" > ${lmdatadir}/train_others.txt
-        cut -f 2- -d" " data/${train_dev}/text > ${lmdatadir}/valid.txt
-        cut -f 2- -d" " data/${train_test}/text > ${lmdatadir}/test.txt
-        cat ${lmdatadir}/train_trans.txt ${lmdatadir}/train_others.txt > ${lmdatadir}/train.txt
-        text2vocabulary.py -s ${lm_vocabsize} -o ${lmdict} ${lmdatadir}/train.txt
+            cut -f 2- -d" " data/${train_dev}/text > ${lmdatadir}/valid.txt
+            cut -f 2- -d" " data/${train_test}/text > ${lmdatadir}/test.txt
+            cat ${lmdatadir}/train_trans.txt ${lmdatadir}/train_others.txt > ${lmdatadir}/train.txt
+            text2vocabulary.py -s ${lm_vocabsize} -o ${lmdict} ${lmdatadir}/train.txt
+        fi
     else
         lmdatadir=data/local/lm_train
         lmdict=${dict}
-        mkdir -p ${lmdatadir}
-        text2token.py -s 1 -n 1 -l ${nlsyms} data/${train_set}/text \
-            | cut -f 2- -d" " > ${lmdatadir}/train_trans.txt
-        zcat ${wsj1}/13-32.1/wsj1/doc/lng_modl/lm_train/np_data/{87,88,89}/*.z \
-            | grep -v "<" | tr "[:lower:]" "[:upper:]" \
-            | text2token.py -n 1 | cut -f 2- -d" " > ${lmdatadir}/train_others.txt
-        text2token.py -s 1 -n 1 -l ${nlsyms} data/${train_dev}/text \
-            | cut -f 2- -d" " > ${lmdatadir}/valid.txt
-        text2token.py -s 1 -n 1 -l ${nlsyms} data/${train_test}/text \
+        if [ ! -e ${lmdatadir} ]; then
+            mkdir -p ${lmdatadir}
+            text2token.py -s 1 -n 1 -l ${nlsyms} data/${train_set}/text \
+                | cut -f 2- -d" " > ${lmdatadir}/train_trans.txt
+            zcat ${wsj1}/13-32.1/wsj1/doc/lng_modl/lm_train/np_data/{87,88,89}/*.z \
+                | grep -v "<" | tr "[:lower:]" "[:upper:]" \
+                | text2token.py -n 1 | cut -f 2- -d" " > ${lmdatadir}/train_others.txt
+            text2token.py -s 1 -n 1 -l ${nlsyms} data/${train_dev}/text \
+                | cut -f 2- -d" " > ${lmdatadir}/valid.txt
+            text2token.py -s 1 -n 1 -l ${nlsyms} data/${train_test}/text \
                 | cut -f 2- -d" " > ${lmdatadir}/test.txt
-        cat ${lmdatadir}/train_trans.txt ${lmdatadir}/train_others.txt > ${lmdatadir}/train.txt
+            cat ${lmdatadir}/train_trans.txt ${lmdatadir}/train_others.txt > ${lmdatadir}/train.txt
+        fi
     fi
 
     # use only 1 gpu
@@ -198,88 +202,6 @@ if [ ${stage} -le 3 ] && [ ${stop_stage} -ge 3 ]; then
         --valid-label ${lmdatadir}/valid.txt \
         --test-label ${lmdatadir}/test.txt \
         --resume ${lm_resume} \
-        --dict ${lmdict} &
+        --dict ${lmdict}
 fi
 
-
-if [ -z ${tag} ]; then
-    expname=${train_set}_${backend}_$(basename ${train_config%.*})_$(basename ${preprocess_config%.*})
-    if ${do_delta}; then
-        expname=${expname}_delta
-    fi
-else
-    expname=${train_set}_${backend}_${tag}
-fi
-expdir=exp/${expname}
-mkdir -p ${expdir}
-
-if [ ${stage} -le 4 ] && [ ${stop_stage} -ge 4 ]; then
-    echo "stage 4: Network Training"
-
-    ${cuda_cmd} --gpu ${ngpu} ${expdir}/train.log \
-        asr_train.py \
-        --config ${train_config} \
-        --preprocess-conf ${preprocess_config} \
-        --ngpu ${ngpu} \
-        --backend ${backend} \
-        --outdir ${expdir}/results \
-        --tensorboard-dir tensorboard/${expname} \
-        --debugmode ${debugmode} \
-        --dict ${dict} \
-        --debugdir ${expdir} \
-        --minibatches ${N} \
-        --verbose ${verbose} \
-        --resume ${resume} \
-        --seed ${seed} \
-        --train-json ${feat_tr_dir}/data.json \
-        --valid-json ${feat_dt_dir}/data.json
-fi
-wait
-
-if [ ${stage} -le 5 ] && [ ${stop_stage} -ge 5 ]; then
-    echo "stage 5: Decoding"
-    nj=32
-    if [[ $(get_yaml.py ${train_config} model-module) = *transformer* ]]; then
-        recog_model=model.last${n_average}.avg.best
-        average_checkpoints.py --backend ${backend} \
-                               --snapshots ${expdir}/results/snapshot.ep.* \
-                               --out ${expdir}/results/${recog_model} \
-                               --num ${n_average}
-    fi
-
-    pids=() # initialize pids
-    for rtask in ${recog_set}; do
-    (
-        decode_dir=decode_${rtask}_$(basename ${decode_config%.*})_${lmtag}
-        if [ ${use_wordlm} = true ]; then
-            recog_opts="--word-rnnlm ${lmexpdir}/rnnlm.model.best"
-        else
-            recog_opts="--rnnlm ${lmexpdir}/rnnlm.model.best"
-        fi
-        feat_recog_dir=${dumpdir}/${rtask}/delta${do_delta}
-
-        # split data
-        splitjson.py --parts ${nj} ${feat_recog_dir}/data.json
-
-        #### use CPU for decoding
-        ngpu=0
-
-        ${decode_cmd} JOB=1:${nj} ${expdir}/${decode_dir}/log/decode.JOB.log \
-            asr_recog.py \
-            --config ${decode_config} \
-            --ngpu ${ngpu} \
-            --backend ${backend} \
-            --recog-json ${feat_recog_dir}/split${nj}utt/data.JOB.json \
-            --result-label ${expdir}/${decode_dir}/data.JOB.json \
-            --model ${expdir}/results/${recog_model}  \
-            ${recog_opts}
-
-        score_sclite.sh --wer true --nlsyms ${nlsyms} ${expdir}/${decode_dir} ${dict}
-
-    ) &
-    pids+=($!) # store background pids
-    done
-    i=0; for pid in "${pids[@]}"; do wait ${pid} || ((++i)); done
-    [ ${i} -gt 0 ] && echo "$0: ${i} background jobs are failed." && false
-    echo "Finished"
-fi

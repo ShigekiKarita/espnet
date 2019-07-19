@@ -17,12 +17,13 @@ N=0            # number of minibatches to be used (mainly for debugging). "0" us
 verbose=0      # verbose option
 resume=        # Resume the training from snapshot
 
-# feature configurationb
+# feature configuration
 do_delta=false
 
+preprocess_config=conf/specaug.yaml
 train_config=conf/train.yaml
 lm_config=conf/lm.yaml
-decode_config=conf/tuning/decode_pytorch_transformer_light.yaml
+decode_config=conf/decode.yaml
 
 # rnnlm related
 lm_resume=        # specify a snapshot file to resume LM training
@@ -32,23 +33,17 @@ lmtag=            # tag for managing LMs
 recog_model=model.acc.best # set a model to be used for decoding: 'model.acc.best' or 'model.loss.best'
 n_average=10
 
-# Set this to somewhere where you want to put your data, or where
-# someone else has already put it.  You'll want to change this
-# if you're not on the CLSP grid.
-datadir=/export/a15/vpanayotov/data
-
-# base url for downloads.
-data_url=www.openslr.org/resources/12
-
 # bpemode (unigram or bpe)
-nbpe=
+nbpe=500
 bpemode=unigram
 
-nj=64
-lmexpdir=
-expdir=
+# exp tag
 tag=tmp
+# tag for managing experiments.
 
+expdir=
+lmexpdir=
+nj=32
 . utils/parse_options.sh || exit 1;
 
 . ./path.sh
@@ -60,30 +55,27 @@ set -e
 set -u
 set -o pipefail
 
-train_set=train_960
-train_dev=dev
-recog_set="test_clean test_other dev_clean dev_other"
+train_set=train_trim_sp
+train_dev=dev_trim
+recog_set="dev test"
 
-feat_tr_dir=${dumpdir}/${train_set}/delta${do_delta}; mkdir -p ${feat_tr_dir}
-feat_dt_dir=${dumpdir}/${train_dev}/delta${do_delta}; mkdir -p ${feat_dt_dir}
 dict=data/lang_char/${train_set}_${bpemode}${nbpe}_units.txt
 bpemodel=data/lang_char/${train_set}_${bpemode}${nbpe}
 echo "dictionary: ${dict}"
 
-echo "stage 5: Decoding"
-if [ ${n_average} -gt 0 ]; then
-recog_model=model_${tag}.last${n_average}.avg.best
-average_checkpoints.py \
-    --backend ${backend} \
-    --snapshots ${expdir}/results/snapshot.ep.* \
-    --out ${expdir}/results/${recog_model} \
-    --num ${n_average}
-fi
-
-pids=() # initialize pids
-for rtask in ${recog_set}; do
+if [ ${stage} -le 5 ] && [ ${stop_stage} -ge 5 ]; then
+    echo "stage 5: Decoding"
+    if [[ $(get_yaml.py ${train_config} model-module) = *transformer* ]]; then
+	recog_model=model.last${n_average}.avg.best.${tag}
+	average_checkpoints.py --backend ${backend} \
+			       --snapshots ${expdir}/results/snapshot.ep.* \
+			       --out ${expdir}/results/${recog_model} \
+			       --num ${n_average}
+    fi
+    pids=() # initialize pids
+    for rtask in ${recog_set}; do
     (
-        decode_dir=decode_${tag}_${rtask}_$(basename ${decode_config%.*})_${lmtag}
+        decode_dir=decode_${rtask}_$(basename ${decode_config%.*}).${tag}
         feat_recog_dir=${dumpdir}/${rtask}/delta${do_delta}
 
         # split data
@@ -91,24 +83,24 @@ for rtask in ${recog_set}; do
 
         #### use CPU for decoding
         ngpu=0
-
-        # set batchsize 0 to disable batch decoding
         ${decode_cmd} JOB=1:${nj} ${expdir}/${decode_dir}/log/decode.JOB.log \
-                      asr_recog.py \
-                      --config ${decode_config} \
-                      --ngpu ${ngpu} \
-                      --backend ${backend} \
-                      --batchsize 0 \
-                      --recog-json ${feat_recog_dir}/split${nj}utt/data_${bpemode}${nbpe}.JOB.json \
-                      --result-label ${expdir}/${decode_dir}/data.JOB.json \
-                      --model ${expdir}/results/${recog_model}  \
-                      --rnnlm ${lmexpdir}/rnnlm.model.best
+            asr_recog.py \
+            --config ${decode_config} \
+            --ngpu ${ngpu} \
+            --backend ${backend} \
+            --debugmode ${debugmode} \
+            --verbose ${verbose} \
+            --recog-json ${feat_recog_dir}/split${nj}utt/data_${bpemode}${nbpe}.JOB.json \
+            --result-label ${expdir}/${decode_dir}/data.JOB.json \
+            --model ${expdir}/results/${recog_model}  \
+            --rnnlm ${lmexpdir}/rnnlm.model.best
 
         score_sclite.sh --bpe ${nbpe} --bpemodel ${bpemodel}.model --wer true ${expdir}/${decode_dir} ${dict}
 
     ) &
     pids+=($!) # store background pids
-done
-i=0; for pid in "${pids[@]}"; do wait ${pid} || ((++i)); done
-[ ${i} -gt 0 ] && echo "$0: ${i} background jobs are failed." && false
-echo "Finished"
+    done
+    i=0; for pid in "${pids[@]}"; do wait ${pid} || ((++i)); done
+    [ ${i} -gt 0 ] && echo "$0: ${i} background jobs are failed." && false
+    echo "Finished"
+fi

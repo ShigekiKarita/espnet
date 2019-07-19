@@ -10,12 +10,11 @@ def f(nbpe):
 
     results = []
     for path in glob(pattern):
+        if "transformer" in path:
+            continue
         try:
             with open(path, "r") as f:
                 log = json.load(f)
-            qpath = path[:-len("/results/log")] + "/q/train.log"
-            with open(qpath, "r") as f:
-                canceled = any("CANCELLED" in l for l in f)
         except IOError:
             continue
 
@@ -28,10 +27,10 @@ def f(nbpe):
                 if acc < l[score]:
                     acc = l[score]
                     best_epoch = epoch
-        results.append(dict(path=path, acc=acc, best_epoch=best_epoch, curr_epoch=epoch, canceled=canceled))
+        results.append(dict(path=path, acc=acc, best_epoch=best_epoch, curr_epoch=epoch))
 
     print(f"[INFO] total {len(results)} log found")
-    for l in sorted(results, key=lambda x: -x["acc"]): # [:topk]:
+    for l in sorted(results, key=lambda x: -x["acc"])[:topk]:
         print(l)
 
 f(5000)

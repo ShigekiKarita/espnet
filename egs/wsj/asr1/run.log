@@ -1,0 +1,104 @@
+stage 0: Data preparation
+starting to use OOV words [<unk>]
+OOV code is 19982
+OOV code is 19982
+pruning LM with thresholds: 
+ 1e-07 1e-07
+DEBUG_LEVEL:0/1 Everything OK
+starting to use OOV words [<unk>]
+OOV code is 4989
+OOV code is 4989
+pruning LM with thresholds: 
+ 1e-07 1e-07
+DEBUG_LEVEL:0/1 Everything OK
+rm: cannot remove 'wsj0-train-spkrinfo.txt': No such file or directory
+--2019-06-28 11:54:53--  https://catalog.ldc.upenn.edu/docs/LDC93S6A/wsj0-train-spkrinfo.txt
+Resolving proxy.rdh.ecl.ntt.co.jp (proxy.rdh.ecl.ntt.co.jp)... 129.60.39.43
+Connecting to proxy.rdh.ecl.ntt.co.jp (proxy.rdh.ecl.ntt.co.jp)|129.60.39.43|:20066... connected.
+Proxy request sent, awaiting response... 200 OK
+Length: 5545 (5.4K) [text/plain]
+Saving to: 'wsj0-train-spkrinfo.txt'
+
+     0K .....                                                 100%  492M=0s
+
+2019-06-28 11:54:54 (492 MB/s) - 'wsj0-train-spkrinfo.txt' saved [5545/5545]
+
+Data preparation succeeded
+local/wsj_format_data.sh 
+Preparing train and test data
+Succeeded in formatting data.
+stage 1: Feature Generation
+steps/make_fbank_pitch.sh --cmd slurm.pl --nj 32 --write_utt2num_frames true data/train_si284 exp/make_fbank/train_si284 fbank
+utils/validate_data_dir.sh: Successfully validated data-directory data/train_si284
+steps/make_fbank_pitch.sh: [info]: no segments file exists: assuming wav.scp indexed by utterance.
+Succeeded creating filterbank & pitch features for train_si284
+fix_data_dir.sh: kept all 37416 utterances.
+fix_data_dir.sh: old files are kept in data/train_si284/.backup
+steps/make_fbank_pitch.sh --cmd slurm.pl --nj 32 --write_utt2num_frames true data/test_dev93 exp/make_fbank/test_dev93 fbank
+utils/validate_data_dir.sh: Successfully validated data-directory data/test_dev93
+steps/make_fbank_pitch.sh: [info]: no segments file exists: assuming wav.scp indexed by utterance.
+Succeeded creating filterbank & pitch features for test_dev93
+fix_data_dir.sh: kept all 503 utterances.
+fix_data_dir.sh: old files are kept in data/test_dev93/.backup
+steps/make_fbank_pitch.sh --cmd slurm.pl --nj 32 --write_utt2num_frames true data/test_eval92 exp/make_fbank/test_eval92 fbank
+utils/validate_data_dir.sh: Successfully validated data-directory data/test_eval92
+steps/make_fbank_pitch.sh: [info]: no segments file exists: assuming wav.scp indexed by utterance.
+Succeeded creating filterbank & pitch features for test_eval92
+fix_data_dir.sh: kept all 333 utterances.
+fix_data_dir.sh: old files are kept in data/test_eval92/.backup
+compute-cmvn-stats scp:data/train_si284/feats.scp data/train_si284/cmvn.ark 
+LOG (compute-cmvn-stats[5.5.0-76bd]:main():compute-cmvn-stats.cc:168) Wrote global CMVN stats to data/train_si284/cmvn.ark
+LOG (compute-cmvn-stats[5.5.0-76bd]:main():compute-cmvn-stats.cc:171) Done accumulating CMVN stats for 37416 utterances; 0 had errors.
+/data/work73/skarita/repos/espnet-asru2019/egs/wsj/asr1/../../../utils/dump.sh --cmd slurm.pl --nj 32 --do_delta false data/train_si284/feats.scp data/train_si284/cmvn.ark exp/dump_feats/train dump/train_si284/deltafalse
+/data/work73/skarita/repos/espnet-asru2019/egs/wsj/asr1/../../../utils/dump.sh --cmd slurm.pl --nj 4 --do_delta false data/test_dev93/feats.scp data/train_si284/cmvn.ark exp/dump_feats/dev dump/test_dev93/deltafalse
+/data/work73/skarita/repos/espnet-asru2019/egs/wsj/asr1/../../../utils/dump.sh --cmd slurm.pl --nj 4 --do_delta false data/test_dev93/feats.scp data/train_si284/cmvn.ark exp/dump_feats/recog/test_dev93 dump/test_dev93/deltafalse
+/data/work73/skarita/repos/espnet-asru2019/egs/wsj/asr1/../../../utils/dump.sh --cmd slurm.pl --nj 4 --do_delta false data/test_eval92/feats.scp data/train_si284/cmvn.ark exp/dump_feats/recog/test_eval92 dump/test_eval92/deltafalse
+dictionary: data/lang_1char/train_si284_units.txt
+stage 2: Dictionary and Json Data Preparation
+make a non-linguistic symbol list
+<*IN*>
+<*MR.*>
+<NOISE>
+make a dictionary
+50 data/lang_1char/train_si284_units.txt
+make json files
+/data/work73/skarita/repos/espnet-asru2019/egs/wsj/asr1/../../../utils/data2json.sh --feat dump/train_si284/deltafalse/feats.scp --nlsyms data/lang_1char/non_lang_syms.txt data/train_si284 data/lang_1char/train_si284_units.txt
+/data/work73/skarita/repos/espnet-asru2019/egs/wsj/asr1/../../../utils/feat_to_shape.sh --cmd run.pl --nj 1 --filetype  --preprocess-conf  --verbose 0 dump/train_si284/deltafalse/feats.scp data/train_si284/tmp-G0PJi/input/shape.scp
+/data/work73/skarita/repos/espnet-asru2019/egs/wsj/asr1/../../../utils/data2json.sh --feat dump/test_dev93/deltafalse/feats.scp --nlsyms data/lang_1char/non_lang_syms.txt data/test_dev93 data/lang_1char/train_si284_units.txt
+/data/work73/skarita/repos/espnet-asru2019/egs/wsj/asr1/../../../utils/feat_to_shape.sh --cmd run.pl --nj 1 --filetype  --preprocess-conf  --verbose 0 dump/test_dev93/deltafalse/feats.scp data/test_dev93/tmp-URr5I/input/shape.scp
+/data/work73/skarita/repos/espnet-asru2019/egs/wsj/asr1/../../../utils/data2json.sh --feat dump/test_dev93/deltafalse/feats.scp --nlsyms data/lang_1char/non_lang_syms.txt data/test_dev93 data/lang_1char/train_si284_units.txt
+/data/work73/skarita/repos/espnet-asru2019/egs/wsj/asr1/../../../utils/feat_to_shape.sh --cmd run.pl --nj 1 --filetype  --preprocess-conf  --verbose 0 dump/test_dev93/deltafalse/feats.scp data/test_dev93/tmp-VzNxr/input/shape.scp
+/data/work73/skarita/repos/espnet-asru2019/egs/wsj/asr1/../../../utils/data2json.sh --feat dump/test_eval92/deltafalse/feats.scp --nlsyms data/lang_1char/non_lang_syms.txt data/test_eval92 data/lang_1char/train_si284_units.txt
+/data/work73/skarita/repos/espnet-asru2019/egs/wsj/asr1/../../../utils/feat_to_shape.sh --cmd run.pl --nj 1 --filetype  --preprocess-conf  --verbose 0 dump/test_eval92/deltafalse/feats.scp data/test_eval92/tmp-jFYS2/input/shape.scp
+stage 3: LM Preparation
+WARNING:root:OOV rate = 0.47 %
+stage 4: Network Training
+stage 5: Decoding
+average over ['exp/train_si284_pytorch_train_no_preprocess/results/snapshot.ep.38', 'exp/train_si284_pytorch_train_no_preprocess/results/snapshot.ep.39', 'exp/train_si284_pytorch_train_no_preprocess/results/snapshot.ep.40', 'exp/train_si284_pytorch_train_no_preprocess/results/snapshot.ep.41', 'exp/train_si284_pytorch_train_no_preprocess/results/snapshot.ep.42', 'exp/train_si284_pytorch_train_no_preprocess/results/snapshot.ep.43', 'exp/train_si284_pytorch_train_no_preprocess/results/snapshot.ep.44', 'exp/train_si284_pytorch_train_no_preprocess/results/snapshot.ep.45', 'exp/train_si284_pytorch_train_no_preprocess/results/snapshot.ep.46', 'exp/train_si284_pytorch_train_no_preprocess/results/snapshot.ep.47']
+2019-06-29 04:38:52,723 (splitjson:35) INFO: /data/work73/skarita/repos/espnet-asru2019/tools/venv/bin/python /data/work73/skarita/repos/espnet-asru2019/egs/wsj/asr1/../../../utils/splitjson.py --parts 32 dump/test_dev93/deltafalse/data.json
+2019-06-29 04:38:52,764 (splitjson:35) INFO: /data/work73/skarita/repos/espnet-asru2019/tools/venv/bin/python /data/work73/skarita/repos/espnet-asru2019/egs/wsj/asr1/../../../utils/splitjson.py --parts 32 dump/test_eval92/deltafalse/data.json
+2019-06-29 04:38:52,773 (splitjson:47) INFO: number of utterances = 503
+2019-06-29 04:38:52,797 (splitjson:47) INFO: number of utterances = 333
+2019-06-29 05:08:07,318 (concatjson:31) INFO: /data/work73/skarita/repos/espnet-asru2019/tools/venv/bin/python /data/work73/skarita/repos/espnet-asru2019/egs/wsj/asr1/../../../utils/concatjson.py exp/train_si284_pytorch_train_no_preprocess/decode_test_eval92_decode_lm_word65000/data.1.json exp/train_si284_pytorch_train_no_preprocess/decode_test_eval92_decode_lm_word65000/data.10.json exp/train_si284_pytorch_train_no_preprocess/decode_test_eval92_decode_lm_word65000/data.11.json exp/train_si284_pytorch_train_no_preprocess/decode_test_eval92_decode_lm_word65000/data.12.json exp/train_si284_pytorch_train_no_preprocess/decode_test_eval92_decode_lm_word65000/data.13.json exp/train_si284_pytorch_train_no_preprocess/decode_test_eval92_decode_lm_word65000/data.14.json exp/train_si284_pytorch_train_no_preprocess/decode_test_eval92_decode_lm_word65000/data.15.json exp/train_si284_pytorch_train_no_preprocess/decode_test_eval92_decode_lm_word65000/data.16.json exp/train_si284_pytorch_train_no_preprocess/decode_test_eval92_decode_lm_word65000/data.17.json exp/train_si284_pytorch_train_no_preprocess/decode_test_eval92_decode_lm_word65000/data.18.json exp/train_si284_pytorch_train_no_preprocess/decode_test_eval92_decode_lm_word65000/data.19.json exp/train_si284_pytorch_train_no_preprocess/decode_test_eval92_decode_lm_word65000/data.2.json exp/train_si284_pytorch_train_no_preprocess/decode_test_eval92_decode_lm_word65000/data.20.json exp/train_si284_pytorch_train_no_preprocess/decode_test_eval92_decode_lm_word65000/data.21.json exp/train_si284_pytorch_train_no_preprocess/decode_test_eval92_decode_lm_word65000/data.22.json exp/train_si284_pytorch_train_no_preprocess/decode_test_eval92_decode_lm_word65000/data.23.json exp/train_si284_pytorch_train_no_preprocess/decode_test_eval92_decode_lm_word65000/data.24.json exp/train_si284_pytorch_train_no_preprocess/decode_test_eval92_decode_lm_word65000/data.25.json exp/train_si284_pytorch_train_no_preprocess/decode_test_eval92_decode_lm_word65000/data.26.json exp/train_si284_pytorch_train_no_preprocess/decode_test_eval92_decode_lm_word65000/data.27.json exp/train_si284_pytorch_train_no_preprocess/decode_test_eval92_decode_lm_word65000/data.28.json exp/train_si284_pytorch_train_no_preprocess/decode_test_eval92_decode_lm_word65000/data.29.json exp/train_si284_pytorch_train_no_preprocess/decode_test_eval92_decode_lm_word65000/data.3.json exp/train_si284_pytorch_train_no_preprocess/decode_test_eval92_decode_lm_word65000/data.30.json exp/train_si284_pytorch_train_no_preprocess/decode_test_eval92_decode_lm_word65000/data.31.json exp/train_si284_pytorch_train_no_preprocess/decode_test_eval92_decode_lm_word65000/data.32.json exp/train_si284_pytorch_train_no_preprocess/decode_test_eval92_decode_lm_word65000/data.4.json exp/train_si284_pytorch_train_no_preprocess/decode_test_eval92_decode_lm_word65000/data.5.json exp/train_si284_pytorch_train_no_preprocess/decode_test_eval92_decode_lm_word65000/data.6.json exp/train_si284_pytorch_train_no_preprocess/decode_test_eval92_decode_lm_word65000/data.7.json exp/train_si284_pytorch_train_no_preprocess/decode_test_eval92_decode_lm_word65000/data.8.json exp/train_si284_pytorch_train_no_preprocess/decode_test_eval92_decode_lm_word65000/data.9.json
+2019-06-29 05:08:07,700 (concatjson:41) INFO: new json has 333 utterances
+2019-06-29 05:08:08,220 (json2trn:38) INFO: /data/work73/skarita/repos/espnet-asru2019/tools/venv/bin/python /data/work73/skarita/repos/espnet-asru2019/egs/wsj/asr1/../../../utils/json2trn.py exp/train_si284_pytorch_train_no_preprocess/decode_test_eval92_decode_lm_word65000/data.json data/lang_1char/train_si284_units.txt --num-spkrs 1 --refs exp/train_si284_pytorch_train_no_preprocess/decode_test_eval92_decode_lm_word65000/ref.trn --hyps exp/train_si284_pytorch_train_no_preprocess/decode_test_eval92_decode_lm_word65000/hyp.trn
+2019-06-29 05:08:08,221 (json2trn:40) INFO: reading exp/train_si284_pytorch_train_no_preprocess/decode_test_eval92_decode_lm_word65000/data.json
+2019-06-29 05:08:08,225 (json2trn:44) INFO: reading data/lang_1char/train_si284_units.txt
+write a CER (or TER) result in exp/train_si284_pytorch_train_no_preprocess/decode_test_eval92_decode_lm_word65000/result.txt
+|  SPKR     |  # Snt     # Wrd  |  Corr       Sub       Del       Ins      Err     S.Err   |
+|  Sum/Avg  |   333      33341  |  98.2       0.9       1.0       0.5      2.3      52.0   |
+write a WER result in exp/train_si284_pytorch_train_no_preprocess/decode_test_eval92_decode_lm_word65000/result.wrd.txt
+|  SPKR     |   # Snt    # Wrd   |  Corr        Sub       Del       Ins        Err     S.Err   |
+|  Sum/Avg  |    333      5643   |  95.7        3.9       0.4       0.7        5.1      42.3   |
+2019-06-29 05:17:42,957 (concatjson:31) INFO: /data/work73/skarita/repos/espnet-asru2019/tools/venv/bin/python /data/work73/skarita/repos/espnet-asru2019/egs/wsj/asr1/../../../utils/concatjson.py exp/train_si284_pytorch_train_no_preprocess/decode_test_dev93_decode_lm_word65000/data.1.json exp/train_si284_pytorch_train_no_preprocess/decode_test_dev93_decode_lm_word65000/data.10.json exp/train_si284_pytorch_train_no_preprocess/decode_test_dev93_decode_lm_word65000/data.11.json exp/train_si284_pytorch_train_no_preprocess/decode_test_dev93_decode_lm_word65000/data.12.json exp/train_si284_pytorch_train_no_preprocess/decode_test_dev93_decode_lm_word65000/data.13.json exp/train_si284_pytorch_train_no_preprocess/decode_test_dev93_decode_lm_word65000/data.14.json exp/train_si284_pytorch_train_no_preprocess/decode_test_dev93_decode_lm_word65000/data.15.json exp/train_si284_pytorch_train_no_preprocess/decode_test_dev93_decode_lm_word65000/data.16.json exp/train_si284_pytorch_train_no_preprocess/decode_test_dev93_decode_lm_word65000/data.17.json exp/train_si284_pytorch_train_no_preprocess/decode_test_dev93_decode_lm_word65000/data.18.json exp/train_si284_pytorch_train_no_preprocess/decode_test_dev93_decode_lm_word65000/data.19.json exp/train_si284_pytorch_train_no_preprocess/decode_test_dev93_decode_lm_word65000/data.2.json exp/train_si284_pytorch_train_no_preprocess/decode_test_dev93_decode_lm_word65000/data.20.json exp/train_si284_pytorch_train_no_preprocess/decode_test_dev93_decode_lm_word65000/data.21.json exp/train_si284_pytorch_train_no_preprocess/decode_test_dev93_decode_lm_word65000/data.22.json exp/train_si284_pytorch_train_no_preprocess/decode_test_dev93_decode_lm_word65000/data.23.json exp/train_si284_pytorch_train_no_preprocess/decode_test_dev93_decode_lm_word65000/data.24.json exp/train_si284_pytorch_train_no_preprocess/decode_test_dev93_decode_lm_word65000/data.25.json exp/train_si284_pytorch_train_no_preprocess/decode_test_dev93_decode_lm_word65000/data.26.json exp/train_si284_pytorch_train_no_preprocess/decode_test_dev93_decode_lm_word65000/data.27.json exp/train_si284_pytorch_train_no_preprocess/decode_test_dev93_decode_lm_word65000/data.28.json exp/train_si284_pytorch_train_no_preprocess/decode_test_dev93_decode_lm_word65000/data.29.json exp/train_si284_pytorch_train_no_preprocess/decode_test_dev93_decode_lm_word65000/data.3.json exp/train_si284_pytorch_train_no_preprocess/decode_test_dev93_decode_lm_word65000/data.30.json exp/train_si284_pytorch_train_no_preprocess/decode_test_dev93_decode_lm_word65000/data.31.json exp/train_si284_pytorch_train_no_preprocess/decode_test_dev93_decode_lm_word65000/data.32.json exp/train_si284_pytorch_train_no_preprocess/decode_test_dev93_decode_lm_word65000/data.4.json exp/train_si284_pytorch_train_no_preprocess/decode_test_dev93_decode_lm_word65000/data.5.json exp/train_si284_pytorch_train_no_preprocess/decode_test_dev93_decode_lm_word65000/data.6.json exp/train_si284_pytorch_train_no_preprocess/decode_test_dev93_decode_lm_word65000/data.7.json exp/train_si284_pytorch_train_no_preprocess/decode_test_dev93_decode_lm_word65000/data.8.json exp/train_si284_pytorch_train_no_preprocess/decode_test_dev93_decode_lm_word65000/data.9.json
+2019-06-29 05:17:43,204 (concatjson:41) INFO: new json has 503 utterances
+2019-06-29 05:17:43,708 (json2trn:38) INFO: /data/work73/skarita/repos/espnet-asru2019/tools/venv/bin/python /data/work73/skarita/repos/espnet-asru2019/egs/wsj/asr1/../../../utils/json2trn.py exp/train_si284_pytorch_train_no_preprocess/decode_test_dev93_decode_lm_word65000/data.json data/lang_1char/train_si284_units.txt --num-spkrs 1 --refs exp/train_si284_pytorch_train_no_preprocess/decode_test_dev93_decode_lm_word65000/ref.trn --hyps exp/train_si284_pytorch_train_no_preprocess/decode_test_dev93_decode_lm_word65000/hyp.trn
+2019-06-29 05:17:43,708 (json2trn:40) INFO: reading exp/train_si284_pytorch_train_no_preprocess/decode_test_dev93_decode_lm_word65000/data.json
+2019-06-29 05:17:43,715 (json2trn:44) INFO: reading data/lang_1char/train_si284_units.txt
+write a CER (or TER) result in exp/train_si284_pytorch_train_no_preprocess/decode_test_dev93_decode_lm_word65000/result.txt
+|  SPKR     |  # Snt    # Wrd   |  Corr       Sub      Del       Ins       Err    S.Err   |
+|  Sum/Avg  |   503     48634   |  97.3       1.2      1.5       0.6       3.4     62.6   |
+write a WER result in exp/train_si284_pytorch_train_no_preprocess/decode_test_dev93_decode_lm_word65000/result.wrd.txt
+|  SPKR     |  # Snt     # Wrd   |  Corr       Sub       Del        Ins       Err     S.Err   |
+|  Sum/Avg  |   503       8234   |  93.5       5.5       0.9        1.1       7.5      55.5   |
+Finished

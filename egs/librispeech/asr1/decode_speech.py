@@ -1,0 +1,2 @@
+exp/train_960_pytorch_nbpe16000_ngpu8_train_pytorch_transformer.v2.seqs_specaug/decode_test_clean_decode_pytorch_transformer_lm/result.wrd.txt
+./exp/train_960_pytorch_nbpe5000_ngpu1_train/decode_tmp_dev_clean_decode_beam-size40_/log/decode.1.log
