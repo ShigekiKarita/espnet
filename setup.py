@@ -44,6 +44,7 @@ requirements = {
         'nltk>=3.4.5',
         'torch_complex@git+https://github.com/kamo-naoyuki/pytorch_complex.git',
         'pytorch_wpe@git+https://github.com/nttcslab-sp/dnn_wpe.git',
+        'kaldi-edit-distance@git+https://github.com/ShigekiKarita/kaldi-edit-distance.git'
     ],
     'setup': [
         'numpy',
@@ -77,7 +78,7 @@ extras_require = {k: v for k, v in requirements.items()
 
 dirname = os.path.dirname(__file__)
 setup(name='espnet',
-      version='0.5.2',
+      version='0.6.0',
       url='http://github.com/espnet/espnet',
       author='Shinji Watanabe',
       author_email='shinjiw@ieee.org',

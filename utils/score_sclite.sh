@@ -13,6 +13,7 @@ remove_blank=true
 filter=""
 num_spkrs=1
 help_message="Usage: $0 <data-dir> <dict>"
+sclite=sclite.py
 
 . utils/parse_options.sh
 
@@ -43,7 +44,7 @@ if [ $num_spkrs -eq 1 ]; then
       sed -i.bak3 -f ${filter} ${dir}/ref.trn
   fi
 
-  sclite -r ${dir}/ref.trn trn -h ${dir}/hyp.trn trn -i rm -o all stdout > ${dir}/result.txt
+  ${sclite} -r ${dir}/ref.trn trn -h ${dir}/hyp.trn trn -i rm -o all stdout > ${dir}/result.txt
 
   echo "write a CER (or TER) result in ${dir}/result.txt"
   grep -e Avg -e SPKR -m 2 ${dir}/result.txt
@@ -56,7 +57,7 @@ if [ $num_spkrs -eq 1 ]; then
   	    sed -e "s/ //g" -e "s/(/ (/" -e "s/<space>/ /g" ${dir}/ref.trn > ${dir}/ref.wrd.trn
   	    sed -e "s/ //g" -e "s/(/ (/" -e "s/<space>/ /g" ${dir}/hyp.trn > ${dir}/hyp.wrd.trn
       fi
-      sclite -r ${dir}/ref.wrd.trn trn -h ${dir}/hyp.wrd.trn trn -i rm -o all stdout > ${dir}/result.wrd.txt
+      ${sclite} -r ${dir}/ref.wrd.trn trn -h ${dir}/hyp.wrd.trn trn -i rm -o all stdout > ${dir}/result.wrd.txt
 
       echo "write a WER result in ${dir}/result.wrd.txt"
       grep -e Avg -e SPKR -m 2 ${dir}/result.wrd.txt
@@ -89,7 +90,7 @@ elif [ ${num_spkrs} -eq 2 ]; then
   for (( i=0; i<$((num_spkrs * num_spkrs)); i++ )); do
       ind_r=$((i / num_spkrs + 1))
       ind_h=$((i % num_spkrs + 1))
-      sclite -r ${dir}/ref${ind_r}.trn trn -h ${dir}/hyp${ind_h}.trn trn -i rm -o all stdout > ${dir}/result_r${ind_r}h${ind_h}.txt
+      ${sclite} -r ${dir}/ref${ind_r}.trn trn -h ${dir}/hyp${ind_h}.trn trn -i rm -o all stdout > ${dir}/result_r${ind_r}h${ind_h}.txt
   done
 
   echo "write CER (or TER) results in ${dir}/result_r*h*.txt"
@@ -110,7 +111,7 @@ elif [ ${num_spkrs} -eq 2 ]; then
       for (( i=0; i<$((num_spkrs * num_spkrs)); i++ )); do
           ind_r=$((i / num_spkrs + 1))
           ind_h=$((i % num_spkrs + 1))
-          sclite -r ${dir}/ref${ind_r}.wrd.trn trn -h ${dir}/hyp${ind_h}.wrd.trn trn -i rm -o all stdout > ${dir}/result_r${ind_r}h${ind_h}.wrd.txt
+          ${sclite} -r ${dir}/ref${ind_r}.wrd.trn trn -h ${dir}/hyp${ind_h}.wrd.trn trn -i rm -o all stdout > ${dir}/result_r${ind_r}h${ind_h}.wrd.txt
       done
 
       echo "write WER results in ${dir}/result_r*h*.wrd.txt"
