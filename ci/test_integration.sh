@@ -81,5 +81,4 @@ fi
 
 echo "=== test_utils: integration test ==="
 
-cd "${cwd}"
 bats-core/bin/bats test_utils/integration_test_*.bats
