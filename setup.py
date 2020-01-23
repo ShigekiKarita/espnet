@@ -7,10 +7,10 @@ from setuptools import setup
 import sys
 
 
-if LooseVersion(sys.version) < LooseVersion("3.7"):
-    raise RuntimeError(
-        "ESPnet requires Python>=3.7, but your Python is {}".format(sys.version)
-    )
+# if LooseVersion(sys.version) < LooseVersion("3.7"):
+#     raise RuntimeError(
+#         "ESPnet requires Python>=3.7, but your Python is {}".format(sys.version)
+#     )
 if LooseVersion(pip.__version__) < LooseVersion("19"):
     raise RuntimeError(
         "pip>=19.0.0 is required, but your pip is {}. "
