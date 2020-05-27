@@ -1,0 +1,799 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>espnet2.utils package &mdash; ESPnet 0.7.0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../_static/jquery.js"></script>
+        <script type="text/javascript" src="../_static/underscore.js"></script>
+        <script type="text/javascript" src="../_static/doctools.js"></script>
+        <script type="text/javascript" src="../_static/language_data.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+        <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true, "ignoreClass": "document", "processClass": "math|output_area"}})</script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="espnet2.bin package" href="espnet2.bin.html" />
+    <link rel="prev" title="espnet2.train package" href="espnet2.train.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> ESPnet
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.7.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Tutorial:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorial.html">Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../parallelization.html">Using Job scheduling system</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq.html">FAQ</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../docker.html">Docker</a></li>
+</ul>
+<p class="caption"><span class="caption-text">ESPnet2:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../espnet2_tutorial.html">ESPnet2</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../espnet2_tutorial.html#instruction-for-run-sh">Instruction for run.sh</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../espnet2_training_option.html">Change the configuration for training</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../espnet2_task.html">Task class and data input system for training</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../espnet2_distributed.html">Distributed training</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Package Reference:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="espnet.scheduler.html">espnet.scheduler package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="espnet.lm.html">espnet.lm package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="espnet.asr.html">espnet.asr package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="espnet.optimizer.html">espnet.optimizer package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="espnet.tts.html">espnet.tts package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="espnet.st.html">espnet.st package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="espnet.nets.html">espnet.nets package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="espnet.mt.html">espnet.mt package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="espnet.utils.html">espnet.utils package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="espnet.bin.html">espnet.bin package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="espnet.transform.html">espnet.transform package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="espnet2.optimizers.html">espnet2.optimizers package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="espnet2.schedulers.html">espnet2.schedulers package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="espnet2.lm.html">espnet2.lm package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="espnet2.asr.html">espnet2.asr package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="espnet2.main_funcs.html">espnet2.main_funcs package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="espnet2.tts.html">espnet2.tts package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="espnet2.samplers.html">espnet2.samplers package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="espnet2.torch_utils.html">espnet2.torch_utils package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="espnet2.train.html">espnet2.train package</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">espnet2.utils package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#espnet2-utils-fileio">espnet2.utils.fileio</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#espnet2-utils-yaml-no-alias-safe-dump">espnet2.utils.yaml_no_alias_safe_dump</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#espnet2-utils-build-dataclass">espnet2.utils.build_dataclass</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#espnet2-utils-types">espnet2.utils.types</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#espnet2-utils-sized-dict">espnet2.utils.sized_dict</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#espnet2-utils-get-default-kwargs">espnet2.utils.get_default_kwargs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#espnet2-utils-pack-funcs">espnet2.utils.pack_funcs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#espnet2-utils-init">espnet2.utils.__init__</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#espnet2-utils-griffin-lim">espnet2.utils.griffin_lim</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#espnet2-utils-rand-gen-dataset">espnet2.utils.rand_gen_dataset</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#espnet2-utils-nested-dict-action">espnet2.utils.nested_dict_action</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="espnet2.bin.html">espnet2.bin package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="espnet2.iterators.html">espnet2.iterators package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="espnet2.layers.html">espnet2.layers package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="espnet2.tasks.html">espnet2.tasks package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="espnet2.text.html">espnet2.text package</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Tool Reference:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../apis/espnet_bin.html">core tools</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../apis/utils_py.html">python utility tools</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../apis/utils_sh.html">bash utility tools</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">ESPnet</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+      <li>espnet2.utils package</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/_gen/espnet2.utils.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  
+<style>
+/* CSS overrides for sphinx_rtd_theme */
+
+/* 24px margin */
+.nbinput.nblast.container,
+.nboutput.nblast.container {
+    margin-bottom: 19px;  /* padding has already 5px */
+}
+
+/* ... except between code cells! */
+.nblast.container + .nbinput.container {
+    margin-top: -19px;
+}
+
+.admonition > p:before {
+    margin-right: 4px;  /* make room for the exclamation icon */
+}
+
+/* Fix math alignment, see https://github.com/rtfd/sphinx_rtd_theme/pull/686 */
+.math {
+    text-align: unset;
+}
+</style>
+<div class="section" id="espnet2-utils-package">
+<h1>espnet2.utils package<a class="headerlink" href="#espnet2-utils-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="espnet2-utils-fileio">
+<span id="id1"></span><h2>espnet2.utils.fileio<a class="headerlink" href="#espnet2-utils-fileio" title="Permalink to this headline">¶</a></h2>
+<span class="target" id="module-espnet2.utils.fileio"></span><dl class="class">
+<dt id="espnet2.utils.fileio.DatadirWriter">
+<em class="property">class </em><code class="sig-prename descclassname">espnet2.utils.fileio.</code><code class="sig-name descname">DatadirWriter</code><span class="sig-paren">(</span><em class="sig-param">p: Union[pathlib.Path, str]</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/espnet2/utils/fileio.html#DatadirWriter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#espnet2.utils.fileio.DatadirWriter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Writer class to create kaldi like data directory.</p>
+<p class="rubric">Examples</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">with</span> <span class="n">DatadirWriter</span><span class="p">(</span><span class="s2">&quot;output&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">writer</span><span class="p">:</span>
+<span class="gp">... </span>    <span class="c1"># output/sub.txt is created here</span>
+<span class="gp">... </span>    <span class="n">subwriter</span> <span class="o">=</span> <span class="n">writer</span><span class="p">[</span><span class="s2">&quot;sub.txt&quot;</span><span class="p">]</span>
+<span class="gp">... </span>    <span class="c1"># Write &quot;uttidA some/where/a.wav&quot;</span>
+<span class="gp">... </span>    <span class="n">subwriter</span><span class="p">[</span><span class="s2">&quot;uttidA&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;some/where/a.wav&quot;</span>
+<span class="gp">... </span>    <span class="n">subwriter</span><span class="p">[</span><span class="s2">&quot;uttidB&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;some/where/b.wav&quot;</span>
+</pre></div>
+</div>
+<dl class="method">
+<dt id="espnet2.utils.fileio.DatadirWriter.close">
+<code class="sig-name descname">close</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/espnet2/utils/fileio.html#DatadirWriter.close"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#espnet2.utils.fileio.DatadirWriter.close" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="espnet2.utils.fileio.NpyScpReader">
+<em class="property">class </em><code class="sig-prename descclassname">espnet2.utils.fileio.</code><code class="sig-name descname">NpyScpReader</code><span class="sig-paren">(</span><em class="sig-param">fname: Union[pathlib.Path, str]</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/espnet2/utils/fileio.html#NpyScpReader"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#espnet2.utils.fileio.NpyScpReader" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">collections.abc.Mapping</span></code></p>
+<p>Reader class for a scp file of numpy file.</p>
+<p class="rubric">Examples</p>
+<p>key1 /some/path/a.npy
+key2 /some/path/b.npy
+key3 /some/path/c.npy
+key4 /some/path/d.npy
+…</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">reader</span> <span class="o">=</span> <span class="n">NpyScpReader</span><span class="p">(</span><span class="s1">&#39;npy.scp&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">array</span> <span class="o">=</span> <span class="n">reader</span><span class="p">[</span><span class="s1">&#39;key1&#39;</span><span class="p">]</span>
+</pre></div>
+</div>
+<dl class="method">
+<dt id="espnet2.utils.fileio.NpyScpReader.get_path">
+<code class="sig-name descname">get_path</code><span class="sig-paren">(</span><em class="sig-param">key</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/espnet2/utils/fileio.html#NpyScpReader.get_path"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#espnet2.utils.fileio.NpyScpReader.get_path" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="espnet2.utils.fileio.NpyScpReader.keys">
+<code class="sig-name descname">keys</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; a set-like object providing a view on D's keys<a class="reference internal" href="../_modules/espnet2/utils/fileio.html#NpyScpReader.keys"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#espnet2.utils.fileio.NpyScpReader.keys" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="espnet2.utils.fileio.NpyScpWriter">
+<em class="property">class </em><code class="sig-prename descclassname">espnet2.utils.fileio.</code><code class="sig-name descname">NpyScpWriter</code><span class="sig-paren">(</span><em class="sig-param">outdir: Union[pathlib.Path, str], scpfile: Union[pathlib.Path, str]</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/espnet2/utils/fileio.html#NpyScpWriter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#espnet2.utils.fileio.NpyScpWriter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Writer class for a scp file of numpy file.</p>
+<p class="rubric">Examples</p>
+<p>key1 /some/path/a.npy
+key2 /some/path/b.npy
+key3 /some/path/c.npy
+key4 /some/path/d.npy
+…</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">writer</span> <span class="o">=</span> <span class="n">NpyScpWriter</span><span class="p">(</span><span class="s1">&#39;./data/&#39;</span><span class="p">,</span> <span class="s1">&#39;./data/feat.scp&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">writer</span><span class="p">[</span><span class="s1">&#39;aa&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">numpy_array</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">writer</span><span class="p">[</span><span class="s1">&#39;bb&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">numpy_array</span>
+</pre></div>
+</div>
+<dl class="method">
+<dt id="espnet2.utils.fileio.NpyScpWriter.close">
+<code class="sig-name descname">close</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/espnet2/utils/fileio.html#NpyScpWriter.close"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#espnet2.utils.fileio.NpyScpWriter.close" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="espnet2.utils.fileio.NpyScpWriter.get_path">
+<code class="sig-name descname">get_path</code><span class="sig-paren">(</span><em class="sig-param">key</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/espnet2/utils/fileio.html#NpyScpWriter.get_path"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#espnet2.utils.fileio.NpyScpWriter.get_path" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="espnet2.utils.fileio.SoundScpReader">
+<em class="property">class </em><code class="sig-prename descclassname">espnet2.utils.fileio.</code><code class="sig-name descname">SoundScpReader</code><span class="sig-paren">(</span><em class="sig-param">fname</em>, <em class="sig-param">dtype=&lt;class 'numpy.int16'&gt;</em>, <em class="sig-param">always_2d: bool = False</em>, <em class="sig-param">normalize: bool = False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/espnet2/utils/fileio.html#SoundScpReader"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#espnet2.utils.fileio.SoundScpReader" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">collections.abc.Mapping</span></code></p>
+<p>Reader class for ‘wav.scp’.</p>
+<p class="rubric">Examples</p>
+<p>key1 /some/path/a.wav
+key2 /some/path/b.wav
+key3 /some/path/c.wav
+key4 /some/path/d.wav
+…</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">reader</span> <span class="o">=</span> <span class="n">SoundScpReader</span><span class="p">(</span><span class="s1">&#39;wav.scp&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">rate</span><span class="p">,</span> <span class="n">array</span> <span class="o">=</span> <span class="n">reader</span><span class="p">[</span><span class="s1">&#39;key1&#39;</span><span class="p">]</span>
+</pre></div>
+</div>
+<dl class="method">
+<dt id="espnet2.utils.fileio.SoundScpReader.get_path">
+<code class="sig-name descname">get_path</code><span class="sig-paren">(</span><em class="sig-param">key</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/espnet2/utils/fileio.html#SoundScpReader.get_path"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#espnet2.utils.fileio.SoundScpReader.get_path" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="espnet2.utils.fileio.SoundScpReader.keys">
+<code class="sig-name descname">keys</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; a set-like object providing a view on D's keys<a class="reference internal" href="../_modules/espnet2/utils/fileio.html#SoundScpReader.keys"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#espnet2.utils.fileio.SoundScpReader.keys" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="espnet2.utils.fileio.SoundScpWriter">
+<em class="property">class </em><code class="sig-prename descclassname">espnet2.utils.fileio.</code><code class="sig-name descname">SoundScpWriter</code><span class="sig-paren">(</span><em class="sig-param">outdir: Union[pathlib.Path, str], scpfile: Union[pathlib.Path, str], format='wav', dtype=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/espnet2/utils/fileio.html#SoundScpWriter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#espnet2.utils.fileio.SoundScpWriter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Writer class for ‘wav.scp’</p>
+<p class="rubric">Examples</p>
+<p>key1 /some/path/a.wav
+key2 /some/path/b.wav
+key3 /some/path/c.wav
+key4 /some/path/d.wav
+…</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">writer</span> <span class="o">=</span> <span class="n">SoundScpWriter</span><span class="p">(</span><span class="s1">&#39;./data/&#39;</span><span class="p">,</span> <span class="s1">&#39;./data/feat.scp&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">writer</span><span class="p">[</span><span class="s1">&#39;aa&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">16000</span><span class="p">,</span> <span class="n">numpy_array</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">writer</span><span class="p">[</span><span class="s1">&#39;bb&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">16000</span><span class="p">,</span> <span class="n">numpy_array</span>
+</pre></div>
+</div>
+<dl class="method">
+<dt id="espnet2.utils.fileio.SoundScpWriter.close">
+<code class="sig-name descname">close</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/espnet2/utils/fileio.html#SoundScpWriter.close"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#espnet2.utils.fileio.SoundScpWriter.close" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="espnet2.utils.fileio.SoundScpWriter.get_path">
+<code class="sig-name descname">get_path</code><span class="sig-paren">(</span><em class="sig-param">key</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/espnet2/utils/fileio.html#SoundScpWriter.get_path"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#espnet2.utils.fileio.SoundScpWriter.get_path" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="espnet2.utils.fileio.load_num_sequence_text">
+<code class="sig-prename descclassname">espnet2.utils.fileio.</code><code class="sig-name descname">load_num_sequence_text</code><span class="sig-paren">(</span><em class="sig-param">path: Union[pathlib.Path, str], loader_type: str = 'csv_int'</em><span class="sig-paren">)</span> &#x2192; Dict[str, numpy.ndarray]<a class="reference internal" href="../_modules/espnet2/utils/fileio.html#load_num_sequence_text"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#espnet2.utils.fileio.load_num_sequence_text" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="espnet2.utils.fileio.read_2column_text">
+<code class="sig-prename descclassname">espnet2.utils.fileio.</code><code class="sig-name descname">read_2column_text</code><span class="sig-paren">(</span><em class="sig-param">path: Union[pathlib.Path, str]</em><span class="sig-paren">)</span> &#x2192; Dict[str, str]<a class="reference internal" href="../_modules/espnet2/utils/fileio.html#read_2column_text"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#espnet2.utils.fileio.read_2column_text" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read a text file having 2 column as dict object.</p>
+<p class="rubric">Examples</p>
+<dl class="simple">
+<dt>wav.scp:</dt><dd><p>key1 /some/path/a.wav
+key2 /some/path/b.wav</p>
+</dd>
+</dl>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">read_2column_text</span><span class="p">(</span><span class="s1">&#39;wav.scp&#39;</span><span class="p">)</span>
+<span class="go">{&#39;key1&#39;: &#39;/some/path/a.wav&#39;, &#39;key2&#39;: &#39;/some/path/b.wav&#39;}</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</div>
+<div class="section" id="espnet2-utils-yaml-no-alias-safe-dump">
+<span id="id2"></span><h2>espnet2.utils.yaml_no_alias_safe_dump<a class="headerlink" href="#espnet2-utils-yaml-no-alias-safe-dump" title="Permalink to this headline">¶</a></h2>
+<span class="target" id="module-espnet2.utils.yaml_no_alias_safe_dump"></span><dl class="class">
+<dt id="espnet2.utils.yaml_no_alias_safe_dump.NoAliasSafeDumper">
+<em class="property">class </em><code class="sig-prename descclassname">espnet2.utils.yaml_no_alias_safe_dump.</code><code class="sig-name descname">NoAliasSafeDumper</code><span class="sig-paren">(</span><em class="sig-param">stream</em>, <em class="sig-param">default_style=None</em>, <em class="sig-param">default_flow_style=False</em>, <em class="sig-param">canonical=None</em>, <em class="sig-param">indent=None</em>, <em class="sig-param">width=None</em>, <em class="sig-param">allow_unicode=None</em>, <em class="sig-param">line_break=None</em>, <em class="sig-param">encoding=None</em>, <em class="sig-param">explicit_start=None</em>, <em class="sig-param">explicit_end=None</em>, <em class="sig-param">version=None</em>, <em class="sig-param">tags=None</em>, <em class="sig-param">sort_keys=True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/espnet2/utils/yaml_no_alias_safe_dump.html#NoAliasSafeDumper"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#espnet2.utils.yaml_no_alias_safe_dump.NoAliasSafeDumper" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">yaml.dumper.SafeDumper</span></code></p>
+<dl class="method">
+<dt id="espnet2.utils.yaml_no_alias_safe_dump.NoAliasSafeDumper.ignore_aliases">
+<code class="sig-name descname">ignore_aliases</code><span class="sig-paren">(</span><em class="sig-param">data</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/espnet2/utils/yaml_no_alias_safe_dump.html#NoAliasSafeDumper.ignore_aliases"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#espnet2.utils.yaml_no_alias_safe_dump.NoAliasSafeDumper.ignore_aliases" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="espnet2.utils.yaml_no_alias_safe_dump.yaml_no_alias_safe_dump">
+<code class="sig-prename descclassname">espnet2.utils.yaml_no_alias_safe_dump.</code><code class="sig-name descname">yaml_no_alias_safe_dump</code><span class="sig-paren">(</span><em class="sig-param">data</em>, <em class="sig-param">stream=None</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/espnet2/utils/yaml_no_alias_safe_dump.html#yaml_no_alias_safe_dump"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#espnet2.utils.yaml_no_alias_safe_dump.yaml_no_alias_safe_dump" title="Permalink to this definition">¶</a></dt>
+<dd><p>Safe-dump in yaml with no anchor/alias</p>
+</dd></dl>
+
+</div>
+<div class="section" id="espnet2-utils-build-dataclass">
+<span id="id3"></span><h2>espnet2.utils.build_dataclass<a class="headerlink" href="#espnet2-utils-build-dataclass" title="Permalink to this headline">¶</a></h2>
+<span class="target" id="module-espnet2.utils.build_dataclass"></span><dl class="function">
+<dt id="espnet2.utils.build_dataclass.build_dataclass">
+<code class="sig-prename descclassname">espnet2.utils.build_dataclass.</code><code class="sig-name descname">build_dataclass</code><span class="sig-paren">(</span><em class="sig-param">dataclass</em>, <em class="sig-param">args: argparse.Namespace</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/espnet2/utils/build_dataclass.html#build_dataclass"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#espnet2.utils.build_dataclass.build_dataclass" title="Permalink to this definition">¶</a></dt>
+<dd><p>Helper function to build dataclass from ‘args’.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="espnet2-utils-types">
+<span id="id4"></span><h2>espnet2.utils.types<a class="headerlink" href="#espnet2-utils-types" title="Permalink to this headline">¶</a></h2>
+<span class="target" id="module-espnet2.utils.types"></span><dl class="function">
+<dt id="espnet2.utils.types.float_or_none">
+<code class="sig-prename descclassname">espnet2.utils.types.</code><code class="sig-name descname">float_or_none</code><span class="sig-paren">(</span><em class="sig-param">value: str</em><span class="sig-paren">)</span> &#x2192; Optional[float]<a class="reference internal" href="../_modules/espnet2/utils/types.html#float_or_none"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#espnet2.utils.types.float_or_none" title="Permalink to this definition">¶</a></dt>
+<dd><p>float_or_none.</p>
+<p class="rubric">Examples</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">argparse</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">parser</span> <span class="o">=</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">_</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;--foo&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="n">float_or_none</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">parser</span><span class="o">.</span><span class="n">parse_args</span><span class="p">([</span><span class="s1">&#39;--foo&#39;</span><span class="p">,</span> <span class="s1">&#39;4.5&#39;</span><span class="p">])</span>
+<span class="go">Namespace(foo=4.5)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">parser</span><span class="o">.</span><span class="n">parse_args</span><span class="p">([</span><span class="s1">&#39;--foo&#39;</span><span class="p">,</span> <span class="s1">&#39;none&#39;</span><span class="p">])</span>
+<span class="go">Namespace(foo=None)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">parser</span><span class="o">.</span><span class="n">parse_args</span><span class="p">([</span><span class="s1">&#39;--foo&#39;</span><span class="p">,</span> <span class="s1">&#39;null&#39;</span><span class="p">])</span>
+<span class="go">Namespace(foo=None)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">parser</span><span class="o">.</span><span class="n">parse_args</span><span class="p">([</span><span class="s1">&#39;--foo&#39;</span><span class="p">,</span> <span class="s1">&#39;nil&#39;</span><span class="p">])</span>
+<span class="go">Namespace(foo=None)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="espnet2.utils.types.humanfriendly_parse_size_or_none">
+<code class="sig-prename descclassname">espnet2.utils.types.</code><code class="sig-name descname">humanfriendly_parse_size_or_none</code><span class="sig-paren">(</span><em class="sig-param">value</em><span class="sig-paren">)</span> &#x2192; Optional[float]<a class="reference internal" href="../_modules/espnet2/utils/types.html#humanfriendly_parse_size_or_none"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#espnet2.utils.types.humanfriendly_parse_size_or_none" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="espnet2.utils.types.int_or_none">
+<code class="sig-prename descclassname">espnet2.utils.types.</code><code class="sig-name descname">int_or_none</code><span class="sig-paren">(</span><em class="sig-param">value: str</em><span class="sig-paren">)</span> &#x2192; Optional[int]<a class="reference internal" href="../_modules/espnet2/utils/types.html#int_or_none"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#espnet2.utils.types.int_or_none" title="Permalink to this definition">¶</a></dt>
+<dd><p>int_or_none.</p>
+<p class="rubric">Examples</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">argparse</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">parser</span> <span class="o">=</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">_</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;--foo&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="n">int_or_none</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">parser</span><span class="o">.</span><span class="n">parse_args</span><span class="p">([</span><span class="s1">&#39;--foo&#39;</span><span class="p">,</span> <span class="s1">&#39;456&#39;</span><span class="p">])</span>
+<span class="go">Namespace(foo=456)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">parser</span><span class="o">.</span><span class="n">parse_args</span><span class="p">([</span><span class="s1">&#39;--foo&#39;</span><span class="p">,</span> <span class="s1">&#39;none&#39;</span><span class="p">])</span>
+<span class="go">Namespace(foo=None)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">parser</span><span class="o">.</span><span class="n">parse_args</span><span class="p">([</span><span class="s1">&#39;--foo&#39;</span><span class="p">,</span> <span class="s1">&#39;null&#39;</span><span class="p">])</span>
+<span class="go">Namespace(foo=None)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">parser</span><span class="o">.</span><span class="n">parse_args</span><span class="p">([</span><span class="s1">&#39;--foo&#39;</span><span class="p">,</span> <span class="s1">&#39;nil&#39;</span><span class="p">])</span>
+<span class="go">Namespace(foo=None)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="espnet2.utils.types.remove_parenthesis">
+<code class="sig-prename descclassname">espnet2.utils.types.</code><code class="sig-name descname">remove_parenthesis</code><span class="sig-paren">(</span><em class="sig-param">value: str</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/espnet2/utils/types.html#remove_parenthesis"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#espnet2.utils.types.remove_parenthesis" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="espnet2.utils.types.remove_quotes">
+<code class="sig-prename descclassname">espnet2.utils.types.</code><code class="sig-name descname">remove_quotes</code><span class="sig-paren">(</span><em class="sig-param">value: str</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/espnet2/utils/types.html#remove_quotes"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#espnet2.utils.types.remove_quotes" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="espnet2.utils.types.str2bool">
+<code class="sig-prename descclassname">espnet2.utils.types.</code><code class="sig-name descname">str2bool</code><span class="sig-paren">(</span><em class="sig-param">value: str</em><span class="sig-paren">)</span> &#x2192; bool<a class="reference internal" href="../_modules/espnet2/utils/types.html#str2bool"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#espnet2.utils.types.str2bool" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="espnet2.utils.types.str2pair_str">
+<code class="sig-prename descclassname">espnet2.utils.types.</code><code class="sig-name descname">str2pair_str</code><span class="sig-paren">(</span><em class="sig-param">value: str</em><span class="sig-paren">)</span> &#x2192; Tuple[str, str]<a class="reference internal" href="../_modules/espnet2/utils/types.html#str2pair_str"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#espnet2.utils.types.str2pair_str" title="Permalink to this definition">¶</a></dt>
+<dd><p>str2pair_str.</p>
+<p class="rubric">Examples</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">argparse</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">str2pair_str</span><span class="p">(</span><span class="s1">&#39;abc,def &#39;</span><span class="p">)</span>
+<span class="go">(&#39;abc&#39;, &#39;def&#39;)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">parser</span> <span class="o">=</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">_</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;--foo&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="n">str2pair_str</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">parser</span><span class="o">.</span><span class="n">parse_args</span><span class="p">([</span><span class="s1">&#39;--foo&#39;</span><span class="p">,</span> <span class="s1">&#39;abc,def&#39;</span><span class="p">])</span>
+<span class="go">Namespace(foo=(&#39;abc&#39;, &#39;def&#39;))</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="espnet2.utils.types.str2triple_str">
+<code class="sig-prename descclassname">espnet2.utils.types.</code><code class="sig-name descname">str2triple_str</code><span class="sig-paren">(</span><em class="sig-param">value: str</em><span class="sig-paren">)</span> &#x2192; Tuple[str, str, str]<a class="reference internal" href="../_modules/espnet2/utils/types.html#str2triple_str"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#espnet2.utils.types.str2triple_str" title="Permalink to this definition">¶</a></dt>
+<dd><p>str2triple_str.</p>
+<p class="rubric">Examples</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">str2triple_str</span><span class="p">(</span><span class="s1">&#39;abc,def ,ghi&#39;</span><span class="p">)</span>
+<span class="go">(&#39;abc&#39;, &#39;def&#39;, &#39;ghi&#39;)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="espnet2.utils.types.str_or_int">
+<code class="sig-prename descclassname">espnet2.utils.types.</code><code class="sig-name descname">str_or_int</code><span class="sig-paren">(</span><em class="sig-param">value: str</em><span class="sig-paren">)</span> &#x2192; Union[str, int]<a class="reference internal" href="../_modules/espnet2/utils/types.html#str_or_int"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#espnet2.utils.types.str_or_int" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="espnet2.utils.types.str_or_none">
+<code class="sig-prename descclassname">espnet2.utils.types.</code><code class="sig-name descname">str_or_none</code><span class="sig-paren">(</span><em class="sig-param">value: str</em><span class="sig-paren">)</span> &#x2192; Optional[str]<a class="reference internal" href="../_modules/espnet2/utils/types.html#str_or_none"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#espnet2.utils.types.str_or_none" title="Permalink to this definition">¶</a></dt>
+<dd><p>str_or_none.</p>
+<p class="rubric">Examples</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">argparse</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">parser</span> <span class="o">=</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">_</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;--foo&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="n">str_or_none</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">parser</span><span class="o">.</span><span class="n">parse_args</span><span class="p">([</span><span class="s1">&#39;--foo&#39;</span><span class="p">,</span> <span class="s1">&#39;aaa&#39;</span><span class="p">])</span>
+<span class="go">Namespace(foo=&#39;aaa&#39;)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">parser</span><span class="o">.</span><span class="n">parse_args</span><span class="p">([</span><span class="s1">&#39;--foo&#39;</span><span class="p">,</span> <span class="s1">&#39;none&#39;</span><span class="p">])</span>
+<span class="go">Namespace(foo=None)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">parser</span><span class="o">.</span><span class="n">parse_args</span><span class="p">([</span><span class="s1">&#39;--foo&#39;</span><span class="p">,</span> <span class="s1">&#39;null&#39;</span><span class="p">])</span>
+<span class="go">Namespace(foo=None)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">parser</span><span class="o">.</span><span class="n">parse_args</span><span class="p">([</span><span class="s1">&#39;--foo&#39;</span><span class="p">,</span> <span class="s1">&#39;nil&#39;</span><span class="p">])</span>
+<span class="go">Namespace(foo=None)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</div>
+<div class="section" id="espnet2-utils-sized-dict">
+<span id="id5"></span><h2>espnet2.utils.sized_dict<a class="headerlink" href="#espnet2-utils-sized-dict" title="Permalink to this headline">¶</a></h2>
+<span class="target" id="module-espnet2.utils.sized_dict"></span><dl class="class">
+<dt id="espnet2.utils.sized_dict.SizedDict">
+<em class="property">class </em><code class="sig-prename descclassname">espnet2.utils.sized_dict.</code><code class="sig-name descname">SizedDict</code><span class="sig-paren">(</span><em class="sig-param">shared: bool = False</em>, <em class="sig-param">data: dict = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/espnet2/utils/sized_dict.html#SizedDict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#espnet2.utils.sized_dict.SizedDict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">collections.abc.MutableMapping</span></code></p>
+</dd></dl>
+
+<dl class="function">
+<dt id="espnet2.utils.sized_dict.get_size">
+<code class="sig-prename descclassname">espnet2.utils.sized_dict.</code><code class="sig-name descname">get_size</code><span class="sig-paren">(</span><em class="sig-param">obj</em>, <em class="sig-param">seen=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/espnet2/utils/sized_dict.html#get_size"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#espnet2.utils.sized_dict.get_size" title="Permalink to this definition">¶</a></dt>
+<dd><p>Recursively finds size of objects</p>
+<p>Taken from <a class="reference external" href="https://github.com/bosswissam/pysize">https://github.com/bosswissam/pysize</a></p>
+</dd></dl>
+
+</div>
+<div class="section" id="espnet2-utils-get-default-kwargs">
+<span id="id6"></span><h2>espnet2.utils.get_default_kwargs<a class="headerlink" href="#espnet2-utils-get-default-kwargs" title="Permalink to this headline">¶</a></h2>
+<span class="target" id="module-espnet2.utils.get_default_kwargs"></span><dl class="class">
+<dt id="espnet2.utils.get_default_kwargs.Invalid">
+<em class="property">class </em><code class="sig-prename descclassname">espnet2.utils.get_default_kwargs.</code><code class="sig-name descname">Invalid</code><a class="reference internal" href="../_modules/espnet2/utils/get_default_kwargs.html#Invalid"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#espnet2.utils.get_default_kwargs.Invalid" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Marker object for not serializable-object</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="espnet2.utils.get_default_kwargs.get_default_kwargs">
+<code class="sig-prename descclassname">espnet2.utils.get_default_kwargs.</code><code class="sig-name descname">get_default_kwargs</code><span class="sig-paren">(</span><em class="sig-param">func</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/espnet2/utils/get_default_kwargs.html#get_default_kwargs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#espnet2.utils.get_default_kwargs.get_default_kwargs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the default values of the input function.</p>
+<p class="rubric">Examples</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">def</span> <span class="nf">func</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="mi">3</span><span class="p">):</span>  <span class="k">pass</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">get_default_kwargs</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
+<span class="go">{&#39;b&#39;: 3}</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</div>
+<div class="section" id="espnet2-utils-pack-funcs">
+<span id="id7"></span><h2>espnet2.utils.pack_funcs<a class="headerlink" href="#espnet2-utils-pack-funcs" title="Permalink to this headline">¶</a></h2>
+<span class="target" id="module-espnet2.utils.pack_funcs"></span><dl class="function">
+<dt id="espnet2.utils.pack_funcs.default_tarinfo">
+<code class="sig-prename descclassname">espnet2.utils.pack_funcs.</code><code class="sig-name descname">default_tarinfo</code><span class="sig-paren">(</span><em class="sig-param">name</em><span class="sig-paren">)</span> &#x2192; tarfile.TarInfo<a class="reference internal" href="../_modules/espnet2/utils/pack_funcs.html#default_tarinfo"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#espnet2.utils.pack_funcs.default_tarinfo" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generate TarInfo using system information</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="espnet2.utils.pack_funcs.find_path_and_change_it_recursive">
+<code class="sig-prename descclassname">espnet2.utils.pack_funcs.</code><code class="sig-name descname">find_path_and_change_it_recursive</code><span class="sig-paren">(</span><em class="sig-param">value</em>, <em class="sig-param">src: str</em>, <em class="sig-param">tgt: str</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/espnet2/utils/pack_funcs.html#find_path_and_change_it_recursive"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#espnet2.utils.pack_funcs.find_path_and_change_it_recursive" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="espnet2.utils.pack_funcs.pack">
+<code class="sig-prename descclassname">espnet2.utils.pack_funcs.</code><code class="sig-name descname">pack</code><span class="sig-paren">(</span><em class="sig-param">files: Dict[str, Union[str, pathlib.Path]], yaml_files: Dict[str, Union[str, pathlib.Path]], outpath: Union[str, pathlib.Path], option: Iterable[Union[str, pathlib.Path]] = (), mode: str = 'w:gz'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/espnet2/utils/pack_funcs.html#pack"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#espnet2.utils.pack_funcs.pack" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="espnet2.utils.pack_funcs.unpack">
+<code class="sig-prename descclassname">espnet2.utils.pack_funcs.</code><code class="sig-name descname">unpack</code><span class="sig-paren">(</span><em class="sig-param">input_tarfile: Union[pathlib.Path, str], outpath: Union[pathlib.Path, str]</em><span class="sig-paren">)</span> &#x2192; Dict[str, str]<a class="reference internal" href="../_modules/espnet2/utils/pack_funcs.html#unpack"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#espnet2.utils.pack_funcs.unpack" title="Permalink to this definition">¶</a></dt>
+<dd><p>Scan all files in the archive file and return as a dict of files.</p>
+<p class="rubric">Examples</p>
+<dl class="simple">
+<dt>tarfile:</dt><dd><p>packed/asr_model_file.pth
+packed/option/some1.file
+packed/option/some2.file</p>
+</dd>
+</dl>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">unpack</span><span class="p">(</span><span class="s2">&quot;tarfile&quot;</span><span class="p">,</span> <span class="s2">&quot;out&quot;</span><span class="p">)</span>
+<span class="go">{&#39;asr_model_file&#39;: &#39;out/packed/asr_model_file.pth&#39;,</span>
+<span class="go"> &#39;option&#39;: [&#39;out/packed/option/some1.file&#39;, &#39;out/packed/option/some2.file&#39;]}</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</div>
+<div class="section" id="espnet2-utils-init">
+<span id="id8"></span><h2>espnet2.utils.__init__<a class="headerlink" href="#espnet2-utils-init" title="Permalink to this headline">¶</a></h2>
+<span class="target" id="module-espnet2.utils.__init__"></span></div>
+<div class="section" id="espnet2-utils-griffin-lim">
+<span id="id9"></span><h2>espnet2.utils.griffin_lim<a class="headerlink" href="#espnet2-utils-griffin-lim" title="Permalink to this headline">¶</a></h2>
+<span class="target" id="module-espnet2.utils.griffin_lim"></span><p>Griffin-Lim related modules.</p>
+<dl class="class">
+<dt id="espnet2.utils.griffin_lim.Spectrogram2Waveform">
+<em class="property">class </em><code class="sig-prename descclassname">espnet2.utils.griffin_lim.</code><code class="sig-name descname">Spectrogram2Waveform</code><span class="sig-paren">(</span><em class="sig-param">n_fft: int</em>, <em class="sig-param">n_shift: int</em>, <em class="sig-param">fs: int = None</em>, <em class="sig-param">n_mels: int = None</em>, <em class="sig-param">win_length: int = None</em>, <em class="sig-param">window: Optional[str] = 'hann'</em>, <em class="sig-param">fmin: int = None</em>, <em class="sig-param">fmax: int = None</em>, <em class="sig-param">griffin_lim_iters: Optional[int] = 32</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/espnet2/utils/griffin_lim.html#Spectrogram2Waveform"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#espnet2.utils.griffin_lim.Spectrogram2Waveform" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Spectrogram to waveform conversion module.</p>
+<p>Initialize module.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>fs</strong> – Sampling frequency.</p></li>
+<li><p><strong>n_fft</strong> – The number of FFT points.</p></li>
+<li><p><strong>n_shift</strong> – Shift size in points.</p></li>
+<li><p><strong>n_mels</strong> – The number of mel basis.</p></li>
+<li><p><strong>win_length</strong> – Window length in points.</p></li>
+<li><p><strong>window</strong> – Window function type.</p></li>
+<li><p><strong>f_min</strong> – Minimum frequency to analyze.</p></li>
+<li><p><strong>f_max</strong> – Maximum frequency to analyze.</p></li>
+<li><p><strong>griffin_lim_iters</strong> – The number of iterations.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="espnet2.utils.griffin_lim.griffin_lim">
+<code class="sig-prename descclassname">espnet2.utils.griffin_lim.</code><code class="sig-name descname">griffin_lim</code><span class="sig-paren">(</span><em class="sig-param">spc: numpy.ndarray</em>, <em class="sig-param">n_fft: int</em>, <em class="sig-param">n_shift: int</em>, <em class="sig-param">win_length: int = None</em>, <em class="sig-param">window: Optional[str] = 'hann'</em>, <em class="sig-param">n_iter: Optional[int] = 32</em><span class="sig-paren">)</span> &#x2192; numpy.ndarray<a class="reference internal" href="../_modules/espnet2/utils/griffin_lim.html#griffin_lim"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#espnet2.utils.griffin_lim.griffin_lim" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert linear spectrogram into waveform using Griffin-Lim.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>spc</strong> – Linear spectrogram (T, n_fft // 2 + 1).</p></li>
+<li><p><strong>n_fft</strong> – The number of FFT points.</p></li>
+<li><p><strong>n_shift</strong> – Shift size in points.</p></li>
+<li><p><strong>win_length</strong> – Window length in points.</p></li>
+<li><p><strong>window</strong> – Window function type.</p></li>
+<li><p><strong>n_iter</strong> – The number of iterations.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Reconstructed waveform (N,).</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="espnet2.utils.griffin_lim.logmel2linear">
+<code class="sig-prename descclassname">espnet2.utils.griffin_lim.</code><code class="sig-name descname">logmel2linear</code><span class="sig-paren">(</span><em class="sig-param">lmspc: numpy.ndarray</em>, <em class="sig-param">fs: int</em>, <em class="sig-param">n_fft: int</em>, <em class="sig-param">n_mels: int</em>, <em class="sig-param">fmin: int = None</em>, <em class="sig-param">fmax: int = None</em><span class="sig-paren">)</span> &#x2192; numpy.ndarray<a class="reference internal" href="../_modules/espnet2/utils/griffin_lim.html#logmel2linear"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#espnet2.utils.griffin_lim.logmel2linear" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert log Mel filterbank to linear spectrogram.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>lmspc</strong> – Log Mel filterbank (T, n_mels).</p></li>
+<li><p><strong>fs</strong> – Sampling frequency.</p></li>
+<li><p><strong>n_fft</strong> – The number of FFT points.</p></li>
+<li><p><strong>n_mels</strong> – The number of mel basis.</p></li>
+<li><p><strong>f_min</strong> – Minimum frequency to analyze.</p></li>
+<li><p><strong>f_max</strong> – Maximum frequency to analyze.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Linear spectrogram (T, n_fft // 2 + 1).</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="espnet2-utils-rand-gen-dataset">
+<span id="id10"></span><h2>espnet2.utils.rand_gen_dataset<a class="headerlink" href="#espnet2-utils-rand-gen-dataset" title="Permalink to this headline">¶</a></h2>
+<span class="target" id="module-espnet2.utils.rand_gen_dataset"></span><dl class="class">
+<dt id="espnet2.utils.rand_gen_dataset.FloatRandomGenerateDataset">
+<em class="property">class </em><code class="sig-prename descclassname">espnet2.utils.rand_gen_dataset.</code><code class="sig-name descname">FloatRandomGenerateDataset</code><span class="sig-paren">(</span><em class="sig-param">shape_file: Union[pathlib.Path, str], dtype: Union[str, numpy.dtype] = 'float32', loader_type: str = 'csv_int'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/espnet2/utils/rand_gen_dataset.html#FloatRandomGenerateDataset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#espnet2.utils.rand_gen_dataset.FloatRandomGenerateDataset" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">collections.abc.Mapping</span></code></p>
+<p>Generate float array from shape.txt.</p>
+<p class="rubric">Examples</p>
+<p>shape.txt
+uttA 123,83
+uttB 34,83
+&gt;&gt;&gt; dataset = FloatRandomGenerateDataset(“shape.txt”)
+&gt;&gt;&gt; array = dataset[“uttA”]
+&gt;&gt;&gt; assert array.shape == (123, 83)
+&gt;&gt;&gt; array = dataset[“uttB”]
+&gt;&gt;&gt; assert array.shape == (34, 83)</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="espnet2.utils.rand_gen_dataset.IntRandomGenerateDataset">
+<em class="property">class </em><code class="sig-prename descclassname">espnet2.utils.rand_gen_dataset.</code><code class="sig-name descname">IntRandomGenerateDataset</code><span class="sig-paren">(</span><em class="sig-param">shape_file: Union[pathlib.Path, str], low: int, high: int = None, dtype: Union[str, numpy.dtype] = 'int64', loader_type: str = 'csv_int'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/espnet2/utils/rand_gen_dataset.html#IntRandomGenerateDataset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#espnet2.utils.rand_gen_dataset.IntRandomGenerateDataset" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">collections.abc.Mapping</span></code></p>
+<p>Generate float array from shape.txt</p>
+<p class="rubric">Examples</p>
+<p>shape.txt
+uttA 123,83
+uttB 34,83
+&gt;&gt;&gt; dataset = IntRandomGenerateDataset(“shape.txt”, low=0, high=10)
+&gt;&gt;&gt; array = dataset[“uttA”]
+&gt;&gt;&gt; assert array.shape == (123, 83)
+&gt;&gt;&gt; array = dataset[“uttB”]
+&gt;&gt;&gt; assert array.shape == (34, 83)</p>
+</dd></dl>
+
+</div>
+<div class="section" id="espnet2-utils-nested-dict-action">
+<span id="id11"></span><h2>espnet2.utils.nested_dict_action<a class="headerlink" href="#espnet2-utils-nested-dict-action" title="Permalink to this headline">¶</a></h2>
+<span class="target" id="module-espnet2.utils.nested_dict_action"></span><dl class="class">
+<dt id="espnet2.utils.nested_dict_action.NestedDictAction">
+<em class="property">class </em><code class="sig-prename descclassname">espnet2.utils.nested_dict_action.</code><code class="sig-name descname">NestedDictAction</code><span class="sig-paren">(</span><em class="sig-param">option_strings</em>, <em class="sig-param">dest</em>, <em class="sig-param">nargs=None</em>, <em class="sig-param">default=None</em>, <em class="sig-param">choices=None</em>, <em class="sig-param">required=False</em>, <em class="sig-param">help=None</em>, <em class="sig-param">metavar=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/espnet2/utils/nested_dict_action.html#NestedDictAction"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#espnet2.utils.nested_dict_action.NestedDictAction" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">argparse.Action</span></code></p>
+<p>Action class to append items to dict object.</p>
+<p class="rubric">Examples</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">parser</span> <span class="o">=</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">_</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;--conf&#39;</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="n">NestedDictAction</span><span class="p">,</span>
+<span class="gp">... </span>                        <span class="n">default</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;a&#39;</span><span class="p">:</span> <span class="mi">4</span><span class="p">})</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">parser</span><span class="o">.</span><span class="n">parse_args</span><span class="p">([</span><span class="s1">&#39;--conf&#39;</span><span class="p">,</span> <span class="s1">&#39;a=3&#39;</span><span class="p">,</span> <span class="s1">&#39;--conf&#39;</span><span class="p">,</span> <span class="s1">&#39;c=4&#39;</span><span class="p">])</span>
+<span class="go">Namespace(conf={&#39;a&#39;: 3, &#39;c&#39;: 4})</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">parser</span><span class="o">.</span><span class="n">parse_args</span><span class="p">([</span><span class="s1">&#39;--conf&#39;</span><span class="p">,</span> <span class="s1">&#39;c.d=4&#39;</span><span class="p">])</span>
+<span class="go">Namespace(conf={&#39;a&#39;: 4, &#39;c&#39;: {&#39;d&#39;: 4}})</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">parser</span><span class="o">.</span><span class="n">parse_args</span><span class="p">([</span><span class="s1">&#39;--conf&#39;</span><span class="p">,</span> <span class="s1">&#39;c.d=4&#39;</span><span class="p">,</span> <span class="s1">&#39;--conf&#39;</span><span class="p">,</span> <span class="s1">&#39;c=2&#39;</span><span class="p">])</span>
+<span class="go">Namespace(conf={&#39;a&#39;: 4, &#39;c&#39;: 2})</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">parser</span><span class="o">.</span><span class="n">parse_args</span><span class="p">([</span><span class="s1">&#39;--conf&#39;</span><span class="p">,</span> <span class="s1">&#39;{d: 5, e: 9}&#39;</span><span class="p">])</span>
+<span class="go">Namespace(conf={&#39;d&#39;: 5, &#39;e&#39;: 9})</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="espnet2.bin.html" class="btn btn-neutral float-right" title="espnet2.bin package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="espnet2.train.html" class="btn btn-neutral float-left" title="espnet2.train package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2017, Shinji Watanabe
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

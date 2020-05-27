@@ -1,0 +1,574 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>espnet2.tts package &mdash; ESPnet 0.7.0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../_static/jquery.js"></script>
+        <script type="text/javascript" src="../_static/underscore.js"></script>
+        <script type="text/javascript" src="../_static/doctools.js"></script>
+        <script type="text/javascript" src="../_static/language_data.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+        <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true, "ignoreClass": "document", "processClass": "math|output_area"}})</script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="espnet2.samplers package" href="espnet2.samplers.html" />
+    <link rel="prev" title="espnet2.main_funcs package" href="espnet2.main_funcs.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> ESPnet
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.7.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Tutorial:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorial.html">Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../parallelization.html">Using Job scheduling system</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq.html">FAQ</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../docker.html">Docker</a></li>
+</ul>
+<p class="caption"><span class="caption-text">ESPnet2:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../espnet2_tutorial.html">ESPnet2</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../espnet2_tutorial.html#instruction-for-run-sh">Instruction for run.sh</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../espnet2_training_option.html">Change the configuration for training</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../espnet2_task.html">Task class and data input system for training</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../espnet2_distributed.html">Distributed training</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Package Reference:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="espnet.scheduler.html">espnet.scheduler package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="espnet.lm.html">espnet.lm package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="espnet.asr.html">espnet.asr package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="espnet.optimizer.html">espnet.optimizer package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="espnet.tts.html">espnet.tts package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="espnet.st.html">espnet.st package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="espnet.nets.html">espnet.nets package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="espnet.mt.html">espnet.mt package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="espnet.utils.html">espnet.utils package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="espnet.bin.html">espnet.bin package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="espnet.transform.html">espnet.transform package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="espnet2.optimizers.html">espnet2.optimizers package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="espnet2.schedulers.html">espnet2.schedulers package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="espnet2.lm.html">espnet2.lm package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="espnet2.asr.html">espnet2.asr package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="espnet2.main_funcs.html">espnet2.main_funcs package</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">espnet2.tts package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#espnet2-tts-tacotron2">espnet2.tts.tacotron2</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#espnet2-tts-espnet-model">espnet2.tts.espnet_model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#espnet2-tts-init">espnet2.tts.__init__</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#espnet2-tts-abs-tts">espnet2.tts.abs_tts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#espnet2-tts-feats-extract-abs-feats-extract">espnet2.tts.feats_extract.abs_feats_extract</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#espnet2-tts-feats-extract-log-mel-fbank">espnet2.tts.feats_extract.log_mel_fbank</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#espnet2-tts-feats-extract-log-spectrogram">espnet2.tts.feats_extract.log_spectrogram</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#espnet2-tts-feats-extract-init">espnet2.tts.feats_extract.__init__</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="espnet2.samplers.html">espnet2.samplers package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="espnet2.torch_utils.html">espnet2.torch_utils package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="espnet2.train.html">espnet2.train package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="espnet2.utils.html">espnet2.utils package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="espnet2.bin.html">espnet2.bin package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="espnet2.iterators.html">espnet2.iterators package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="espnet2.layers.html">espnet2.layers package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="espnet2.tasks.html">espnet2.tasks package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="espnet2.text.html">espnet2.text package</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Tool Reference:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../apis/espnet_bin.html">core tools</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../apis/utils_py.html">python utility tools</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../apis/utils_sh.html">bash utility tools</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">ESPnet</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+      <li>espnet2.tts package</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/_gen/espnet2.tts.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  
+<style>
+/* CSS overrides for sphinx_rtd_theme */
+
+/* 24px margin */
+.nbinput.nblast.container,
+.nboutput.nblast.container {
+    margin-bottom: 19px;  /* padding has already 5px */
+}
+
+/* ... except between code cells! */
+.nblast.container + .nbinput.container {
+    margin-top: -19px;
+}
+
+.admonition > p:before {
+    margin-right: 4px;  /* make room for the exclamation icon */
+}
+
+/* Fix math alignment, see https://github.com/rtfd/sphinx_rtd_theme/pull/686 */
+.math {
+    text-align: unset;
+}
+</style>
+<div class="section" id="espnet2-tts-package">
+<h1>espnet2.tts package<a class="headerlink" href="#espnet2-tts-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="espnet2-tts-tacotron2">
+<span id="id1"></span><h2>espnet2.tts.tacotron2<a class="headerlink" href="#espnet2-tts-tacotron2" title="Permalink to this headline">¶</a></h2>
+<span class="target" id="module-espnet2.tts.tacotron2"></span><p>Tacotron 2 related modules.</p>
+<dl class="class">
+<dt id="espnet2.tts.tacotron2.Tacotron2">
+<em class="property">class </em><code class="sig-prename descclassname">espnet2.tts.tacotron2.</code><code class="sig-name descname">Tacotron2</code><span class="sig-paren">(</span><em class="sig-param">idim: int</em>, <em class="sig-param">odim: int</em>, <em class="sig-param">embed_dim: int = 512</em>, <em class="sig-param">elayers: int = 1</em>, <em class="sig-param">eunits: int = 512</em>, <em class="sig-param">econv_layers: int = 3</em>, <em class="sig-param">econv_chans: int = 512</em>, <em class="sig-param">econv_filts: int = 5</em>, <em class="sig-param">atype: str = 'location'</em>, <em class="sig-param">adim: int = 512</em>, <em class="sig-param">aconv_chans: int = 32</em>, <em class="sig-param">aconv_filts: int = 15</em>, <em class="sig-param">cumulate_att_w: bool = True</em>, <em class="sig-param">dlayers: int = 2</em>, <em class="sig-param">dunits: int = 1024</em>, <em class="sig-param">prenet_layers: int = 2</em>, <em class="sig-param">prenet_units: int = 256</em>, <em class="sig-param">postnet_layers: int = 5</em>, <em class="sig-param">postnet_chans: int = 512</em>, <em class="sig-param">postnet_filts: int = 5</em>, <em class="sig-param">output_activation: str = None</em>, <em class="sig-param">use_cbhg: bool = False</em>, <em class="sig-param">cbhg_conv_bank_layers: int = 8</em>, <em class="sig-param">cbhg_conv_bank_chans: int = 128</em>, <em class="sig-param">cbhg_conv_proj_filts: int = 3</em>, <em class="sig-param">cbhg_conv_proj_chans: int = 256</em>, <em class="sig-param">cbhg_highway_layers: int = 4</em>, <em class="sig-param">cbhg_highway_units: int = 128</em>, <em class="sig-param">cbhg_gru_units: int = 256</em>, <em class="sig-param">use_batch_norm: bool = True</em>, <em class="sig-param">use_concate: bool = True</em>, <em class="sig-param">use_residual: bool = False</em>, <em class="sig-param">dropout_rate: float = 0.5</em>, <em class="sig-param">zoneout_rate: float = 0.1</em>, <em class="sig-param">reduction_factor: int = 1</em>, <em class="sig-param">spk_embed_dim: int = None</em>, <em class="sig-param">spc_dim: int = None</em>, <em class="sig-param">use_masking: bool = True</em>, <em class="sig-param">use_weighted_masking: bool = False</em>, <em class="sig-param">bce_pos_weight: float = 5.0</em>, <em class="sig-param">use_guided_attn_loss: bool = True</em>, <em class="sig-param">guided_attn_loss_sigma: float = 0.4</em>, <em class="sig-param">guided_attn_loss_lambda: float = 1.0</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/espnet2/tts/tacotron2.html#Tacotron2"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#espnet2.tts.tacotron2.Tacotron2" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#espnet2.tts.abs_tts.AbsTTS" title="espnet2.tts.abs_tts.AbsTTS"><code class="xref py py-class docutils literal notranslate"><span class="pre">espnet2.tts.abs_tts.AbsTTS</span></code></a></p>
+<p>Tacotron2 module for end-to-end text-to-speech.</p>
+<p>This is a module of Spectrogram prediction network in Tacotron2 described
+in <a class="reference external" href="https://arxiv.org/abs/1712.05884">Natural TTS Synthesis
+by Conditioning WaveNet on Mel Spectrogram Predictions</a>, which converts
+the sequence of characters into the sequence of Mel-filterbanks.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>idim</strong> – Dimension of the inputs.</p></li>
+<li><p><strong>odim</strong> – Dimension of the outputs.</p></li>
+<li><p><strong>spk_embed_dim</strong> – Dimension of the speaker embedding.</p></li>
+<li><p><strong>embed_dim</strong> – Dimension of character embedding.</p></li>
+<li><p><strong>elayers</strong> – The number of encoder blstm layers.</p></li>
+<li><p><strong>eunits</strong> – The number of encoder blstm units.</p></li>
+<li><p><strong>econv_layers</strong> – The number of encoder conv layers.</p></li>
+<li><p><strong>econv_filts</strong> – The number of encoder conv filter size.</p></li>
+<li><p><strong>econv_chans</strong> – The number of encoder conv filter channels.</p></li>
+<li><p><strong>dlayers</strong> – The number of decoder lstm layers.</p></li>
+<li><p><strong>dunits</strong> – The number of decoder lstm units.</p></li>
+<li><p><strong>prenet_layers</strong> – The number of prenet layers.</p></li>
+<li><p><strong>prenet_units</strong> – The number of prenet units.</p></li>
+<li><p><strong>postnet_layers</strong> – The number of postnet layers.</p></li>
+<li><p><strong>postnet_filts</strong> – The number of postnet filter size.</p></li>
+<li><p><strong>postnet_chans</strong> – The number of postnet filter channels.</p></li>
+<li><p><strong>output_activation</strong> – The name of activation function for outputs.</p></li>
+<li><p><strong>adim</strong> – The number of dimension of mlp in attention.</p></li>
+<li><p><strong>aconv_chans</strong> – The number of attention conv filter channels.</p></li>
+<li><p><strong>aconv_filts</strong> – The number of attention conv filter size.</p></li>
+<li><p><strong>cumulate_att_w</strong> – Whether to cumulate previous attention weight.</p></li>
+<li><p><strong>use_batch_norm</strong> – Whether to use batch normalization.</p></li>
+<li><p><strong>use_concate</strong> – Whether to concatenate encoder embedding with decoder
+lstm outputs.</p></li>
+<li><p><strong>dropout_rate</strong> – Dropout rate.</p></li>
+<li><p><strong>zoneout_rate</strong> – Zoneout rate.</p></li>
+<li><p><strong>reduction_factor</strong> – Reduction factor.</p></li>
+<li><p><strong>spk_embed_dim</strong> – Number of speaker embedding dimenstions.</p></li>
+<li><p><strong>spc_dim</strong> – Number of spectrogram embedding dimenstions
+(only for use_cbhg=True).</p></li>
+<li><p><strong>use_cbhg</strong> – Whether to use CBHG module.</p></li>
+<li><p><strong>cbhg_conv_bank_layers</strong> – The number of convoluional banks in CBHG.</p></li>
+<li><p><strong>cbhg_conv_bank_chans</strong> – The number of channels of convolutional bank in
+CBHG.</p></li>
+<li><p><strong>cbhg_proj_filts</strong> – The number of filter size of projection layeri in
+CBHG.</p></li>
+<li><p><strong>cbhg_proj_chans</strong> – The number of channels of projection layer in CBHG.</p></li>
+<li><p><strong>cbhg_highway_layers</strong> – The number of layers of highway network in CBHG.</p></li>
+<li><p><strong>cbhg_highway_units</strong> – The number of units of highway network in CBHG.</p></li>
+<li><p><strong>cbhg_gru_units</strong> – The number of units of GRU in CBHG.</p></li>
+<li><p><strong>use_masking</strong> – Whether to mask padded part in loss calculation.</p></li>
+<li><p><strong>use_weighted_masking</strong> – Whether to apply weighted masking in
+loss calculation.</p></li>
+<li><p><strong>bce_pos_weight</strong> – Weight of positive sample of stop token
+(only for use_masking=True).</p></li>
+<li><p><strong>use_guided_attn_loss</strong> – Whether to use guided attention loss.</p></li>
+<li><p><strong>guided_attn_loss_sigma</strong> – Sigma in guided attention loss.</p></li>
+<li><p><strong>guided_attn_loss_lamdba</strong> – Lambda in guided attention loss.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="method">
+<dt id="espnet2.tts.tacotron2.Tacotron2.forward">
+<code class="sig-name descname">forward</code><span class="sig-paren">(</span><em class="sig-param">text: torch.Tensor</em>, <em class="sig-param">text_lengths: torch.Tensor</em>, <em class="sig-param">speech: torch.Tensor</em>, <em class="sig-param">speech_lengths: torch.Tensor</em>, <em class="sig-param">spembs: torch.Tensor = None</em>, <em class="sig-param">spcs: torch.Tensor = None</em>, <em class="sig-param">spcs_lengths: torch.Tensor = None</em><span class="sig-paren">)</span> &#x2192; Tuple[torch.Tensor, Dict[str, torch.Tensor], torch.Tensor]<a class="reference internal" href="../_modules/espnet2/tts/tacotron2.html#Tacotron2.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#espnet2.tts.tacotron2.Tacotron2.forward" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate forward propagation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>text</strong> – Batch of padded character ids (B, Tmax).</p></li>
+<li><p><strong>text_lengths</strong> – Batch of lengths of each input batch (B,).</p></li>
+<li><p><strong>speech</strong> – Batch of padded target features (B, Lmax, odim).</p></li>
+<li><p><strong>speech_lengths</strong> – Batch of the lengths of each target (B,).</p></li>
+<li><p><strong>spembs</strong> – Batch of speaker embedding vectors (B, spk_embed_dim).</p></li>
+<li><p><strong>spcs</strong> – Batch of ground-truth spectrogram (B, Lmax, spc_dim).</p></li>
+<li><p><strong>spcs_lengths</strong> – </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="espnet2.tts.tacotron2.Tacotron2.inference">
+<code class="sig-name descname">inference</code><span class="sig-paren">(</span><em class="sig-param">text: torch.Tensor</em>, <em class="sig-param">spembs: torch.Tensor = None</em>, <em class="sig-param">threshold: float = 0.5</em>, <em class="sig-param">minlenratio: float = 0.0</em>, <em class="sig-param">maxlenratio: float = 10.0</em>, <em class="sig-param">use_att_constraint: bool = False</em>, <em class="sig-param">backward_window: int = 1</em>, <em class="sig-param">forward_window: int = 3</em><span class="sig-paren">)</span> &#x2192; Tuple[torch.Tensor, torch.Tensor, torch.Tensor]<a class="reference internal" href="../_modules/espnet2/tts/tacotron2.html#Tacotron2.inference"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#espnet2.tts.tacotron2.Tacotron2.inference" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generate the sequence of features given the sequences of characters.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>text</strong> – Input sequence of characters (T,).</p></li>
+<li><p><strong>spembs</strong> – Speaker embedding vector (spk_embed_dim,).</p></li>
+<li><p><strong>threshold</strong> – Threshold in inference.</p></li>
+<li><p><strong>minlenratio</strong> – Minimum length ratio in inference.</p></li>
+<li><p><strong>maxlenratio</strong> – Maximum length ratio in inference.</p></li>
+<li><p><strong>use_att_constraint</strong> – Whether to apply attention constraint.</p></li>
+<li><p><strong>backward_window</strong> – Backward window in attention constraint.</p></li>
+<li><p><strong>forward_window</strong> – Forward window in attention constraint.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Output sequence of features (L, odim).
+Tensor: Output sequence of stop probabilities (L,).
+Tensor: Attention weights (L, T).</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>Tensor</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="espnet2-tts-espnet-model">
+<span id="id2"></span><h2>espnet2.tts.espnet_model<a class="headerlink" href="#espnet2-tts-espnet-model" title="Permalink to this headline">¶</a></h2>
+<span class="target" id="module-espnet2.tts.espnet_model"></span><dl class="class">
+<dt id="espnet2.tts.espnet_model.ESPnetTTSModel">
+<em class="property">class </em><code class="sig-prename descclassname">espnet2.tts.espnet_model.</code><code class="sig-name descname">ESPnetTTSModel</code><span class="sig-paren">(</span><em class="sig-param">feats_extract: Optional[espnet2.tts.feats_extract.abs_feats_extract.AbsFeatsExtract], normalize: Optional[espnet2.layers.inversible_interface.InversibleInterface], tts: espnet2.tts.abs_tts.AbsTTS</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/espnet2/tts/espnet_model.html#ESPnetTTSModel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#espnet2.tts.espnet_model.ESPnetTTSModel" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="espnet2.train.html#espnet2.train.abs_espnet_model.AbsESPnetModel" title="espnet2.train.abs_espnet_model.AbsESPnetModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">espnet2.train.abs_espnet_model.AbsESPnetModel</span></code></a></p>
+<dl class="method">
+<dt id="espnet2.tts.espnet_model.ESPnetTTSModel.collect_feats">
+<code class="sig-name descname">collect_feats</code><span class="sig-paren">(</span><em class="sig-param">text: torch.Tensor</em>, <em class="sig-param">text_lengths: torch.Tensor</em>, <em class="sig-param">speech: torch.Tensor</em>, <em class="sig-param">speech_lengths: torch.Tensor</em>, <em class="sig-param">spembs: torch.Tensor = None</em>, <em class="sig-param">spcs: torch.Tensor = None</em>, <em class="sig-param">spcs_lengths: torch.Tensor = None</em><span class="sig-paren">)</span> &#x2192; Dict[str, torch.Tensor]<a class="reference internal" href="../_modules/espnet2/tts/espnet_model.html#ESPnetTTSModel.collect_feats"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#espnet2.tts.espnet_model.ESPnetTTSModel.collect_feats" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="espnet2.tts.espnet_model.ESPnetTTSModel.forward">
+<code class="sig-name descname">forward</code><span class="sig-paren">(</span><em class="sig-param">text: torch.Tensor</em>, <em class="sig-param">text_lengths: torch.Tensor</em>, <em class="sig-param">speech: torch.Tensor</em>, <em class="sig-param">speech_lengths: torch.Tensor</em>, <em class="sig-param">spembs: torch.Tensor = None</em>, <em class="sig-param">spcs: torch.Tensor = None</em>, <em class="sig-param">spcs_lengths: torch.Tensor = None</em><span class="sig-paren">)</span> &#x2192; Tuple[torch.Tensor, Dict[str, torch.Tensor], torch.Tensor]<a class="reference internal" href="../_modules/espnet2/tts/espnet_model.html#ESPnetTTSModel.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#espnet2.tts.espnet_model.ESPnetTTSModel.forward" title="Permalink to this definition">¶</a></dt>
+<dd><p>Defines the computation performed at every call.</p>
+<p>Should be overridden by all subclasses.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Although the recipe for forward pass needs to be defined within
+this function, one should call the <code class="xref py py-class docutils literal notranslate"><span class="pre">Module</span></code> instance afterwards
+instead of this since the former takes care of running the
+registered hooks while the latter silently ignores them.</p>
+</div>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="espnet2-tts-init">
+<span id="id3"></span><h2>espnet2.tts.__init__<a class="headerlink" href="#espnet2-tts-init" title="Permalink to this headline">¶</a></h2>
+<span class="target" id="module-espnet2.tts.__init__"></span></div>
+<div class="section" id="espnet2-tts-abs-tts">
+<span id="id4"></span><h2>espnet2.tts.abs_tts<a class="headerlink" href="#espnet2-tts-abs-tts" title="Permalink to this headline">¶</a></h2>
+<span class="target" id="module-espnet2.tts.abs_tts"></span><dl class="class">
+<dt id="espnet2.tts.abs_tts.AbsTTS">
+<em class="property">class </em><code class="sig-prename descclassname">espnet2.tts.abs_tts.</code><code class="sig-name descname">AbsTTS</code><a class="reference internal" href="../_modules/espnet2/tts/abs_tts.html#AbsTTS"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#espnet2.tts.abs_tts.AbsTTS" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">torch.nn.modules.module.Module</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">abc.ABC</span></code></p>
+<dl class="method">
+<dt id="espnet2.tts.abs_tts.AbsTTS.forward">
+<em class="property">abstract </em><code class="sig-name descname">forward</code><span class="sig-paren">(</span><em class="sig-param">text: torch.Tensor</em>, <em class="sig-param">text_lengths: torch.Tensor</em>, <em class="sig-param">speech: torch.Tensor</em>, <em class="sig-param">speech_lengths: torch.Tensor</em>, <em class="sig-param">spembs: torch.Tensor = None</em>, <em class="sig-param">spcs: torch.Tensor = None</em>, <em class="sig-param">spcs_lengths: torch.Tensor = None</em><span class="sig-paren">)</span> &#x2192; Tuple[torch.Tensor, Dict[str, torch.Tensor], torch.Tensor]<a class="reference internal" href="../_modules/espnet2/tts/abs_tts.html#AbsTTS.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#espnet2.tts.abs_tts.AbsTTS.forward" title="Permalink to this definition">¶</a></dt>
+<dd><p>Defines the computation performed at every call.</p>
+<p>Should be overridden by all subclasses.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Although the recipe for forward pass needs to be defined within
+this function, one should call the <code class="xref py py-class docutils literal notranslate"><span class="pre">Module</span></code> instance afterwards
+instead of this since the former takes care of running the
+registered hooks while the latter silently ignores them.</p>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="espnet2.tts.abs_tts.AbsTTS.inference">
+<em class="property">abstract </em><code class="sig-name descname">inference</code><span class="sig-paren">(</span><em class="sig-param">text: torch.Tensor</em>, <em class="sig-param">threshold: float</em>, <em class="sig-param">minlenratio: float</em>, <em class="sig-param">maxlenratio: float</em>, <em class="sig-param">spembs: torch.Tensor = None</em><span class="sig-paren">)</span> &#x2192; Tuple[torch.Tensor, torch.Tensor, torch.Tensor]<a class="reference internal" href="../_modules/espnet2/tts/abs_tts.html#AbsTTS.inference"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#espnet2.tts.abs_tts.AbsTTS.inference" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="espnet2-tts-feats-extract-abs-feats-extract">
+<span id="id5"></span><h2>espnet2.tts.feats_extract.abs_feats_extract<a class="headerlink" href="#espnet2-tts-feats-extract-abs-feats-extract" title="Permalink to this headline">¶</a></h2>
+<span class="target" id="module-espnet2.tts.feats_extract.abs_feats_extract"></span><dl class="class">
+<dt id="espnet2.tts.feats_extract.abs_feats_extract.AbsFeatsExtract">
+<em class="property">class </em><code class="sig-prename descclassname">espnet2.tts.feats_extract.abs_feats_extract.</code><code class="sig-name descname">AbsFeatsExtract</code><a class="reference internal" href="../_modules/espnet2/tts/feats_extract/abs_feats_extract.html#AbsFeatsExtract"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#espnet2.tts.feats_extract.abs_feats_extract.AbsFeatsExtract" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">torch.nn.modules.module.Module</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">abc.ABC</span></code></p>
+<dl class="method">
+<dt id="espnet2.tts.feats_extract.abs_feats_extract.AbsFeatsExtract.forward">
+<em class="property">abstract </em><code class="sig-name descname">forward</code><span class="sig-paren">(</span><em class="sig-param">input: torch.Tensor</em>, <em class="sig-param">input_lengths: torch.Tensor</em><span class="sig-paren">)</span> &#x2192; Tuple[torch.Tensor, torch.Tensor]<a class="reference internal" href="../_modules/espnet2/tts/feats_extract/abs_feats_extract.html#AbsFeatsExtract.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#espnet2.tts.feats_extract.abs_feats_extract.AbsFeatsExtract.forward" title="Permalink to this definition">¶</a></dt>
+<dd><p>Defines the computation performed at every call.</p>
+<p>Should be overridden by all subclasses.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Although the recipe for forward pass needs to be defined within
+this function, one should call the <code class="xref py py-class docutils literal notranslate"><span class="pre">Module</span></code> instance afterwards
+instead of this since the former takes care of running the
+registered hooks while the latter silently ignores them.</p>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="espnet2.tts.feats_extract.abs_feats_extract.AbsFeatsExtract.get_parameters">
+<em class="property">abstract </em><code class="sig-name descname">get_parameters</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; Dict[str, Any]<a class="reference internal" href="../_modules/espnet2/tts/feats_extract/abs_feats_extract.html#AbsFeatsExtract.get_parameters"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#espnet2.tts.feats_extract.abs_feats_extract.AbsFeatsExtract.get_parameters" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="espnet2.tts.feats_extract.abs_feats_extract.AbsFeatsExtract.output_size">
+<em class="property">abstract </em><code class="sig-name descname">output_size</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; int<a class="reference internal" href="../_modules/espnet2/tts/feats_extract/abs_feats_extract.html#AbsFeatsExtract.output_size"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#espnet2.tts.feats_extract.abs_feats_extract.AbsFeatsExtract.output_size" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="espnet2-tts-feats-extract-log-mel-fbank">
+<span id="id6"></span><h2>espnet2.tts.feats_extract.log_mel_fbank<a class="headerlink" href="#espnet2-tts-feats-extract-log-mel-fbank" title="Permalink to this headline">¶</a></h2>
+<span class="target" id="module-espnet2.tts.feats_extract.log_mel_fbank"></span><dl class="class">
+<dt id="espnet2.tts.feats_extract.log_mel_fbank.LogMelFbank">
+<em class="property">class </em><code class="sig-prename descclassname">espnet2.tts.feats_extract.log_mel_fbank.</code><code class="sig-name descname">LogMelFbank</code><span class="sig-paren">(</span><em class="sig-param">fs: Union[int</em>, <em class="sig-param">str] = 16000</em>, <em class="sig-param">n_fft: int = 1024</em>, <em class="sig-param">win_length: int = None</em>, <em class="sig-param">hop_length: int = 256</em>, <em class="sig-param">center: bool = True</em>, <em class="sig-param">pad_mode: str = 'reflect'</em>, <em class="sig-param">normalized: bool = False</em>, <em class="sig-param">onesided: bool = True</em>, <em class="sig-param">n_mels: int = 80</em>, <em class="sig-param">fmin: Optional[int] = 80</em>, <em class="sig-param">fmax: Optional[int] = 7600</em>, <em class="sig-param">htk: bool = False</em>, <em class="sig-param">norm=1</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/espnet2/tts/feats_extract/log_mel_fbank.html#LogMelFbank"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#espnet2.tts.feats_extract.log_mel_fbank.LogMelFbank" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#espnet2.tts.feats_extract.abs_feats_extract.AbsFeatsExtract" title="espnet2.tts.feats_extract.abs_feats_extract.AbsFeatsExtract"><code class="xref py py-class docutils literal notranslate"><span class="pre">espnet2.tts.feats_extract.abs_feats_extract.AbsFeatsExtract</span></code></a></p>
+<p>Conventional frontend structure for ASR</p>
+<p>Stft -&gt; amplitude-spec -&gt; Log-Mel-Fbank</p>
+<dl class="method">
+<dt id="espnet2.tts.feats_extract.log_mel_fbank.LogMelFbank.forward">
+<code class="sig-name descname">forward</code><span class="sig-paren">(</span><em class="sig-param">input: torch.Tensor</em>, <em class="sig-param">input_lengths: torch.Tensor</em><span class="sig-paren">)</span> &#x2192; Tuple[torch.Tensor, torch.Tensor]<a class="reference internal" href="../_modules/espnet2/tts/feats_extract/log_mel_fbank.html#LogMelFbank.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#espnet2.tts.feats_extract.log_mel_fbank.LogMelFbank.forward" title="Permalink to this definition">¶</a></dt>
+<dd><p>Defines the computation performed at every call.</p>
+<p>Should be overridden by all subclasses.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Although the recipe for forward pass needs to be defined within
+this function, one should call the <code class="xref py py-class docutils literal notranslate"><span class="pre">Module</span></code> instance afterwards
+instead of this since the former takes care of running the
+registered hooks while the latter silently ignores them.</p>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="espnet2.tts.feats_extract.log_mel_fbank.LogMelFbank.get_parameters">
+<code class="sig-name descname">get_parameters</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; Dict[str, Any]<a class="reference internal" href="../_modules/espnet2/tts/feats_extract/log_mel_fbank.html#LogMelFbank.get_parameters"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#espnet2.tts.feats_extract.log_mel_fbank.LogMelFbank.get_parameters" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the parameters required by Vocoder</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="espnet2.tts.feats_extract.log_mel_fbank.LogMelFbank.output_size">
+<code class="sig-name descname">output_size</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; int<a class="reference internal" href="../_modules/espnet2/tts/feats_extract/log_mel_fbank.html#LogMelFbank.output_size"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#espnet2.tts.feats_extract.log_mel_fbank.LogMelFbank.output_size" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="espnet2-tts-feats-extract-log-spectrogram">
+<span id="id7"></span><h2>espnet2.tts.feats_extract.log_spectrogram<a class="headerlink" href="#espnet2-tts-feats-extract-log-spectrogram" title="Permalink to this headline">¶</a></h2>
+<span class="target" id="module-espnet2.tts.feats_extract.log_spectrogram"></span><dl class="class">
+<dt id="espnet2.tts.feats_extract.log_spectrogram.LogSpectrogram">
+<em class="property">class </em><code class="sig-prename descclassname">espnet2.tts.feats_extract.log_spectrogram.</code><code class="sig-name descname">LogSpectrogram</code><span class="sig-paren">(</span><em class="sig-param">n_fft: int = 1024</em>, <em class="sig-param">win_length: int = None</em>, <em class="sig-param">hop_length: int = 256</em>, <em class="sig-param">center: bool = True</em>, <em class="sig-param">pad_mode: str = 'reflect'</em>, <em class="sig-param">normalized: bool = False</em>, <em class="sig-param">onesided: bool = True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/espnet2/tts/feats_extract/log_spectrogram.html#LogSpectrogram"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#espnet2.tts.feats_extract.log_spectrogram.LogSpectrogram" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#espnet2.tts.feats_extract.abs_feats_extract.AbsFeatsExtract" title="espnet2.tts.feats_extract.abs_feats_extract.AbsFeatsExtract"><code class="xref py py-class docutils literal notranslate"><span class="pre">espnet2.tts.feats_extract.abs_feats_extract.AbsFeatsExtract</span></code></a></p>
+<p>Conventional frontend structure for ASR</p>
+<p>Stft -&gt; log-amplitude-spec</p>
+<dl class="method">
+<dt id="espnet2.tts.feats_extract.log_spectrogram.LogSpectrogram.forward">
+<code class="sig-name descname">forward</code><span class="sig-paren">(</span><em class="sig-param">input: torch.Tensor</em>, <em class="sig-param">input_lengths: torch.Tensor</em><span class="sig-paren">)</span> &#x2192; Tuple[torch.Tensor, torch.Tensor]<a class="reference internal" href="../_modules/espnet2/tts/feats_extract/log_spectrogram.html#LogSpectrogram.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#espnet2.tts.feats_extract.log_spectrogram.LogSpectrogram.forward" title="Permalink to this definition">¶</a></dt>
+<dd><p>Defines the computation performed at every call.</p>
+<p>Should be overridden by all subclasses.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Although the recipe for forward pass needs to be defined within
+this function, one should call the <code class="xref py py-class docutils literal notranslate"><span class="pre">Module</span></code> instance afterwards
+instead of this since the former takes care of running the
+registered hooks while the latter silently ignores them.</p>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="espnet2.tts.feats_extract.log_spectrogram.LogSpectrogram.get_parameters">
+<code class="sig-name descname">get_parameters</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; Dict[str, Any]<a class="reference internal" href="../_modules/espnet2/tts/feats_extract/log_spectrogram.html#LogSpectrogram.get_parameters"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#espnet2.tts.feats_extract.log_spectrogram.LogSpectrogram.get_parameters" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the parameters required by Vocoder</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="espnet2.tts.feats_extract.log_spectrogram.LogSpectrogram.output_size">
+<code class="sig-name descname">output_size</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; int<a class="reference internal" href="../_modules/espnet2/tts/feats_extract/log_spectrogram.html#LogSpectrogram.output_size"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#espnet2.tts.feats_extract.log_spectrogram.LogSpectrogram.output_size" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="espnet2-tts-feats-extract-init">
+<span id="id8"></span><h2>espnet2.tts.feats_extract.__init__<a class="headerlink" href="#espnet2-tts-feats-extract-init" title="Permalink to this headline">¶</a></h2>
+<span class="target" id="module-espnet2.tts.feats_extract.__init__"></span></div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="espnet2.samplers.html" class="btn btn-neutral float-right" title="espnet2.samplers package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="espnet2.main_funcs.html" class="btn btn-neutral float-left" title="espnet2.main_funcs package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2017, Shinji Watanabe
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
