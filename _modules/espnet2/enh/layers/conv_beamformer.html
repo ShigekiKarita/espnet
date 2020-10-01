@@ -1,0 +1,605 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>espnet2.enh.layers.conv_beamformer &mdash; ESPnet 0.9.3 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../../../../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../../../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../../../_static/doctools.js"></script>
+        <script type="text/javascript" src="../../../../_static/language_data.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+        <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true, "ignoreClass": "document", "processClass": "math|output_area"}})</script>
+    
+    <script type="text/javascript" src="../../../../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../../../index.html" class="icon icon-home"> ESPnet
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.9.3
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Tutorial:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../tutorial.html">Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../parallelization.html">Using Job scheduling system</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../faq.html">FAQ</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../docker.html">Docker</a></li>
+</ul>
+<p class="caption"><span class="caption-text">ESPnet2:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../espnet2_tutorial.html">ESPnet2</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../espnet2_tutorial.html#instruction-for-run-sh">Instruction for run.sh</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../espnet2_training_option.html">Change the configuration for training</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../espnet2_task.html">Task class and data input system for training</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../espnet2_distributed.html">Distributed training</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Notebook:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../notebook/asr_cli.html">Speech Recognition (Recipe)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../notebook/asr_library.html">Speech Recognition (Library)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../notebook/tts_cli.html">Text-to-Speech (Recipe)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../notebook/pretrained.html">Pretrained Model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../notebook/tts_realtime_demo.html">ESPnet real time E2E-TTS demonstration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../notebook/st_demo.html">ESPnet Speech Translation Demonstration</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Package Reference:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../_gen/espnet.scheduler.html">espnet.scheduler package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../_gen/espnet.lm.html">espnet.lm package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../_gen/espnet.asr.html">espnet.asr package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../_gen/espnet.optimizer.html">espnet.optimizer package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../_gen/espnet.vc.html">espnet.vc package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../_gen/espnet.tts.html">espnet.tts package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../_gen/espnet.st.html">espnet.st package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../_gen/espnet.nets.html">espnet.nets package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../_gen/espnet.mt.html">espnet.mt package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../_gen/espnet.utils.html">espnet.utils package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../_gen/espnet.bin.html">espnet.bin package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../_gen/espnet.transform.html">espnet.transform package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../_gen/espnet2.fileio.html">espnet2.fileio package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../_gen/espnet2.optimizers.html">espnet2.optimizers package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../_gen/espnet2.schedulers.html">espnet2.schedulers package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../_gen/espnet2.lm.html">espnet2.lm package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../_gen/espnet2.asr.html">espnet2.asr package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../_gen/espnet2.main_funcs.html">espnet2.main_funcs package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../_gen/espnet2.tts.html">espnet2.tts package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../_gen/espnet2.enh.html">espnet2.enh package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../_gen/espnet2.samplers.html">espnet2.samplers package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../_gen/espnet2.torch_utils.html">espnet2.torch_utils package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../_gen/espnet2.train.html">espnet2.train package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../_gen/espnet2.utils.html">espnet2.utils package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../_gen/espnet2.bin.html">espnet2.bin package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../_gen/espnet2.iterators.html">espnet2.iterators package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../_gen/espnet2.layers.html">espnet2.layers package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../_gen/espnet2.tasks.html">espnet2.tasks package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../_gen/espnet2.text.html">espnet2.text package</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Tool Reference:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apis/espnet_bin.html">core tools</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apis/espnet2_bin.html">core tools (espnet2)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apis/utils_py.html">python utility tools</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apis/utils_sh.html">bash utility tools</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">ESPnet</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../../index.html">Module code</a> &raquo;</li>
+        
+      <li>espnet2.enh.layers.conv_beamformer</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for espnet2.enh.layers.conv_beamformer</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">This script is used to construct convolutional beamformers.</span>
+<span class="sd">Copyright 2020  Wangyou Zhang</span>
+<span class="sd"> Apache 2.0  (http://www.apache.org/licenses/LICENSE-2.0)</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Union</span>
+
+<span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">from</span> <span class="nn">torch_complex</span> <span class="kn">import</span> <span class="n">functional</span> <span class="k">as</span> <span class="n">FC</span>
+<span class="kn">from</span> <span class="nn">torch_complex.tensor</span> <span class="kn">import</span> <span class="n">ComplexTensor</span>
+
+<span class="kn">from</span> <span class="nn">espnet.nets.pytorch_backend.frontends</span> <span class="kn">import</span> <span class="n">beamformer</span>
+
+
+<div class="viewcode-block" id="inv"><a class="viewcode-back" href="../../../../_gen/espnet2.enh.html#espnet2.enh.layers.conv_beamformer.inv">[docs]</a><span class="k">def</span> <span class="nf">inv</span><span class="p">(</span><span class="n">z</span><span class="p">):</span>
+    <span class="c1"># z.shape: ..., N, N</span>
+    <span class="n">real</span><span class="p">,</span> <span class="n">imag</span> <span class="o">=</span> <span class="n">z</span><span class="o">.</span><span class="n">real</span><span class="p">,</span> <span class="n">z</span><span class="o">.</span><span class="n">imag</span>
+    <span class="n">dim_N</span> <span class="o">=</span> <span class="n">z</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">C</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">(</span>
+        <span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">((</span><span class="n">real</span><span class="p">,</span> <span class="o">-</span><span class="n">imag</span><span class="p">),</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">),</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">((</span><span class="n">imag</span><span class="p">,</span> <span class="n">real</span><span class="p">),</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)),</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">2</span>
+    <span class="p">)</span>
+    <span class="n">invC</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">inverse</span><span class="p">(</span><span class="n">C</span><span class="p">)[</span><span class="o">...</span><span class="p">,</span> <span class="p">:</span><span class="n">dim_N</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">ComplexTensor</span><span class="p">(</span><span class="n">invC</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="p">:</span><span class="n">dim_N</span><span class="p">,</span> <span class="p">:],</span> <span class="n">invC</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">dim_N</span><span class="p">:,</span> <span class="p">:])</span></div>
+
+
+<div class="viewcode-block" id="signal_framing"><a class="viewcode-back" href="../../../../_gen/espnet2.enh.html#espnet2.enh.layers.conv_beamformer.signal_framing">[docs]</a><span class="k">def</span> <span class="nf">signal_framing</span><span class="p">(</span>
+    <span class="n">signal</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">ComplexTensor</span><span class="p">],</span>
+    <span class="n">frame_length</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="n">frame_step</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="n">bdelay</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="n">do_padding</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="n">pad_value</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="n">indices</span><span class="p">:</span> <span class="n">List</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">ComplexTensor</span><span class="p">]:</span>
+    <span class="sd">&quot;&quot;&quot;Expand `signal` into several frames, with each frame of length `frame_length`.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        signal : (..., T)</span>
+<span class="sd">        frame_length:   length of each segment</span>
+<span class="sd">        frame_step:     step for selecting frames</span>
+<span class="sd">        bdelay:         delay for WPD</span>
+<span class="sd">        do_padding:     whether or not to pad the input signal at the beginning</span>
+<span class="sd">                          of the time dimension</span>
+<span class="sd">        pad_value:      value to fill in the padding</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        torch.Tensor:</span>
+<span class="sd">            if do_padding: (..., T, frame_length)</span>
+<span class="sd">            else:          (..., T - bdelay - frame_length + 2, frame_length)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">indices</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">frame_length2</span> <span class="o">=</span> <span class="n">frame_length</span> <span class="o">-</span> <span class="mi">1</span>
+        <span class="c1"># pad to the right at the last dimension of `signal` (time dimension)</span>
+        <span class="k">if</span> <span class="n">do_padding</span><span class="p">:</span>
+            <span class="c1"># (..., T) --&gt; (..., T + bdelay + frame_length - 2)</span>
+            <span class="n">signal</span> <span class="o">=</span> <span class="n">FC</span><span class="o">.</span><span class="n">pad</span><span class="p">(</span>
+                <span class="n">signal</span><span class="p">,</span> <span class="p">(</span><span class="n">bdelay</span> <span class="o">+</span> <span class="n">frame_length2</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="s2">&quot;constant&quot;</span><span class="p">,</span> <span class="n">pad_value</span>
+            <span class="p">)</span>
+
+        <span class="c1"># indices:</span>
+        <span class="c1"># [[ 0, 1, ..., frame_length2 - 1,              frame_length2 - 1 + bdelay ],</span>
+        <span class="c1">#  [ 1, 2, ..., frame_length2,                  frame_length2 + bdelay     ],</span>
+        <span class="c1">#  [ 2, 3, ..., frame_length2 + 1,              frame_length2 + 1 + bdelay ],</span>
+        <span class="c1">#  ...</span>
+        <span class="c1">#  [ T-bdelay-frame_length2, ..., T-1-bdelay,   T-1 ]</span>
+        <span class="n">indices</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="p">[</span><span class="o">*</span><span class="nb">range</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">i</span> <span class="o">+</span> <span class="n">frame_length2</span><span class="p">),</span> <span class="n">i</span> <span class="o">+</span> <span class="n">frame_length2</span> <span class="o">+</span> <span class="n">bdelay</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">signal</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">frame_length2</span> <span class="o">-</span> <span class="n">bdelay</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">frame_step</span><span class="p">)</span>
+        <span class="p">]</span>
+
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">signal</span><span class="p">,</span> <span class="n">ComplexTensor</span><span class="p">):</span>
+        <span class="n">real</span> <span class="o">=</span> <span class="n">signal_framing</span><span class="p">(</span>
+            <span class="n">signal</span><span class="o">.</span><span class="n">real</span><span class="p">,</span>
+            <span class="n">frame_length</span><span class="p">,</span>
+            <span class="n">frame_step</span><span class="p">,</span>
+            <span class="n">bdelay</span><span class="p">,</span>
+            <span class="n">do_padding</span><span class="p">,</span>
+            <span class="n">pad_value</span><span class="p">,</span>
+            <span class="n">indices</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">imag</span> <span class="o">=</span> <span class="n">signal_framing</span><span class="p">(</span>
+            <span class="n">signal</span><span class="o">.</span><span class="n">imag</span><span class="p">,</span>
+            <span class="n">frame_length</span><span class="p">,</span>
+            <span class="n">frame_step</span><span class="p">,</span>
+            <span class="n">bdelay</span><span class="p">,</span>
+            <span class="n">do_padding</span><span class="p">,</span>
+            <span class="n">pad_value</span><span class="p">,</span>
+            <span class="n">indices</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">ComplexTensor</span><span class="p">(</span><span class="n">real</span><span class="p">,</span> <span class="n">imag</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># (..., T - bdelay - frame_length + 2, frame_length)</span>
+        <span class="n">signal</span> <span class="o">=</span> <span class="n">signal</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">indices</span><span class="p">]</span>
+        <span class="c1"># signal[..., :-1] = -signal[..., :-1]</span>
+        <span class="k">return</span> <span class="n">signal</span></div>
+
+
+<div class="viewcode-block" id="get_covariances"><a class="viewcode-back" href="../../../../_gen/espnet2.enh.html#espnet2.enh.layers.conv_beamformer.get_covariances">[docs]</a><span class="k">def</span> <span class="nf">get_covariances</span><span class="p">(</span>
+    <span class="n">Y</span><span class="p">:</span> <span class="n">ComplexTensor</span><span class="p">,</span>
+    <span class="n">inverse_power</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span>
+    <span class="n">bdelay</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="n">btaps</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="n">get_vector</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ComplexTensor</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Calculates the power normalized spatio-temporal</span>
+
+<span class="sd">     covariance matrix of the framed signal.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        Y : Complext STFT signal with shape (B, F, C, T)</span>
+<span class="sd">        inverse_power : Weighting factor with shape (B, F, T)</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Correlation matrix of shape (B, F, (btaps+1) * C, (btaps+1) * C)</span>
+<span class="sd">        Correlation vector of shape (B, F, btaps + 1, C, C)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">assert</span> <span class="n">inverse_power</span><span class="o">.</span><span class="n">dim</span><span class="p">()</span> <span class="o">==</span> <span class="mi">3</span><span class="p">,</span> <span class="n">inverse_power</span><span class="o">.</span><span class="n">dim</span><span class="p">()</span>
+    <span class="k">assert</span> <span class="n">inverse_power</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="o">==</span> <span class="n">Y</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="p">(</span><span class="n">inverse_power</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="n">Y</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span>
+
+    <span class="n">Bs</span><span class="p">,</span> <span class="n">Fdim</span><span class="p">,</span> <span class="n">C</span><span class="p">,</span> <span class="n">T</span> <span class="o">=</span> <span class="n">Y</span><span class="o">.</span><span class="n">shape</span>
+
+    <span class="c1"># (B, F, C, T - bdelay - btaps + 1, btaps + 1)</span>
+    <span class="n">Psi</span> <span class="o">=</span> <span class="n">signal_framing</span><span class="p">(</span><span class="n">Y</span><span class="p">,</span> <span class="n">btaps</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">bdelay</span><span class="p">,</span> <span class="n">do_padding</span><span class="o">=</span><span class="kc">False</span><span class="p">)[</span>
+        <span class="o">...</span><span class="p">,</span> <span class="p">:</span> <span class="n">T</span> <span class="o">-</span> <span class="n">bdelay</span> <span class="o">-</span> <span class="n">btaps</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="p">:</span>
+    <span class="p">]</span>
+    <span class="c1"># Reverse along btaps-axis:</span>
+    <span class="c1"># [tau, tau-bdelay, tau-bdelay-1, ..., tau-bdelay-frame_length+1]</span>
+    <span class="n">Psi</span> <span class="o">=</span> <span class="n">FC</span><span class="o">.</span><span class="n">reverse</span><span class="p">(</span><span class="n">Psi</span><span class="p">,</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">Psi_norm</span> <span class="o">=</span> <span class="n">Psi</span> <span class="o">*</span> <span class="n">inverse_power</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="n">bdelay</span> <span class="o">+</span> <span class="n">btaps</span> <span class="o">-</span> <span class="mi">1</span> <span class="p">:,</span> <span class="kc">None</span><span class="p">]</span>
+
+    <span class="c1"># let T&#39; = T - bdelay - btaps + 1</span>
+    <span class="c1"># (B, F, C, T&#39;, btaps + 1) x (B, F, C, T&#39;, btaps + 1)</span>
+    <span class="c1">#  -&gt; (B, F, btaps + 1, C, btaps + 1, C)</span>
+    <span class="n">covariance_matrix</span> <span class="o">=</span> <span class="n">FC</span><span class="o">.</span><span class="n">einsum</span><span class="p">(</span><span class="s2">&quot;bfdtk,bfetl-&gt;bfkdle&quot;</span><span class="p">,</span> <span class="p">(</span><span class="n">Psi</span><span class="p">,</span> <span class="n">Psi_norm</span><span class="o">.</span><span class="n">conj</span><span class="p">()))</span>
+
+    <span class="c1"># (B, F, btaps + 1, C, btaps + 1, C)</span>
+    <span class="c1">#   -&gt; (B, F, (btaps + 1) * C, (btaps + 1) * C)</span>
+    <span class="n">covariance_matrix</span> <span class="o">=</span> <span class="n">covariance_matrix</span><span class="o">.</span><span class="n">view</span><span class="p">(</span>
+        <span class="n">Bs</span><span class="p">,</span> <span class="n">Fdim</span><span class="p">,</span> <span class="p">(</span><span class="n">btaps</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">C</span><span class="p">,</span> <span class="p">(</span><span class="n">btaps</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">C</span>
+    <span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">get_vector</span><span class="p">:</span>
+        <span class="c1"># (B, F, C, T&#39;, btaps + 1) x (B, F, C, T&#39;)</span>
+        <span class="c1">#    --&gt; (B, F, btaps +1, C, C)</span>
+        <span class="n">covariance_vector</span> <span class="o">=</span> <span class="n">FC</span><span class="o">.</span><span class="n">einsum</span><span class="p">(</span>
+            <span class="s2">&quot;bfdtk,bfet-&gt;bfked&quot;</span><span class="p">,</span> <span class="p">(</span><span class="n">Psi_norm</span><span class="p">,</span> <span class="n">Y</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">bdelay</span> <span class="o">+</span> <span class="n">btaps</span> <span class="o">-</span> <span class="mi">1</span> <span class="p">:]</span><span class="o">.</span><span class="n">conj</span><span class="p">())</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">covariance_matrix</span><span class="p">,</span> <span class="n">covariance_vector</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">covariance_matrix</span></div>
+
+
+<div class="viewcode-block" id="get_WPD_filter"><a class="viewcode-back" href="../../../../_gen/espnet2.enh.html#espnet2.enh.layers.conv_beamformer.get_WPD_filter">[docs]</a><span class="k">def</span> <span class="nf">get_WPD_filter</span><span class="p">(</span>
+    <span class="n">Phi</span><span class="p">:</span> <span class="n">ComplexTensor</span><span class="p">,</span>
+    <span class="n">Rf</span><span class="p">:</span> <span class="n">ComplexTensor</span><span class="p">,</span>
+    <span class="n">reference_vector</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span>
+    <span class="n">eps</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1e-15</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ComplexTensor</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Return the WPD vector.</span>
+
+<span class="sd">        WPD is the Weighted Power minimization Distortionless response</span>
+<span class="sd">        convolutional beamformer. As follows:</span>
+
+<span class="sd">        h = (Rf^-1 @ Phi_{xx}) / tr[(Rf^-1) @ Phi_{xx}] @ u</span>
+
+<span class="sd">    Reference:</span>
+<span class="sd">        T. Nakatani and K. Kinoshita, &quot;A Unified Convolutional Beamformer</span>
+<span class="sd">        for Simultaneous Denoising and Dereverberation,&quot; in IEEE Signal</span>
+<span class="sd">        Processing Letters, vol. 26, no. 6, pp. 903-907, June 2019, doi:</span>
+<span class="sd">        10.1109/LSP.2019.2911179.</span>
+<span class="sd">        https://ieeexplore.ieee.org/document/8691481</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        Phi (ComplexTensor): (B, F, (btaps+1) * C, (btaps+1) * C)</span>
+<span class="sd">            is the PSD of zero-padded speech [x^T(t,f) 0 ... 0]^T.</span>
+<span class="sd">        Rf (ComplexTensor): (B, F, (btaps+1) * C, (btaps+1) * C)</span>
+<span class="sd">            is the power normalized spatio-temporal covariance matrix.</span>
+<span class="sd">        reference_vector (torch.Tensor): (B, (btaps+1) * C)</span>
+<span class="sd">            is the reference_vector.</span>
+<span class="sd">        eps (float):</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        filter_matrix (ComplexTensor): (B, F, (btaps + 1) * C)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">inv_Rf</span> <span class="o">=</span> <span class="n">inv</span><span class="p">(</span><span class="n">Rf</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">reg_coeff_tensor</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="n">ComplexTensor</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">rand_like</span><span class="p">(</span><span class="n">Rf</span><span class="o">.</span><span class="n">real</span><span class="p">),</span> <span class="n">torch</span><span class="o">.</span><span class="n">rand_like</span><span class="p">(</span><span class="n">Rf</span><span class="o">.</span><span class="n">real</span><span class="p">))</span> <span class="o">*</span> <span class="mf">1e-4</span>
+            <span class="p">)</span>
+            <span class="n">Rf</span> <span class="o">=</span> <span class="n">Rf</span> <span class="o">/</span> <span class="mf">10e4</span>
+            <span class="n">Phi</span> <span class="o">=</span> <span class="n">Phi</span> <span class="o">/</span> <span class="mf">10e4</span>
+            <span class="n">Rf</span> <span class="o">+=</span> <span class="n">reg_coeff_tensor</span>
+            <span class="n">inv_Rf</span> <span class="o">=</span> <span class="n">inv</span><span class="p">(</span><span class="n">Rf</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+            <span class="n">reg_coeff_tensor</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="n">ComplexTensor</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">rand_like</span><span class="p">(</span><span class="n">Rf</span><span class="o">.</span><span class="n">real</span><span class="p">),</span> <span class="n">torch</span><span class="o">.</span><span class="n">rand_like</span><span class="p">(</span><span class="n">Rf</span><span class="o">.</span><span class="n">real</span><span class="p">))</span> <span class="o">*</span> <span class="mf">1e-1</span>
+            <span class="p">)</span>
+            <span class="n">Rf</span> <span class="o">=</span> <span class="n">Rf</span> <span class="o">/</span> <span class="mf">10e10</span>
+            <span class="n">Phi</span> <span class="o">=</span> <span class="n">Phi</span> <span class="o">/</span> <span class="mf">10e10</span>
+            <span class="n">Rf</span> <span class="o">+=</span> <span class="n">reg_coeff_tensor</span>
+            <span class="n">inv_Rf</span> <span class="o">=</span> <span class="n">inv</span><span class="p">(</span><span class="n">Rf</span><span class="p">)</span>
+
+    <span class="c1"># numerator: (..., C_1, C_2) x (..., C_2, C_3) -&gt; (..., C_1, C_3)</span>
+    <span class="n">numerator</span> <span class="o">=</span> <span class="n">FC</span><span class="o">.</span><span class="n">einsum</span><span class="p">(</span><span class="s2">&quot;...ec,...cd-&gt;...ed&quot;</span><span class="p">,</span> <span class="p">[</span><span class="n">inv_Rf</span><span class="p">,</span> <span class="n">Phi</span><span class="p">])</span>
+    <span class="c1"># ws: (..., C, C) / (...,) -&gt; (..., C, C)</span>
+    <span class="n">ws</span> <span class="o">=</span> <span class="n">numerator</span> <span class="o">/</span> <span class="p">(</span><span class="n">FC</span><span class="o">.</span><span class="n">trace</span><span class="p">(</span><span class="n">numerator</span><span class="p">)[</span><span class="o">...</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">+</span> <span class="n">eps</span><span class="p">)</span>
+    <span class="c1"># h: (..., F, C_1, C_2) x (..., C_2) -&gt; (..., F, C_1)</span>
+    <span class="n">beamform_vector</span> <span class="o">=</span> <span class="n">FC</span><span class="o">.</span><span class="n">einsum</span><span class="p">(</span><span class="s2">&quot;...fec,...c-&gt;...fe&quot;</span><span class="p">,</span> <span class="p">[</span><span class="n">ws</span><span class="p">,</span> <span class="n">reference_vector</span><span class="p">])</span>
+    <span class="c1"># (B, F, (btaps + 1) * C)</span>
+    <span class="k">return</span> <span class="n">beamform_vector</span></div>
+
+
+<div class="viewcode-block" id="get_WPD_filter_v2"><a class="viewcode-back" href="../../../../_gen/espnet2.enh.html#espnet2.enh.layers.conv_beamformer.get_WPD_filter_v2">[docs]</a><span class="k">def</span> <span class="nf">get_WPD_filter_v2</span><span class="p">(</span>
+    <span class="n">Phi</span><span class="p">:</span> <span class="n">ComplexTensor</span><span class="p">,</span>
+    <span class="n">Rf</span><span class="p">:</span> <span class="n">ComplexTensor</span><span class="p">,</span>
+    <span class="n">reference_vector</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span>
+    <span class="n">eps</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1e-15</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ComplexTensor</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Return the WPD vector with filter v2.</span>
+
+<span class="sd">        WPD is the Weighted Power minimization Distortionless response</span>
+<span class="sd">        convolutional beamformer. As follows:</span>
+
+<span class="sd">        h = (Rf^-1 @ Phi_{xx}) @ u / tr[(Rf^-1) @ Phi_{xx}]</span>
+
+<span class="sd">       This implementaion is more efficient than `get_WPD_filter` as</span>
+<span class="sd">        it skips unnecessary computation with zeros.</span>
+
+<span class="sd">    Reference:</span>
+<span class="sd">        T. Nakatani and K. Kinoshita, &quot;A Unified Convolutional Beamformer</span>
+<span class="sd">        for Simultaneous Denoising and Dereverberation,&quot; in IEEE Signal</span>
+<span class="sd">        Processing Letters, vol. 26, no. 6, pp. 903-907, June 2019, doi:</span>
+<span class="sd">        10.1109/LSP.2019.2911179.</span>
+<span class="sd">        https://ieeexplore.ieee.org/document/8691481</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        Phi (ComplexTensor): (B, F, C, C)</span>
+<span class="sd">            is speech PSD.</span>
+<span class="sd">        Rf (ComplexTensor): (B, F, (btaps+1) * C, (btaps+1) * C)</span>
+<span class="sd">            is the power normalized spatio-temporal covariance matrix.</span>
+<span class="sd">        reference_vector (torch.Tensor): (B, C)</span>
+<span class="sd">            is the reference_vector.</span>
+<span class="sd">        eps (float):</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        filter_matrix (ComplexTensor): (B, F, (btaps+1) * C)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">C</span> <span class="o">=</span> <span class="n">reference_vector</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">inv_Rf</span> <span class="o">=</span> <span class="n">inv</span><span class="p">(</span><span class="n">Rf</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">reg_coeff_tensor</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="n">ComplexTensor</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">rand_like</span><span class="p">(</span><span class="n">Rf</span><span class="o">.</span><span class="n">real</span><span class="p">),</span> <span class="n">torch</span><span class="o">.</span><span class="n">rand_like</span><span class="p">(</span><span class="n">Rf</span><span class="o">.</span><span class="n">real</span><span class="p">))</span> <span class="o">*</span> <span class="mf">1e-4</span>
+            <span class="p">)</span>
+            <span class="n">Rf</span> <span class="o">=</span> <span class="n">Rf</span> <span class="o">/</span> <span class="mf">10e4</span>
+            <span class="n">Phi</span> <span class="o">=</span> <span class="n">Phi</span> <span class="o">/</span> <span class="mf">10e4</span>
+            <span class="n">Rf</span> <span class="o">+=</span> <span class="n">reg_coeff_tensor</span>
+            <span class="n">inv_Rf</span> <span class="o">=</span> <span class="n">inv</span><span class="p">(</span><span class="n">Rf</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+            <span class="n">reg_coeff_tensor</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="n">ComplexTensor</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">rand_like</span><span class="p">(</span><span class="n">Rf</span><span class="o">.</span><span class="n">real</span><span class="p">),</span> <span class="n">torch</span><span class="o">.</span><span class="n">rand_like</span><span class="p">(</span><span class="n">Rf</span><span class="o">.</span><span class="n">real</span><span class="p">))</span> <span class="o">*</span> <span class="mf">1e-1</span>
+            <span class="p">)</span>
+            <span class="n">Rf</span> <span class="o">=</span> <span class="n">Rf</span> <span class="o">/</span> <span class="mf">10e10</span>
+            <span class="n">Phi</span> <span class="o">=</span> <span class="n">Phi</span> <span class="o">/</span> <span class="mf">10e10</span>
+            <span class="n">Rf</span> <span class="o">+=</span> <span class="n">reg_coeff_tensor</span>
+            <span class="n">inv_Rf</span> <span class="o">=</span> <span class="n">inv</span><span class="p">(</span><span class="n">Rf</span><span class="p">)</span>
+    <span class="c1"># (B, F, (btaps+1) * C, (btaps+1) * C) --&gt; (B, F, (btaps+1) * C, C)</span>
+    <span class="n">inv_Rf_pruned</span> <span class="o">=</span> <span class="n">inv_Rf</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="p">:</span><span class="n">C</span><span class="p">]</span>
+    <span class="c1"># numerator: (..., C_1, C_2) x (..., C_2, C_3) -&gt; (..., C_1, C_3)</span>
+    <span class="n">numerator</span> <span class="o">=</span> <span class="n">FC</span><span class="o">.</span><span class="n">einsum</span><span class="p">(</span><span class="s2">&quot;...ec,...cd-&gt;...ed&quot;</span><span class="p">,</span> <span class="p">[</span><span class="n">inv_Rf_pruned</span><span class="p">,</span> <span class="n">Phi</span><span class="p">])</span>
+    <span class="c1"># ws: (..., (btaps+1) * C, C) / (...,) -&gt; (..., (btaps+1) * C, C)</span>
+    <span class="n">ws</span> <span class="o">=</span> <span class="n">numerator</span> <span class="o">/</span> <span class="p">(</span><span class="n">FC</span><span class="o">.</span><span class="n">trace</span><span class="p">(</span><span class="n">numerator</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="p">:</span><span class="n">C</span><span class="p">,</span> <span class="p">:])[</span><span class="o">...</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">+</span> <span class="n">eps</span><span class="p">)</span>
+    <span class="c1"># h: (..., F, C_1, C_2) x (..., C_2) -&gt; (..., F, C_1)</span>
+    <span class="n">beamform_vector</span> <span class="o">=</span> <span class="n">FC</span><span class="o">.</span><span class="n">einsum</span><span class="p">(</span><span class="s2">&quot;...fec,...c-&gt;...fe&quot;</span><span class="p">,</span> <span class="p">[</span><span class="n">ws</span><span class="p">,</span> <span class="n">reference_vector</span><span class="p">])</span>
+    <span class="c1"># (B, F, (btaps+1) * C)</span>
+    <span class="k">return</span> <span class="n">beamform_vector</span></div>
+
+
+<div class="viewcode-block" id="perform_WPD_filtering"><a class="viewcode-back" href="../../../../_gen/espnet2.enh.html#espnet2.enh.layers.conv_beamformer.perform_WPD_filtering">[docs]</a><span class="k">def</span> <span class="nf">perform_WPD_filtering</span><span class="p">(</span>
+    <span class="n">filter_matrix</span><span class="p">:</span> <span class="n">ComplexTensor</span><span class="p">,</span> <span class="n">Y</span><span class="p">:</span> <span class="n">ComplexTensor</span><span class="p">,</span> <span class="n">bdelay</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">btaps</span><span class="p">:</span> <span class="nb">int</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ComplexTensor</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;perform_filter_operation</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        filter_matrix: Filter matrix (B, F, (btaps + 1) * C)</span>
+<span class="sd">        Y : Complex STFT signal with shape (B, F, C, T)</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        enhanced (ComplexTensor): (B, F, T)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># (B, F, C, T) --&gt; (B, F, C, T, btaps + 1)</span>
+    <span class="n">Ytilde</span> <span class="o">=</span> <span class="n">signal_framing</span><span class="p">(</span><span class="n">Y</span><span class="p">,</span> <span class="n">btaps</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">bdelay</span><span class="p">,</span> <span class="n">do_padding</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">pad_value</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">Ytilde</span> <span class="o">=</span> <span class="n">FC</span><span class="o">.</span><span class="n">reverse</span><span class="p">(</span><span class="n">Ytilde</span><span class="p">,</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="n">Bs</span><span class="p">,</span> <span class="n">Fdim</span><span class="p">,</span> <span class="n">C</span><span class="p">,</span> <span class="n">T</span> <span class="o">=</span> <span class="n">Y</span><span class="o">.</span><span class="n">shape</span>
+    <span class="c1"># --&gt; (B, F, T, btaps + 1, C) --&gt; (B, F, T, (btaps + 1) * C)</span>
+    <span class="n">Ytilde</span> <span class="o">=</span> <span class="n">Ytilde</span><span class="o">.</span><span class="n">permute</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">contiguous</span><span class="p">()</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">Bs</span><span class="p">,</span> <span class="n">Fdim</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+    <span class="c1"># (B, F, T, 1)</span>
+    <span class="n">enhanced</span> <span class="o">=</span> <span class="n">FC</span><span class="o">.</span><span class="n">einsum</span><span class="p">(</span><span class="s2">&quot;...tc,...c-&gt;...t&quot;</span><span class="p">,</span> <span class="p">[</span><span class="n">Ytilde</span><span class="p">,</span> <span class="n">filter_matrix</span><span class="o">.</span><span class="n">conj</span><span class="p">()])</span>
+    <span class="k">return</span> <span class="n">enhanced</span></div>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="c1">############################################</span>
+    <span class="c1">#                  Example                 #</span>
+    <span class="c1">############################################</span>
+    <span class="n">eps</span> <span class="o">=</span> <span class="mf">1e-10</span>
+    <span class="n">btaps</span> <span class="o">=</span> <span class="mi">5</span>
+    <span class="n">bdelay</span> <span class="o">=</span> <span class="mi">3</span>
+    <span class="c1"># pretend to be some STFT: (B, F, C, T)</span>
+    <span class="n">Z</span> <span class="o">=</span> <span class="n">ComplexTensor</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">256</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">518</span><span class="p">),</span> <span class="n">torch</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">256</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">518</span><span class="p">))</span>
+
+    <span class="c1"># Calculate power: (B, F, C, T)</span>
+    <span class="n">power</span> <span class="o">=</span> <span class="n">Z</span><span class="o">.</span><span class="n">real</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="n">Z</span><span class="o">.</span><span class="n">imag</span> <span class="o">**</span> <span class="mi">2</span>
+    <span class="c1"># pretend to be some mask</span>
+    <span class="n">mask_speech</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">Z</span><span class="o">.</span><span class="n">real</span><span class="p">)</span>
+    <span class="c1"># (..., C, T) * (..., C, T) -&gt; (..., C, T)</span>
+    <span class="n">power</span> <span class="o">=</span> <span class="n">power</span> <span class="o">*</span> <span class="n">mask_speech</span>
+    <span class="c1"># Averaging along the channel axis: (B, F, C, T) -&gt; (B, F, T)</span>
+    <span class="n">power</span> <span class="o">=</span> <span class="n">power</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">dim</span><span class="o">=-</span><span class="mi">2</span><span class="p">)</span>
+    <span class="c1"># (B, F, T) --&gt; (B * F, T)</span>
+    <span class="n">power</span> <span class="o">=</span> <span class="n">power</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">power</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+    <span class="n">inverse_power</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">/</span> <span class="n">torch</span><span class="o">.</span><span class="n">clamp</span><span class="p">(</span><span class="n">power</span><span class="p">,</span> <span class="nb">min</span><span class="o">=</span><span class="n">eps</span><span class="p">)</span>
+
+    <span class="n">B</span><span class="p">,</span> <span class="n">Fdim</span><span class="p">,</span> <span class="n">C</span><span class="p">,</span> <span class="n">T</span> <span class="o">=</span> <span class="n">Z</span><span class="o">.</span><span class="n">shape</span>
+
+    <span class="c1"># covariance matrix: (B, F, (btaps+1) * C, (btaps+1) * C)</span>
+    <span class="n">covariance_matrix</span> <span class="o">=</span> <span class="n">get_covariances</span><span class="p">(</span>
+        <span class="n">Z</span><span class="p">,</span> <span class="n">inverse_power</span><span class="p">,</span> <span class="n">bdelay</span><span class="p">,</span> <span class="n">btaps</span><span class="p">,</span> <span class="n">get_vector</span><span class="o">=</span><span class="kc">False</span>
+    <span class="p">)</span>
+
+    <span class="c1"># speech signal PSD: (B, F, C, C)</span>
+    <span class="n">psd_speech</span> <span class="o">=</span> <span class="n">beamformer</span><span class="o">.</span><span class="n">get_power_spectral_density_matrix</span><span class="p">(</span>
+        <span class="n">Z</span><span class="p">,</span> <span class="n">mask_speech</span><span class="p">,</span> <span class="n">btaps</span><span class="p">,</span> <span class="n">normalization</span><span class="o">=</span><span class="kc">True</span>
+    <span class="p">)</span>
+
+    <span class="c1"># reference vector: (B, C)</span>
+    <span class="n">ref_channel</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">u</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="o">*</span><span class="p">(</span><span class="n">Z</span><span class="o">.</span><span class="n">size</span><span class="p">()[:</span><span class="o">-</span><span class="mi">3</span><span class="p">]</span> <span class="o">+</span> <span class="p">(</span><span class="n">Z</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span><span class="p">),)),</span> <span class="n">device</span><span class="o">=</span><span class="n">Z</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
+    <span class="n">u</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">ref_channel</span><span class="p">]</span><span class="o">.</span><span class="n">fill_</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="c1"># (B, F, (btaps + 1) * C)</span>
+    <span class="n">WPD_filter</span> <span class="o">=</span> <span class="n">get_WPD_filter_v2</span><span class="p">(</span><span class="n">psd_speech</span><span class="p">,</span> <span class="n">covariance_matrix</span><span class="p">,</span> <span class="n">u</span><span class="p">)</span>
+
+    <span class="c1"># (B, F, T)</span>
+    <span class="n">enhanced</span> <span class="o">=</span> <span class="n">perform_WPD_filtering</span><span class="p">(</span><span class="n">WPD_filter</span><span class="p">,</span> <span class="n">Z</span><span class="p">,</span> <span class="n">bdelay</span><span class="p">,</span> <span class="n">btaps</span><span class="p">)</span>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2017, Shinji Watanabe
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
