@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>espnet2.lm.seq_rnn &mdash; ESPnet 0.7.0 documentation</title>
+  <title>espnet2.lm.seq_rnn_lm &mdash; ESPnet 0.9.3 documentation</title>
   
 
   
@@ -61,7 +61,7 @@
             
             
               <div class="version">
-                0.7.0
+                0.9.3
               </div>
             
           
@@ -101,12 +101,22 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../espnet2_task.html">Task class and data input system for training</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../espnet2_distributed.html">Distributed training</a></li>
 </ul>
+<p class="caption"><span class="caption-text">Notebook:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebook/asr_cli.html">Speech Recognition (Recipe)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebook/asr_library.html">Speech Recognition (Library)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebook/tts_cli.html">Text-to-Speech (Recipe)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebook/pretrained.html">Pretrained Model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebook/tts_realtime_demo.html">ESPnet real time E2E-TTS demonstration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebook/st_demo.html">ESPnet Speech Translation Demonstration</a></li>
+</ul>
 <p class="caption"><span class="caption-text">Package Reference:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../_gen/espnet.scheduler.html">espnet.scheduler package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../_gen/espnet.lm.html">espnet.lm package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../_gen/espnet.asr.html">espnet.asr package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../_gen/espnet.optimizer.html">espnet.optimizer package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../_gen/espnet.vc.html">espnet.vc package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../_gen/espnet.tts.html">espnet.tts package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../_gen/espnet.st.html">espnet.st package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../_gen/espnet.nets.html">espnet.nets package</a></li>
@@ -114,12 +124,14 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../_gen/espnet.utils.html">espnet.utils package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../_gen/espnet.bin.html">espnet.bin package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../_gen/espnet.transform.html">espnet.transform package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../_gen/espnet2.fileio.html">espnet2.fileio package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../_gen/espnet2.optimizers.html">espnet2.optimizers package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../_gen/espnet2.schedulers.html">espnet2.schedulers package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../_gen/espnet2.lm.html">espnet2.lm package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../_gen/espnet2.asr.html">espnet2.asr package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../_gen/espnet2.main_funcs.html">espnet2.main_funcs package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../_gen/espnet2.tts.html">espnet2.tts package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../_gen/espnet2.enh.html">espnet2.enh package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../_gen/espnet2.samplers.html">espnet2.samplers package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../_gen/espnet2.torch_utils.html">espnet2.torch_utils package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../_gen/espnet2.train.html">espnet2.train package</a></li>
@@ -133,6 +145,7 @@
 <p class="caption"><span class="caption-text">Tool Reference:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../apis/espnet_bin.html">core tools</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../apis/espnet2_bin.html">core tools (espnet2)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../apis/utils_py.html">python utility tools</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../apis/utils_sh.html">bash utility tools</a></li>
 </ul>
@@ -182,7 +195,7 @@
         
           <li><a href="../../index.html">Module code</a> &raquo;</li>
         
-      <li>espnet2.lm.seq_rnn</li>
+      <li>espnet2.lm.seq_rnn_lm</li>
     
     
       <li class="wy-breadcrumbs-aside">
@@ -197,7 +210,7 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <h1>Source code for espnet2.lm.seq_rnn</h1><div class="highlight"><pre>
+  <h1>Source code for espnet2.lm.seq_rnn_lm</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;Sequential implementation of Recurrent Neural Network Language Model.&quot;&quot;&quot;</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Tuple</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Union</span>
@@ -209,7 +222,7 @@
 <span class="kn">from</span> <span class="nn">espnet2.lm.abs_model</span> <span class="kn">import</span> <span class="n">AbsLM</span>
 
 
-<div class="viewcode-block" id="SequentialRNNLM"><a class="viewcode-back" href="../../../_gen/espnet2.lm.html#espnet2.lm.seq_rnn.SequentialRNNLM">[docs]</a><span class="k">class</span> <span class="nc">SequentialRNNLM</span><span class="p">(</span><span class="n">AbsLM</span><span class="p">):</span>
+<div class="viewcode-block" id="SequentialRNNLM"><a class="viewcode-back" href="../../../_gen/espnet2.lm.html#espnet2.lm.seq_rnn_lm.SequentialRNNLM">[docs]</a><span class="k">class</span> <span class="nc">SequentialRNNLM</span><span class="p">(</span><span class="n">AbsLM</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Sequential RNNLM.</span>
 
 <span class="sd">    See also:</span>
@@ -279,7 +292,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">nhid</span> <span class="o">=</span> <span class="n">nhid</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">nlayers</span> <span class="o">=</span> <span class="n">nlayers</span>
 
-<div class="viewcode-block" id="SequentialRNNLM.forward"><a class="viewcode-back" href="../../../_gen/espnet2.lm.html#espnet2.lm.seq_rnn.SequentialRNNLM.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span>
+<div class="viewcode-block" id="SequentialRNNLM.forward"><a class="viewcode-back" href="../../../_gen/espnet2.lm.html#espnet2.lm.seq_rnn_lm.SequentialRNNLM.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="nb">input</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">hidden</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">]:</span>
         <span class="n">emb</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">encoder</span><span class="p">(</span><span class="nb">input</span><span class="p">))</span>
@@ -293,26 +306,7 @@
             <span class="n">hidden</span><span class="p">,</span>
         <span class="p">)</span></div>
 
-<div class="viewcode-block" id="SequentialRNNLM.init_state"><a class="viewcode-back" href="../../../_gen/espnet2.lm.html#espnet2.lm.seq_rnn.SequentialRNNLM.init_state">[docs]</a>    <span class="k">def</span> <span class="nf">init_state</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Get an initial state for decoding.</span>
-
-<span class="sd">        Args:</span>
-<span class="sd">            x (torch.Tensor): The encoded feature tensor</span>
-
-<span class="sd">        Returns: initial state</span>
-
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">bsz</span> <span class="o">=</span> <span class="mi">1</span>
-        <span class="n">weight</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">())</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">rnn_type</span> <span class="o">==</span> <span class="s2">&quot;LSTM&quot;</span><span class="p">:</span>
-            <span class="k">return</span> <span class="p">(</span>
-                <span class="n">weight</span><span class="o">.</span><span class="n">new_zeros</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nlayers</span><span class="p">,</span> <span class="n">bsz</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">nhid</span><span class="p">),</span>
-                <span class="n">weight</span><span class="o">.</span><span class="n">new_zeros</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nlayers</span><span class="p">,</span> <span class="n">bsz</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">nhid</span><span class="p">),</span>
-            <span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">weight</span><span class="o">.</span><span class="n">new_zeros</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nlayers</span><span class="p">,</span> <span class="n">bsz</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">nhid</span><span class="p">)</span></div>
-
-<div class="viewcode-block" id="SequentialRNNLM.score"><a class="viewcode-back" href="../../../_gen/espnet2.lm.html#espnet2.lm.seq_rnn.SequentialRNNLM.score">[docs]</a>    <span class="k">def</span> <span class="nf">score</span><span class="p">(</span>
+<div class="viewcode-block" id="SequentialRNNLM.score"><a class="viewcode-back" href="../../../_gen/espnet2.lm.html#espnet2.lm.seq_rnn_lm.SequentialRNNLM.score">[docs]</a>    <span class="k">def</span> <span class="nf">score</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">y</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span>
         <span class="n">state</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">]],</span>
@@ -333,7 +327,53 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">y</span><span class="p">,</span> <span class="n">new_state</span> <span class="o">=</span> <span class="bp">self</span><span class="p">(</span><span class="n">y</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="n">state</span><span class="p">)</span>
         <span class="n">logp</span> <span class="o">=</span> <span class="n">y</span><span class="o">.</span><span class="n">log_softmax</span><span class="p">(</span><span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">logp</span><span class="p">,</span> <span class="n">new_state</span></div></div>
+        <span class="k">return</span> <span class="n">logp</span><span class="p">,</span> <span class="n">new_state</span></div>
+
+<div class="viewcode-block" id="SequentialRNNLM.batch_score"><a class="viewcode-back" href="../../../_gen/espnet2.lm.html#espnet2.lm.seq_rnn_lm.SequentialRNNLM.batch_score">[docs]</a>    <span class="k">def</span> <span class="nf">batch_score</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">ys</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">states</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">xs</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;Score new token batch.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            ys (torch.Tensor): torch.int64 prefix tokens (n_batch, ylen).</span>
+<span class="sd">            states (List[Any]): Scorer states for prefix tokens.</span>
+<span class="sd">            xs (torch.Tensor):</span>
+<span class="sd">                The encoder feature that generates ys (n_batch, xlen, n_feat).</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            tuple[torch.Tensor, List[Any]]: Tuple of</span>
+<span class="sd">                batchfied scores for next token with shape of `(n_batch, n_vocab)`</span>
+<span class="sd">                and next state list for ys.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">states</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">states</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rnn</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">LSTM</span><span class="p">):</span>
+            <span class="c1"># states: Batch x 2 x (Nlayers, Dim) -&gt; 2 x (Nlayers, Batch, Dim)</span>
+            <span class="n">h</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">stack</span><span class="p">([</span><span class="n">h</span> <span class="k">for</span> <span class="n">h</span><span class="p">,</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">states</span><span class="p">],</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+            <span class="n">c</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">stack</span><span class="p">([</span><span class="n">c</span> <span class="k">for</span> <span class="n">h</span><span class="p">,</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">states</span><span class="p">],</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+            <span class="n">states</span> <span class="o">=</span> <span class="n">h</span><span class="p">,</span> <span class="n">c</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># states: Batch x (Nlayers, Dim) -&gt; (Nlayers, Batch, Dim)</span>
+            <span class="n">states</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">stack</span><span class="p">(</span><span class="n">states</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+        <span class="n">ys</span><span class="p">,</span> <span class="n">states</span> <span class="o">=</span> <span class="bp">self</span><span class="p">(</span><span class="n">ys</span><span class="p">[:,</span> <span class="o">-</span><span class="mi">1</span><span class="p">:],</span> <span class="n">states</span><span class="p">)</span>
+        <span class="c1"># ys: (Batch, 1, Nvocab) -&gt; (Batch, NVocab)</span>
+        <span class="k">assert</span> <span class="n">ys</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">,</span> <span class="n">ys</span><span class="o">.</span><span class="n">shape</span>
+        <span class="n">ys</span> <span class="o">=</span> <span class="n">ys</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">logp</span> <span class="o">=</span> <span class="n">ys</span><span class="o">.</span><span class="n">log_softmax</span><span class="p">(</span><span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+
+        <span class="c1"># state: Change to batch first</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rnn</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">LSTM</span><span class="p">):</span>
+            <span class="c1"># h, c: (Nlayers, Batch, Dim)</span>
+            <span class="n">h</span><span class="p">,</span> <span class="n">c</span> <span class="o">=</span> <span class="n">states</span>
+            <span class="c1"># states: Batch x 2 x (Nlayers, Dim)</span>
+            <span class="n">states</span> <span class="o">=</span> <span class="p">[(</span><span class="n">h</span><span class="p">[:,</span> <span class="n">i</span><span class="p">],</span> <span class="n">c</span><span class="p">[:,</span> <span class="n">i</span><span class="p">])</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">h</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">1</span><span class="p">))]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># states: (Nlayers, Batch, Dim) -&gt; Batch x (Nlayers, Dim)</span>
+            <span class="n">states</span> <span class="o">=</span> <span class="p">[</span><span class="n">states</span><span class="p">[:,</span> <span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">states</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">1</span><span class="p">))]</span>
+
+        <span class="k">return</span> <span class="n">logp</span><span class="p">,</span> <span class="n">states</span></div></div>
 </pre></div>
 
            </div>

@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Distributed training &mdash; ESPnet 0.7.0 documentation</title>
+  <title>Distributed training &mdash; ESPnet 0.9.3 documentation</title>
   
 
   
@@ -38,7 +38,7 @@
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="espnet.scheduler package" href="_gen/espnet.scheduler.html" />
+    <link rel="next" title="Speech Recognition (Recipe)" href="notebook/asr_cli.html" />
     <link rel="prev" title="Task class and data input system for training" href="espnet2_task.html" /> 
 </head>
 
@@ -63,7 +63,7 @@
             
             
               <div class="version">
-                0.7.0
+                0.9.3
               </div>
             
           
@@ -104,15 +104,15 @@
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Distributed training</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#examples">Examples</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#single-node-with-4gpus-with-distributed-mode">Single node with 4GPUs with distributed mode</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#nodes-and-2gpus-for-each-node-with-multiprocessing-distributed-mode">2Nodes and 2GPUs for each node with multiprocessing distributed mode</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#host-and-2gpus-for-each-host-with-multiprocessing-distributed-mode">2Host and 2GPUs for each host with multiprocessing distributed mode</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#rank-and-world-size">RANK and WORLD_SIZE</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#about-init-method">About init method</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="#nodes-which-have-2gpus-and-1gpu-respectively">2Nodes which have 2GPUs and 1GPU respectively</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#nodes-and-2gpus-for-each-node-using-slurm-with-multiprocessing-distributed">2Nodes and 2GPUs for each node using <code class="docutils literal notranslate"><span class="pre">Slurm</span></code> with multiprocessing distributed</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#hosts-which-have-2gpus-and-1gpu-respectively">2Hosts which have 2GPUs and 1GPU respectively</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#hosts-and-2gpus-for-each-node-using-slurm-with-multiprocessing-distributed">2Hosts and 2GPUs for each node using <code class="docutils literal notranslate"><span class="pre">Slurm</span></code> with multiprocessing distributed</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#gpus-with-3nodes-using-slurm">5GPUs with 3nodes using <code class="docutils literal notranslate"><span class="pre">Slurm</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="#nodes-and-2gpus-for-each-nodes-using-mpi-with-multiprocessing-distributed">2Nodes and 2GPUs for each nodes using <code class="docutils literal notranslate"><span class="pre">MPI</span></code> with multiprocessing distributed</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#hosts-and-2gpus-for-each-node-using-mpi-with-multiprocessing-distributed">2Hosts and 2GPUs for each node using <code class="docutils literal notranslate"><span class="pre">MPI</span></code> with multiprocessing distributed</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#espnet2-bin-launch"><code class="docutils literal notranslate"><span class="pre">espnet2.bin.launch</span></code></a></li>
@@ -121,12 +121,22 @@
 </ul>
 </li>
 </ul>
+<p class="caption"><span class="caption-text">Notebook:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="notebook/asr_cli.html">Speech Recognition (Recipe)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="notebook/asr_library.html">Speech Recognition (Library)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="notebook/tts_cli.html">Text-to-Speech (Recipe)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="notebook/pretrained.html">Pretrained Model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="notebook/tts_realtime_demo.html">ESPnet real time E2E-TTS demonstration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="notebook/st_demo.html">ESPnet Speech Translation Demonstration</a></li>
+</ul>
 <p class="caption"><span class="caption-text">Package Reference:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="_gen/espnet.scheduler.html">espnet.scheduler package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="_gen/espnet.lm.html">espnet.lm package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="_gen/espnet.asr.html">espnet.asr package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="_gen/espnet.optimizer.html">espnet.optimizer package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="_gen/espnet.vc.html">espnet.vc package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="_gen/espnet.tts.html">espnet.tts package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="_gen/espnet.st.html">espnet.st package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="_gen/espnet.nets.html">espnet.nets package</a></li>
@@ -134,12 +144,14 @@
 <li class="toctree-l1"><a class="reference internal" href="_gen/espnet.utils.html">espnet.utils package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="_gen/espnet.bin.html">espnet.bin package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="_gen/espnet.transform.html">espnet.transform package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="_gen/espnet2.fileio.html">espnet2.fileio package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="_gen/espnet2.optimizers.html">espnet2.optimizers package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="_gen/espnet2.schedulers.html">espnet2.schedulers package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="_gen/espnet2.lm.html">espnet2.lm package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="_gen/espnet2.asr.html">espnet2.asr package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="_gen/espnet2.main_funcs.html">espnet2.main_funcs package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="_gen/espnet2.tts.html">espnet2.tts package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="_gen/espnet2.enh.html">espnet2.enh package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="_gen/espnet2.samplers.html">espnet2.samplers package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="_gen/espnet2.torch_utils.html">espnet2.torch_utils package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="_gen/espnet2.train.html">espnet2.train package</a></li>
@@ -153,6 +165,7 @@
 <p class="caption"><span class="caption-text">Tool Reference:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="apis/espnet_bin.html">core tools</a></li>
+<li class="toctree-l1"><a class="reference internal" href="apis/espnet2_bin.html">core tools (espnet2)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="apis/utils_py.html">python utility tools</a></li>
 <li class="toctree-l1"><a class="reference internal" href="apis/utils_sh.html">bash utility tools</a></li>
 </ul>
@@ -246,42 +259,48 @@
 <div class="section" id="distributed-training">
 <h1>Distributed training<a class="headerlink" href="#distributed-training" title="Permalink to this headline">¶</a></h1>
 <p>ESPnet2 provides some kinds of data-parallel distributed training.</p>
-<ol class="simple">
-<li><p>Single node with multi GPUs</p>
-<ol class="simple">
-<li><p>Using multi-processing: <code class="docutils literal notranslate"><span class="pre">torch.nn.DistributedDataParallel</span></code></p>
-<ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">--ngpu</span> <span class="pre">N-GPU</span> <span class="pre">--multiprocessing_distributed</span> <span class="pre">true</span></code></p></li>
-</ul>
-</li>
-<li><p>Using multi-threading: <code class="docutils literal notranslate"><span class="pre">torch.nn.DataParallel</span></code></p>
-<ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">--ngpu</span> <span class="pre">N-GPU</span> <span class="pre">--multiprocessing_distributed</span> <span class="pre">false</span></code></p></li>
-</ul>
-</li>
-</ol>
-</li>
-<li><p>Multi nodes with multi GPUs: <code class="docutils literal notranslate"><span class="pre">torch.nn.DistributedDataParallel</span></code></p>
-<ol class="simple">
-<li><p>Launch <code class="docutils literal notranslate"><span class="pre">N-HOST</span></code> jobs with <code class="docutils literal notranslate"><span class="pre">N-GPU</span></code> for each host (=<code class="docutils literal notranslate"><span class="pre">N-HOST</span></code>x<code class="docutils literal notranslate"><span class="pre">N-GPU</span></code> nodes) with multi-processing</p>
-<ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">--dist_world_size</span> <span class="pre">N-HOST</span> <span class="pre">--ngpu</span> <span class="pre">N-GPU</span> <span class="pre">--multiprocessing_distributed</span> <span class="pre">true</span></code></p></li>
-</ul>
-</li>
-<li><p>Launch <code class="docutils literal notranslate"><span class="pre">N-HOST</span></code> jobs with <code class="docutils literal notranslate"><span class="pre">N-GPU</span></code> for each host (=<code class="docutils literal notranslate"><span class="pre">N-HOST</span></code>x<code class="docutils literal notranslate"><span class="pre">N-GPU</span></code> nodes) with multi-threading</p>
-<ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">--dist_world_size</span> <span class="pre">N-HOST</span> <span class="pre">--ngpu</span> <span class="pre">N-GPU</span> <span class="pre">--multiprocessing_distributed</span> <span class="pre">false</span></code></p></li>
-</ul>
-</li>
-<li><p>Launch <code class="docutils literal notranslate"><span class="pre">N-NODE</span></code> jobs with <code class="docutils literal notranslate"><span class="pre">1-GPU</span></code> for each node</p>
-<ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">--dist_world_size</span> <span class="pre">N-NODE</span> <span class="pre">--ngpu</span> <span class="pre">1</span></code></p></li>
-</ul>
-</li>
-</ol>
-</li>
-</ol>
-<div class="section" id="examples">
+<table border="1" class="docutils">
+<thead>
+<tr>
+<th></th>
+<th>DP/DDP</th>
+<th>Single/Multi host</th>
+<th>Option</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Multi-processing with single host</td>
+<td>DistributedDataParallel</td>
+<td>Single</td>
+<td>--ngpu <code>N-GPU</code> --multiprocessing_distributed true</td>
+</tr>
+<tr>
+<td>Multi-threading with single host</td>
+<td>DataParallel</td>
+<td>Single</td>
+<td>--ngpu <code>N-GPU</code> --multiprocessing_distributed false</td>
+</tr>
+<tr>
+<td>Multi-processing with <code>N-HOST</code> jobs with <code>N-GPU</code> for each host (=<code>N-HOST</code>x<code>N-GPU</code> nodes)</td>
+<td>DistributedDataParallel</td>
+<td>Multi</td>
+<td>--dist_world_size <code>N-HOST</code> --ngpu <code>N-GPU</code> --multiprocessing_distributed true</td>
+</tr>
+<tr>
+<td>Multi-threading with <code>N-HOST</code> jobs with <code>N-GPU</code> for each host (=<code>N-HOST</code>x<code>N-GPU</code> nodes)</td>
+<td>DistributedDataParallel</td>
+<td>Multi</td>
+<td>--dist_world_size <code>N-HOST</code> --ngpu <code>N-GPU</code> --multiprocessing_distributed false</td>
+</tr>
+<tr>
+<td><code>N-NODE</code> jobs with <code>1-GPU</code> for each node</td>
+<td>DistributedDataParallel</td>
+<td>Single/Multi</td>
+<td>--dist_world_size <code>N-NODE</code> --ngpu 1</td>
+</tr>
+</tbody>
+</table><div class="section" id="examples">
 <h2>Examples<a class="headerlink" href="#examples" title="Permalink to this headline">¶</a></h2>
 <div class="section" id="single-node-with-4gpus-with-distributed-mode">
 <h3>Single node with 4GPUs with distributed mode<a class="headerlink" href="#single-node-with-4gpus-with-distributed-mode" title="Permalink to this headline">¶</a></h3>
@@ -294,8 +313,8 @@
 </div>
 <p>If you meet some errors with distributed mode, please try single gpu mode or multi-GPUs with <code class="docutils literal notranslate"><span class="pre">--multiprocessing_distributed</span> <span class="pre">false</span></code> before reporting the issue.</p>
 </div>
-<div class="section" id="nodes-and-2gpus-for-each-node-with-multiprocessing-distributed-mode">
-<h3>2Nodes and 2GPUs for each node with multiprocessing distributed mode<a class="headerlink" href="#nodes-and-2gpus-for-each-node-with-multiprocessing-distributed-mode" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="host-and-2gpus-for-each-host-with-multiprocessing-distributed-mode">
+<h3>2Host and 2GPUs for each host with multiprocessing distributed mode<a class="headerlink" href="#host-and-2gpus-for-each-host-with-multiprocessing-distributed-mode" title="Permalink to this headline">¶</a></h3>
 <p>Note that multiprocessing distributed mode assumes the same number of GPUs for each node.</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="o">(</span>host1<span class="o">)</span> % python -m espnet2.bin.asr_train <span class="se">\</span>
     --multiprocessing_distributed <span class="nb">true</span> <span class="se">\</span>
@@ -317,7 +336,7 @@
 <h4>RANK and WORLD_SIZE<a class="headerlink" href="#rank-and-world-size" title="Permalink to this headline">¶</a></h4>
 <p><code class="docutils literal notranslate"><span class="pre">--dist_rank</span></code> and <code class="docutils literal notranslate"><span class="pre">--dist_world_size</span></code> indicate <code class="docutils literal notranslate"><span class="pre">RANK</span></code> and <code class="docutils literal notranslate"><span class="pre">WORLD_SIZE</span></code> in terms of MPI;
 i.e., they indicate the id of each processe and the number of processes respectively.
-It can be also specified by the environment variables <code class="docutils literal notranslate"><span class="pre">${RANK}</span></code> and <code class="docutils literal notranslate"><span class="pre">${WORLD_SIZE}</span></code>.</p>
+They can be also specified by the environment variables <code class="docutils literal notranslate"><span class="pre">${RANK}</span></code> and <code class="docutils literal notranslate"><span class="pre">${WORLD_SIZE}</span></code>.</p>
 </div>
 <div class="section" id="about-init-method">
 <h4>About init method<a class="headerlink" href="#about-init-method" title="Permalink to this headline">¶</a></h4>
@@ -344,8 +363,8 @@ It can be also specified by the environment variables <code class="docutils lite
 </ul>
 </div>
 </div>
-<div class="section" id="nodes-which-have-2gpus-and-1gpu-respectively">
-<h3>2Nodes which have 2GPUs and 1GPU respectively<a class="headerlink" href="#nodes-which-have-2gpus-and-1gpu-respectively" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="hosts-which-have-2gpus-and-1gpu-respectively">
+<h3>2Hosts which have 2GPUs and 1GPU respectively<a class="headerlink" href="#hosts-which-have-2gpus-and-1gpu-respectively" title="Permalink to this headline">¶</a></h3>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="o">(</span>host1<span class="o">)</span> % python -m espnet2.bin.asr_train <span class="se">\</span>
     --ngpu <span class="m">1</span> <span class="se">\</span>
     --multiprocessing_distributed <span class="nb">false</span> <span class="se">\</span>
@@ -370,8 +389,8 @@ It can be also specified by the environment variables <code class="docutils lite
 </pre></div>
 </div>
 </div>
-<div class="section" id="nodes-and-2gpus-for-each-node-using-slurm-with-multiprocessing-distributed">
-<h3>2Nodes and 2GPUs for each node using <code class="docutils literal notranslate"><span class="pre">Slurm</span></code> with multiprocessing distributed<a class="headerlink" href="#nodes-and-2gpus-for-each-node-using-slurm-with-multiprocessing-distributed" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="hosts-and-2gpus-for-each-node-using-slurm-with-multiprocessing-distributed">
+<h3>2Hosts and 2GPUs for each node using <code class="docutils literal notranslate"><span class="pre">Slurm</span></code> with multiprocessing distributed<a class="headerlink" href="#hosts-and-2gpus-for-each-node-using-slurm-with-multiprocessing-distributed" title="Permalink to this headline">¶</a></h3>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span> % srun -c2 -N2 --gres gpu:2 <span class="se">\</span>
     python -m espnet2.bin.asr_train --ngpu <span class="m">2</span> --multiprocessing_distributed <span class="nb">true</span> <span class="se">\</span>
     --dist_launcher slurm <span class="se">\</span>
@@ -390,8 +409,8 @@ It can be also specified by the environment variables <code class="docutils lite
 </pre></div>
 </div>
 </div>
-<div class="section" id="nodes-and-2gpus-for-each-nodes-using-mpi-with-multiprocessing-distributed">
-<h3>2Nodes and 2GPUs for each nodes using <code class="docutils literal notranslate"><span class="pre">MPI</span></code> with multiprocessing distributed<a class="headerlink" href="#nodes-and-2gpus-for-each-nodes-using-mpi-with-multiprocessing-distributed" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="hosts-and-2gpus-for-each-node-using-mpi-with-multiprocessing-distributed">
+<h3>2Hosts and 2GPUs for each node using <code class="docutils literal notranslate"><span class="pre">MPI</span></code> with multiprocessing distributed<a class="headerlink" href="#hosts-and-2gpus-for-each-node-using-mpi-with-multiprocessing-distributed" title="Permalink to this headline">¶</a></h3>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span> % mpirun -np <span class="m">2</span> -host host1,host2 <span class="se">\</span>
     python -m espnet2.bin.asr_train --ngpu <span class="m">2</span> --multiprocessing_distributed <span class="nb">true</span> <span class="se">\</span>
     --dist_launcher mpi <span class="se">\</span>
@@ -525,7 +544,7 @@ It can be also specified by the environment variables <code class="docutils lite
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="_gen/espnet.scheduler.html" class="btn btn-neutral float-right" title="espnet.scheduler package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="notebook/asr_cli.html" class="btn btn-neutral float-right" title="Speech Recognition (Recipe)" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
         <a href="espnet2_task.html" class="btn btn-neutral float-left" title="Task class and data input system for training" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>

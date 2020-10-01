@@ -59,6 +59,28 @@ espnet2.bin.pack
     :show-inheritance:
 
 
+.. _espnet2.bin.split_scps:
+
+espnet2.bin.split_scps
+----------------------
+
+.. automodule:: espnet2.bin.split_scps
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+
+.. _espnet2.bin.enh_train:
+
+espnet2.bin.enh_train
+---------------------
+
+.. automodule:: espnet2.bin.enh_train
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+
 .. _espnet2.bin.tts_train:
 
 espnet2.bin.tts_train
@@ -109,6 +131,28 @@ espnet2.bin.aggregate_stats_dirs
 --------------------------------
 
 .. automodule:: espnet2.bin.aggregate_stats_dirs
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+
+.. _espnet2.bin.enh_inference:
+
+espnet2.bin.enh_inference
+-------------------------
+
+.. automodule:: espnet2.bin.enh_inference
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+
+.. _espnet2.bin.enh_scoring:
+
+espnet2.bin.enh_scoring
+-----------------------
+
+.. automodule:: espnet2.bin.enh_scoring
     :members:
     :undoc-members:
     :show-inheritance:

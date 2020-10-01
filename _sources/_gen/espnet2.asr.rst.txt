@@ -4,6 +4,17 @@ espnet2.asr package
 
 
 
+.. _espnet2.asr.espnet_joint_model:
+
+espnet2.asr.espnet_joint_model
+------------------------------
+
+.. automodule:: espnet2.asr.espnet_joint_model
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+
 .. _espnet2.asr.espnet_model:
 
 espnet2.asr.espnet_model
@@ -92,6 +103,17 @@ espnet2.asr.encoder.rnn_encoder
     :show-inheritance:
 
 
+.. _espnet2.asr.encoder.conformer_encoder:
+
+espnet2.asr.encoder.conformer_encoder
+-------------------------------------
+
+.. automodule:: espnet2.asr.encoder.conformer_encoder
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+
 .. _espnet2.asr.encoder.transformer_encoder:
 
 espnet2.asr.encoder.transformer_encoder
@@ -142,6 +164,17 @@ espnet2.asr.specaug.specaug
 ---------------------------
 
 .. automodule:: espnet2.asr.specaug.specaug
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+
+.. _espnet2.asr.specaug.__init__:
+
+espnet2.asr.specaug.__init__
+----------------------------
+
+.. automodule:: espnet2.asr.specaug.__init__
     :members:
     :undoc-members:
     :show-inheritance:

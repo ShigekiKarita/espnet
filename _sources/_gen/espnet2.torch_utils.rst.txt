@@ -4,6 +4,17 @@ espnet2.torch_utils package
 
 
 
+.. _espnet2.torch_utils.model_summary:
+
+espnet2.torch_utils.model_summary
+---------------------------------
+
+.. automodule:: espnet2.torch_utils.model_summary
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+
 .. _espnet2.torch_utils.device_funcs:
 
 espnet2.torch_utils.device_funcs

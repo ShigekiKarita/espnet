@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>espnet.asr package &mdash; ESPnet 0.7.0 documentation</title>
+  <title>espnet.asr package &mdash; ESPnet 0.9.3 documentation</title>
   
 
   
@@ -63,7 +63,7 @@
             
             
               <div class="version">
-                0.7.0
+                0.9.3
               </div>
             
           
@@ -103,6 +103,15 @@
 <li class="toctree-l1"><a class="reference internal" href="../espnet2_task.html">Task class and data input system for training</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../espnet2_distributed.html">Distributed training</a></li>
 </ul>
+<p class="caption"><span class="caption-text">Notebook:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../notebook/asr_cli.html">Speech Recognition (Recipe)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notebook/asr_library.html">Speech Recognition (Library)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notebook/tts_cli.html">Text-to-Speech (Recipe)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notebook/pretrained.html">Pretrained Model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notebook/tts_realtime_demo.html">ESPnet real time E2E-TTS demonstration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notebook/st_demo.html">ESPnet Speech Translation Demonstration</a></li>
+</ul>
 <p class="caption"><span class="caption-text">Package Reference:</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="espnet.scheduler.html">espnet.scheduler package</a></li>
@@ -121,6 +130,7 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="espnet.optimizer.html">espnet.optimizer package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="espnet.vc.html">espnet.vc package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="espnet.tts.html">espnet.tts package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="espnet.st.html">espnet.st package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="espnet.nets.html">espnet.nets package</a></li>
@@ -128,12 +138,14 @@
 <li class="toctree-l1"><a class="reference internal" href="espnet.utils.html">espnet.utils package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="espnet.bin.html">espnet.bin package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="espnet.transform.html">espnet.transform package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="espnet2.fileio.html">espnet2.fileio package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="espnet2.optimizers.html">espnet2.optimizers package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="espnet2.schedulers.html">espnet2.schedulers package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="espnet2.lm.html">espnet2.lm package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="espnet2.asr.html">espnet2.asr package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="espnet2.main_funcs.html">espnet2.main_funcs package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="espnet2.tts.html">espnet2.tts package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="espnet2.enh.html">espnet2.enh package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="espnet2.samplers.html">espnet2.samplers package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="espnet2.torch_utils.html">espnet2.torch_utils package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="espnet2.train.html">espnet2.train package</a></li>
@@ -147,6 +159,7 @@
 <p class="caption"><span class="caption-text">Tool Reference:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../apis/espnet_bin.html">core tools</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../apis/espnet2_bin.html">core tools (espnet2)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../apis/utils_py.html">python utility tools</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../apis/utils_sh.html">bash utility tools</a></li>
 </ul>
@@ -378,7 +391,8 @@ torch_snapshot, torch_save, torch_resume, AttributeDict, get_model_conf.</p>
 <li><p><strong>converter</strong> (<em>espnet.asr.*_backend.asr.CustomConverter</em>) – Function to convert data.</p></li>
 <li><p><strong>device</strong> (<em>int | torch.device</em>) – Device.</p></li>
 <li><p><strong>reverse</strong> (<em>bool</em>) – If True, input and output length are reversed.</p></li>
-<li><p><strong>ikey</strong> (<em>str</em>) – Key to access input (for ASR ikey=”input”, for MT ikey=”output”.)</p></li>
+<li><p><strong>ikey</strong> (<em>str</em>) – Key to access input
+(for ASR ikey=”input”, for MT ikey=”output”.)</p></li>
 <li><p><strong>iaxis</strong> (<em>int</em>) – Dimension to access input (for ASR iaxis=0, for MT iaxis=1.)</p></li>
 <li><p><strong>okey</strong> (<em>str</em>) – Key to access output (for ASR okey=”input”, MT okay=”output”.)</p></li>
 <li><p><strong>oaxis</strong> (<em>int</em>) – Dimension to access output (for ASR oaxis=0, for MT oaxis=0.)</p></li>
@@ -426,7 +440,7 @@ torch_snapshot, torch_save, torch_resume, AttributeDict, get_model_conf.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p><dl>
-<dt>attention weights.float. Its shape would be</dt><dd><p>differ from backend.
+<dt>attention weights. float. Its shape would be</dt><dd><p>differ from backend.
 * pytorch-&gt; 1) multi-head case =&gt; (B, H, Lmax, Tmax), 2)</p>
 <blockquote>
 <div><p>other case =&gt; (B, Lmax, Tmax).</p>
@@ -448,6 +462,68 @@ torch_snapshot, torch_save, torch_resume, AttributeDict, get_model_conf.</p>
 <dt id="espnet.asr.asr_utils.PlotAttentionReport.log_attentions">
 <code class="sig-name descname">log_attentions</code><span class="sig-paren">(</span><em class="sig-param">logger</em>, <em class="sig-param">step</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/espnet/asr/asr_utils.html#PlotAttentionReport.log_attentions"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#espnet.asr.asr_utils.PlotAttentionReport.log_attentions" title="Permalink to this definition">¶</a></dt>
 <dd><p>Add image files of att_ws matrix to the tensorboard.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="espnet.asr.asr_utils.PlotCTCReport">
+<em class="property">class </em><code class="sig-prename descclassname">espnet.asr.asr_utils.</code><code class="sig-name descname">PlotCTCReport</code><span class="sig-paren">(</span><em class="sig-param">ctc_vis_fn</em>, <em class="sig-param">data</em>, <em class="sig-param">outdir</em>, <em class="sig-param">converter</em>, <em class="sig-param">transform</em>, <em class="sig-param">device</em>, <em class="sig-param">reverse=False</em>, <em class="sig-param">ikey='input'</em>, <em class="sig-param">iaxis=0</em>, <em class="sig-param">okey='output'</em>, <em class="sig-param">oaxis=0</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/espnet/asr/asr_utils.html#PlotCTCReport"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#espnet.asr.asr_utils.PlotCTCReport" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">chainer.training.extension.Extension</span></code></p>
+<p>Plot CTC reporter.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ctc_vis_fn</strong> (<em>espnet.nets.*_backend.e2e_asr.E2E.calculate_all_ctc_probs</em>) – Function of CTC visualization.</p></li>
+<li><p><strong>data</strong> (<em>list</em><em>[</em><em>tuple</em><em>(</em><em>str</em><em>, </em><em>dict</em><em>[</em><em>str</em><em>, </em><em>list</em><em>[</em><em>Any</em><em>]</em><em>]</em><em>)</em><em>]</em>) – List json utt key items.</p></li>
+<li><p><strong>outdir</strong> (<em>str</em>) – Directory to save figures.</p></li>
+<li><p><strong>converter</strong> (<em>espnet.asr.*_backend.asr.CustomConverter</em>) – Function to convert data.</p></li>
+<li><p><strong>device</strong> (<em>int | torch.device</em>) – Device.</p></li>
+<li><p><strong>reverse</strong> (<em>bool</em>) – If True, input and output length are reversed.</p></li>
+<li><p><strong>ikey</strong> (<em>str</em>) – Key to access input
+(for ASR ikey=”input”, for MT ikey=”output”.)</p></li>
+<li><p><strong>iaxis</strong> (<em>int</em>) – Dimension to access input (for ASR iaxis=0, for MT iaxis=1.)</p></li>
+<li><p><strong>okey</strong> (<em>str</em>) – Key to access output (for ASR okey=”input”, MT okay=”output”.)</p></li>
+<li><p><strong>oaxis</strong> (<em>int</em>) – Dimension to access output (for ASR oaxis=0, for MT oaxis=0.)</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="method">
+<dt id="espnet.asr.asr_utils.PlotCTCReport.draw_ctc_plot">
+<code class="sig-name descname">draw_ctc_plot</code><span class="sig-paren">(</span><em class="sig-param">ctc_prob</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/espnet/asr/asr_utils.html#PlotCTCReport.draw_ctc_plot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#espnet.asr.asr_utils.PlotCTCReport.draw_ctc_plot" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plot the ctc_prob matrix.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>pyplot object with CTC prob matrix image.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>matplotlib.pyplot</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="espnet.asr.asr_utils.PlotCTCReport.get_ctc_probs">
+<code class="sig-name descname">get_ctc_probs</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/espnet/asr/asr_utils.html#PlotCTCReport.get_ctc_probs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#espnet.asr.asr_utils.PlotCTCReport.get_ctc_probs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return CTC probs.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><dl class="simple">
+<dt>CTC probs. float. Its shape would be</dt><dd><p>differ from backend. (B, Tmax, vocab).</p>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>numpy.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="espnet.asr.asr_utils.PlotCTCReport.log_ctc_probs">
+<code class="sig-name descname">log_ctc_probs</code><span class="sig-paren">(</span><em class="sig-param">logger</em>, <em class="sig-param">step</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/espnet/asr/asr_utils.html#PlotCTCReport.log_ctc_probs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#espnet.asr.asr_utils.PlotCTCReport.log_ctc_probs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add image files of ctc probs to the tensorboard.</p>
 </dd></dl>
 
 </dd></dl>
@@ -609,7 +685,7 @@ torch_snapshot, torch_save, torch_resume, AttributeDict, get_model_conf.</p>
 
 <dl class="function">
 <dt id="espnet.asr.asr_utils.restore_snapshot">
-<code class="sig-prename descclassname">espnet.asr.asr_utils.</code><code class="sig-name descname">restore_snapshot</code><span class="sig-paren">(</span><em class="sig-param">model</em>, <em class="sig-param">snapshot</em>, <em class="sig-param">load_fn=&lt;function load_npz&gt;</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/espnet/asr/asr_utils.html#restore_snapshot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#espnet.asr.asr_utils.restore_snapshot" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">espnet.asr.asr_utils.</code><code class="sig-name descname">restore_snapshot</code><span class="sig-paren">(</span><em class="sig-param">model</em>, <em class="sig-param">snapshot</em>, <em class="sig-param">load_fn=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/espnet/asr/asr_utils.html#restore_snapshot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#espnet.asr.asr_utils.restore_snapshot" title="Permalink to this definition">¶</a></dt>
 <dd><p>Extension to restore snapshot.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
@@ -735,7 +811,7 @@ the :meth: <cite>str.format</cite> method. For example,
 </dl>
 <dl class="class">
 <dt id="espnet.asr.pytorch_backend.asr_mix.CustomConverter">
-<em class="property">class </em><code class="sig-prename descclassname">espnet.asr.pytorch_backend.asr_mix.</code><code class="sig-name descname">CustomConverter</code><span class="sig-paren">(</span><em class="sig-param">subsampling_factor=1</em>, <em class="sig-param">dtype=torch.float32</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/espnet/asr/pytorch_backend/asr_mix.html#CustomConverter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#espnet.asr.pytorch_backend.asr_mix.CustomConverter" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">espnet.asr.pytorch_backend.asr_mix.</code><code class="sig-name descname">CustomConverter</code><span class="sig-paren">(</span><em class="sig-param">subsampling_factor=1</em>, <em class="sig-param">dtype=torch.float32</em>, <em class="sig-param">num_spkrs=2</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/espnet/asr/pytorch_backend/asr_mix.html#CustomConverter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#espnet.asr.pytorch_backend.asr_mix.CustomConverter" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Custom batch converter for Pytorch.</p>
 <dl class="field-list simple">
@@ -870,6 +946,17 @@ updates of parameters.</p>
 </dd></dl>
 
 <dl class="function">
+<dt id="espnet.asr.pytorch_backend.asr.ctc_align">
+<code class="sig-prename descclassname">espnet.asr.pytorch_backend.asr.</code><code class="sig-name descname">ctc_align</code><span class="sig-paren">(</span><em class="sig-param">args</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/espnet/asr/pytorch_backend/asr.html#ctc_align"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#espnet.asr.pytorch_backend.asr.ctc_align" title="Permalink to this definition">¶</a></dt>
+<dd><p>CTC forced alignments with the given args.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>args</strong> (<em>namespace</em>) – The program arguments.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
 <dt id="espnet.asr.pytorch_backend.asr.enhance">
 <code class="sig-prename descclassname">espnet.asr.pytorch_backend.asr.</code><code class="sig-name descname">enhance</code><span class="sig-paren">(</span><em class="sig-param">args</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/espnet/asr/pytorch_backend/asr.html#enhance"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#espnet.asr.pytorch_backend.asr.enhance" title="Permalink to this definition">¶</a></dt>
 <dd><p>Dumping enhanced speech and mask.</p>
@@ -941,6 +1028,27 @@ only supports E2E and RNNLM</p>
 </dd>
 <dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>new_mods (list)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="espnet.asr.pytorch_backend.asr_init.freeze_modules">
+<code class="sig-prename descclassname">espnet.asr.pytorch_backend.asr_init.</code><code class="sig-name descname">freeze_modules</code><span class="sig-paren">(</span><em class="sig-param">model</em>, <em class="sig-param">modules</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/espnet/asr/pytorch_backend/asr_init.html#freeze_modules"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#espnet.asr.pytorch_backend.asr_init.freeze_modules" title="Permalink to this definition">¶</a></dt>
+<dd><p>Freeze model parameters according to modules list.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model</strong> (<em>torch.nn.Module</em>) – main model to update</p></li>
+<li><p><strong>modules</strong> (<em>list</em>) – specified module list for freezing</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>updated model
+model_params (filter): filtered model parameters</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>model (torch.nn.Module)</p>
 </dd>
 </dl>
 </dd></dl>

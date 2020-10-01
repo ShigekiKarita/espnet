@@ -92,6 +92,17 @@ espnet2.train.trainer
     :show-inheritance:
 
 
+.. _espnet2.train.iterable_dataset:
+
+espnet2.train.iterable_dataset
+------------------------------
+
+.. automodule:: espnet2.train.iterable_dataset
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+
 .. _espnet2.train.__init__:
 
 espnet2.train.__init__

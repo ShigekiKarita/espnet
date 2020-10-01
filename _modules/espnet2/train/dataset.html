@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>espnet2.train.dataset &mdash; ESPnet 0.7.0 documentation</title>
+  <title>espnet2.train.dataset &mdash; ESPnet 0.9.3 documentation</title>
   
 
   
@@ -61,7 +61,7 @@
             
             
               <div class="version">
-                0.7.0
+                0.9.3
               </div>
             
           
@@ -101,12 +101,22 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../espnet2_task.html">Task class and data input system for training</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../espnet2_distributed.html">Distributed training</a></li>
 </ul>
+<p class="caption"><span class="caption-text">Notebook:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebook/asr_cli.html">Speech Recognition (Recipe)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebook/asr_library.html">Speech Recognition (Library)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebook/tts_cli.html">Text-to-Speech (Recipe)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebook/pretrained.html">Pretrained Model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebook/tts_realtime_demo.html">ESPnet real time E2E-TTS demonstration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebook/st_demo.html">ESPnet Speech Translation Demonstration</a></li>
+</ul>
 <p class="caption"><span class="caption-text">Package Reference:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../_gen/espnet.scheduler.html">espnet.scheduler package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../_gen/espnet.lm.html">espnet.lm package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../_gen/espnet.asr.html">espnet.asr package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../_gen/espnet.optimizer.html">espnet.optimizer package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../_gen/espnet.vc.html">espnet.vc package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../_gen/espnet.tts.html">espnet.tts package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../_gen/espnet.st.html">espnet.st package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../_gen/espnet.nets.html">espnet.nets package</a></li>
@@ -114,12 +124,14 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../_gen/espnet.utils.html">espnet.utils package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../_gen/espnet.bin.html">espnet.bin package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../_gen/espnet.transform.html">espnet.transform package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../_gen/espnet2.fileio.html">espnet2.fileio package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../_gen/espnet2.optimizers.html">espnet2.optimizers package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../_gen/espnet2.schedulers.html">espnet2.schedulers package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../_gen/espnet2.lm.html">espnet2.lm package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../_gen/espnet2.asr.html">espnet2.asr package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../_gen/espnet2.main_funcs.html">espnet2.main_funcs package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../_gen/espnet2.tts.html">espnet2.tts package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../_gen/espnet2.enh.html">espnet2.enh package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../_gen/espnet2.samplers.html">espnet2.samplers package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../_gen/espnet2.torch_utils.html">espnet2.torch_utils package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../_gen/espnet2.train.html">espnet2.train package</a></li>
@@ -133,6 +145,7 @@
 <p class="caption"><span class="caption-text">Tool Reference:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../apis/espnet_bin.html">core tools</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../apis/espnet2_bin.html">core tools (espnet2)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../apis/utils_py.html">python utility tools</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../apis/utils_sh.html">bash utility tools</a></li>
 </ul>
@@ -198,16 +211,18 @@
            <div itemprop="articleBody">
             
   <h1>Source code for espnet2.train.dataset</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">collections</span>
+<span></span><span class="kn">from</span> <span class="nn">abc</span> <span class="kn">import</span> <span class="n">ABC</span>
+<span class="kn">from</span> <span class="nn">abc</span> <span class="kn">import</span> <span class="n">abstractmethod</span>
+<span class="kn">import</span> <span class="nn">collections</span>
 <span class="kn">import</span> <span class="nn">copy</span>
 <span class="kn">import</span> <span class="nn">functools</span>
 <span class="kn">import</span> <span class="nn">logging</span>
 <span class="kn">import</span> <span class="nn">numbers</span>
 <span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Callable</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Collection</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Dict</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Mapping</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Tuple</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Union</span>
@@ -221,12 +236,12 @@
 <span class="kn">from</span> <span class="nn">typeguard</span> <span class="kn">import</span> <span class="n">check_argument_types</span>
 <span class="kn">from</span> <span class="nn">typeguard</span> <span class="kn">import</span> <span class="n">check_return_type</span>
 
-<span class="kn">from</span> <span class="nn">espnet2.utils.fileio</span> <span class="kn">import</span> <span class="n">load_num_sequence_text</span>
-<span class="kn">from</span> <span class="nn">espnet2.utils.fileio</span> <span class="kn">import</span> <span class="n">NpyScpReader</span>
-<span class="kn">from</span> <span class="nn">espnet2.utils.fileio</span> <span class="kn">import</span> <span class="n">read_2column_text</span>
-<span class="kn">from</span> <span class="nn">espnet2.utils.fileio</span> <span class="kn">import</span> <span class="n">SoundScpReader</span>
-<span class="kn">from</span> <span class="nn">espnet2.utils.rand_gen_dataset</span> <span class="kn">import</span> <span class="n">FloatRandomGenerateDataset</span>
-<span class="kn">from</span> <span class="nn">espnet2.utils.rand_gen_dataset</span> <span class="kn">import</span> <span class="n">IntRandomGenerateDataset</span>
+<span class="kn">from</span> <span class="nn">espnet2.fileio.npy_scp</span> <span class="kn">import</span> <span class="n">NpyScpReader</span>
+<span class="kn">from</span> <span class="nn">espnet2.fileio.rand_gen_dataset</span> <span class="kn">import</span> <span class="n">FloatRandomGenerateDataset</span>
+<span class="kn">from</span> <span class="nn">espnet2.fileio.rand_gen_dataset</span> <span class="kn">import</span> <span class="n">IntRandomGenerateDataset</span>
+<span class="kn">from</span> <span class="nn">espnet2.fileio.read_text</span> <span class="kn">import</span> <span class="n">load_num_sequence_text</span>
+<span class="kn">from</span> <span class="nn">espnet2.fileio.read_text</span> <span class="kn">import</span> <span class="n">read_2column_text</span>
+<span class="kn">from</span> <span class="nn">espnet2.fileio.sound_scp</span> <span class="kn">import</span> <span class="n">SoundScpReader</span>
 <span class="kn">from</span> <span class="nn">espnet2.utils.sized_dict</span> <span class="kn">import</span> <span class="n">SizedDict</span>
 
 
@@ -247,14 +262,39 @@
         <span class="k">return</span> <span class="nb">iter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">loader</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-        <span class="n">rate</span><span class="p">,</span> <span class="n">array</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">loader</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">rate</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">rate</span> <span class="o">!=</span> <span class="n">rate</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Sampling rates are mismatched: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">rate</span><span class="si">}</span><span class="s2"> != </span><span class="si">{</span><span class="n">rate</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">rate</span> <span class="o">=</span> <span class="n">rate</span>
-        <span class="c1"># Multichannel wave fie</span>
-        <span class="c1"># array: (NSample, Channel) or (Nsample)</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">dtype</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">array</span> <span class="o">=</span> <span class="n">array</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span>
+        <span class="n">retval</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">loader</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">retval</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
+            <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">retval</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">retval</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">retval</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nb">int</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">retval</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
+                <span class="c1"># sound scp case</span>
+                <span class="n">rate</span><span class="p">,</span> <span class="n">array</span> <span class="o">=</span> <span class="n">retval</span>
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">retval</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nb">int</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">retval</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
+                <span class="c1"># Extended ark format case</span>
+                <span class="n">array</span><span class="p">,</span> <span class="n">rate</span> <span class="o">=</span> <span class="n">retval</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;Unexpected type: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">retval</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">retval</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="p">)</span>
+
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">rate</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">rate</span> <span class="o">!=</span> <span class="n">rate</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;Sampling rates are mismatched: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">rate</span><span class="si">}</span><span class="s2"> != </span><span class="si">{</span><span class="n">rate</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">rate</span> <span class="o">=</span> <span class="n">rate</span>
+            <span class="c1"># Multichannel wave fie</span>
+            <span class="c1"># array: (NSample, Channel) or (Nsample)</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">dtype</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">array</span> <span class="o">=</span> <span class="n">array</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># Normal ark case</span>
+            <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">retval</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">),</span> <span class="nb">type</span><span class="p">(</span><span class="n">retval</span><span class="p">)</span>
+            <span class="n">array</span> <span class="o">=</span> <span class="n">retval</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">dtype</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">array</span> <span class="o">=</span> <span class="n">array</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span>
+
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">array</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">),</span> <span class="nb">type</span><span class="p">(</span><span class="n">array</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">array</span></div>
 
 
@@ -272,20 +312,12 @@
     <span class="k">def</span> <span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="nb">iter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">h5_file</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]]:</span>
+    <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
         <span class="n">value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">h5_file</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">h5py</span><span class="o">.</span><span class="n">Group</span><span class="p">):</span>
-            <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">value</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-                <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">h5py</span><span class="o">.</span><span class="n">Dataset</span><span class="p">):</span>
-                    <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
-                        <span class="sa">f</span><span class="s2">&quot;Invalid h5-file. Must be 1 or 2 level HDF5: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="si">}</span><span class="s2">&quot;</span>
-                    <span class="p">)</span>
-            <span class="k">return</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span><span class="p">[()]</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">value</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">value</span><span class="p">[()]</span></div>
+        <span class="k">return</span> <span class="n">value</span><span class="p">[()]</span></div>
 
 
-<div class="viewcode-block" id="sound_loader"><a class="viewcode-back" href="../../../_gen/espnet2.train.html#espnet2.train.dataset.sound_loader">[docs]</a><span class="k">def</span> <span class="nf">sound_loader</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">float_dtype</span><span class="p">):</span>
+<div class="viewcode-block" id="sound_loader"><a class="viewcode-back" href="../../../_gen/espnet2.train.html#espnet2.train.dataset.sound_loader">[docs]</a><span class="k">def</span> <span class="nf">sound_loader</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">float_dtype</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
     <span class="c1"># The file is as follows:</span>
     <span class="c1">#   utterance_id_A /some/where/a.wav</span>
     <span class="c1">#   utterance_id_B /some/where/a.flac</span>
@@ -300,16 +332,8 @@
     <span class="k">return</span> <span class="n">AdapterForSoundScpReader</span><span class="p">(</span><span class="n">loader</span><span class="p">,</span> <span class="n">float_dtype</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="pipe_wav_loader"><a class="viewcode-back" href="../../../_gen/espnet2.train.html#espnet2.train.dataset.pipe_wav_loader">[docs]</a><span class="k">def</span> <span class="nf">pipe_wav_loader</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">float_dtype</span><span class="p">):</span>
-    <span class="c1"># The file is as follows:</span>
-    <span class="c1">#   utterance_id_A cat a.wav |</span>
-    <span class="c1">#   utterance_id_B cat b.wav |</span>
-
-    <span class="c1"># NOTE(kamo): I don&#39;t think this case is practical</span>
-    <span class="c1"># because subprocess takes much times due to fork().</span>
-
-    <span class="c1"># NOTE(kamo): kaldiio doesn&#39;t normalize the signal.</span>
-    <span class="n">loader</span> <span class="o">=</span> <span class="n">kaldiio</span><span class="o">.</span><span class="n">load_scp</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+<div class="viewcode-block" id="kaldi_loader"><a class="viewcode-back" href="../../../_gen/espnet2.train.html#espnet2.train.dataset.kaldi_loader">[docs]</a><span class="k">def</span> <span class="nf">kaldi_loader</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">float_dtype</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">max_cache_fd</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">):</span>
+    <span class="n">loader</span> <span class="o">=</span> <span class="n">kaldiio</span><span class="o">.</span><span class="n">load_scp</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">max_cache_fd</span><span class="o">=</span><span class="n">max_cache_fd</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">AdapterForSoundScpReader</span><span class="p">(</span><span class="n">loader</span><span class="p">,</span> <span class="n">float_dtype</span><span class="p">)</span></div>
 
 
@@ -322,62 +346,6 @@
     <span class="k">return</span> <span class="n">IntRandomGenerateDataset</span><span class="p">(</span><span class="n">filepath</span><span class="p">,</span> <span class="n">low</span><span class="p">,</span> <span class="n">high</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="imagefolder_loader"><a class="viewcode-back" href="../../../_gen/espnet2.train.html#espnet2.train.dataset.imagefolder_loader">[docs]</a><span class="k">def</span> <span class="nf">imagefolder_loader</span><span class="p">(</span><span class="n">filepath</span><span class="p">,</span> <span class="n">loader_type</span><span class="p">):</span>
-    <span class="c1"># torchvision is not mandatory for espnet</span>
-    <span class="kn">import</span> <span class="nn">torchvision</span>
-
-    <span class="c1"># e.g. imagefolder_256x256</span>
-    <span class="c1"># /</span>
-    <span class="c1">#   |- horse/</span>
-    <span class="c1">#   │    |- 8537.png</span>
-    <span class="c1">#   │    |- ...</span>
-    <span class="c1">#   |- butterfly/</span>
-    <span class="c1">#   │    |- 2857.png</span>
-    <span class="c1">#   │    |- ...</span>
-    <span class="k">try</span><span class="p">:</span>
-        <span class="n">_</span><span class="p">,</span> <span class="n">image_size</span> <span class="o">=</span> <span class="n">loader_type</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">)</span>
-        <span class="n">height</span><span class="p">,</span> <span class="n">width</span> <span class="o">=</span> <span class="nb">map</span><span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="n">image_size</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;x&quot;</span><span class="p">))</span>
-    <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;e.g imagefolder_256x256: but got </span><span class="si">{</span><span class="n">loader_type</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-
-    <span class="c1"># folder dataset</span>
-    <span class="k">return</span> <span class="n">torchvision</span><span class="o">.</span><span class="n">datasets</span><span class="o">.</span><span class="n">ImageFolder</span><span class="p">(</span>
-        <span class="n">root</span><span class="o">=</span><span class="n">filepath</span><span class="p">,</span>
-        <span class="n">transform</span><span class="o">=</span><span class="n">torchvision</span><span class="o">.</span><span class="n">transforms</span><span class="o">.</span><span class="n">Compose</span><span class="p">(</span>
-            <span class="p">[</span>
-                <span class="n">torchvision</span><span class="o">.</span><span class="n">transforms</span><span class="o">.</span><span class="n">Resize</span><span class="p">([</span><span class="n">height</span><span class="p">,</span> <span class="n">width</span><span class="p">]),</span>
-                <span class="n">torchvision</span><span class="o">.</span><span class="n">transforms</span><span class="o">.</span><span class="n">ToTensor</span><span class="p">(),</span>
-            <span class="p">]</span>
-        <span class="p">),</span>
-    <span class="p">)</span></div>
-
-
-<div class="viewcode-block" id="mnist_loader"><a class="viewcode-back" href="../../../_gen/espnet2.train.html#espnet2.train.dataset.mnist_loader">[docs]</a><span class="k">def</span> <span class="nf">mnist_loader</span><span class="p">(</span><span class="n">filepath</span><span class="p">,</span> <span class="n">loader_type</span><span class="p">):</span>
-    <span class="c1"># torchvision is not mandatory for espnet</span>
-    <span class="kn">import</span> <span class="nn">torchvision</span>
-
-    <span class="c1"># e.g. mnist_train_128x128</span>
-    <span class="k">try</span><span class="p">:</span>
-        <span class="n">_</span><span class="p">,</span> <span class="n">train_test</span><span class="p">,</span> <span class="n">image_size</span> <span class="o">=</span> <span class="n">loader_type</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">train_test</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;train&quot;</span><span class="p">,</span> <span class="s2">&quot;test&quot;</span><span class="p">]:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span>
-        <span class="n">height</span><span class="p">,</span> <span class="n">width</span> <span class="o">=</span> <span class="nb">map</span><span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="n">image_size</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;x&quot;</span><span class="p">))</span>
-    <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;e.g mnist_train_256x256: but got </span><span class="si">{</span><span class="n">loader_type</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-
-    <span class="k">return</span> <span class="n">torchvision</span><span class="o">.</span><span class="n">datasets</span><span class="o">.</span><span class="n">MNIST</span><span class="p">(</span>
-        <span class="n">root</span><span class="o">=</span><span class="n">filepath</span><span class="p">,</span>
-        <span class="n">train</span><span class="o">=</span><span class="n">train_test</span> <span class="o">==</span> <span class="s2">&quot;train&quot;</span><span class="p">,</span>
-        <span class="n">download</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-        <span class="n">transform</span><span class="o">=</span><span class="n">torchvision</span><span class="o">.</span><span class="n">transforms</span><span class="o">.</span><span class="n">Compose</span><span class="p">(</span>
-            <span class="p">[</span>
-                <span class="n">torchvision</span><span class="o">.</span><span class="n">transforms</span><span class="o">.</span><span class="n">Resize</span><span class="p">([</span><span class="n">height</span><span class="p">,</span> <span class="n">width</span><span class="p">]),</span>
-                <span class="n">torchvision</span><span class="o">.</span><span class="n">transforms</span><span class="o">.</span><span class="n">ToTensor</span><span class="p">(),</span>
-            <span class="p">]</span>
-        <span class="p">),</span>
-    <span class="p">)</span></div>
-
-
 <span class="n">DATA_TYPES</span> <span class="o">=</span> <span class="p">{</span>
     <span class="s2">&quot;sound&quot;</span><span class="p">:</span> <span class="nb">dict</span><span class="p">(</span>
         <span class="n">func</span><span class="o">=</span><span class="n">sound_loader</span><span class="p">,</span>
@@ -388,19 +356,9 @@
         <span class="s2">&quot;   utterance_id_b b.wav</span><span class="se">\n</span><span class="s2">&quot;</span>
         <span class="s2">&quot;   ...&quot;</span><span class="p">,</span>
     <span class="p">),</span>
-    <span class="s2">&quot;pipe_wav&quot;</span><span class="p">:</span> <span class="nb">dict</span><span class="p">(</span>
-        <span class="n">func</span><span class="o">=</span><span class="n">pipe_wav_loader</span><span class="p">,</span>
-        <span class="n">kwargs</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;float_dtype&quot;</span><span class="p">],</span>
-        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Kaldi wav.scp file. If the file doesn&#39;t include a pipe, &#39;|&#39; &quot;</span>
-        <span class="s2">&quot;for each line, use &#39;sound&#39; instead.&quot;</span>
-        <span class="s2">&quot;:</span><span class="se">\n\n</span><span class="s2">&quot;</span>
-        <span class="s2">&quot;   utterance_id_a cat a.wav |</span><span class="se">\n</span><span class="s2">&quot;</span>
-        <span class="s2">&quot;   utterance_id_b cat b.wav |</span><span class="se">\n</span><span class="s2">&quot;</span>
-        <span class="s2">&quot;   ...&quot;</span><span class="p">,</span>
-    <span class="p">),</span>
     <span class="s2">&quot;kaldi_ark&quot;</span><span class="p">:</span> <span class="nb">dict</span><span class="p">(</span>
-        <span class="n">func</span><span class="o">=</span><span class="n">kaldiio</span><span class="o">.</span><span class="n">load_scp</span><span class="p">,</span>
-        <span class="n">kwargs</span><span class="o">=</span><span class="p">[],</span>
+        <span class="n">func</span><span class="o">=</span><span class="n">kaldi_loader</span><span class="p">,</span>
+        <span class="n">kwargs</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;max_cache_fd&quot;</span><span class="p">],</span>
         <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Kaldi-ark file type.&quot;</span>
         <span class="s2">&quot;</span><span class="se">\n\n</span><span class="s2">&quot;</span>
         <span class="s2">&quot;   utterance_id_A /some/where/a.ark:123</span><span class="se">\n</span><span class="s2">&quot;</span>
@@ -470,17 +428,9 @@
         <span class="n">func</span><span class="o">=</span><span class="n">H5FileWrapper</span><span class="p">,</span>
         <span class="n">kwargs</span><span class="o">=</span><span class="p">[],</span>
         <span class="n">help</span><span class="o">=</span><span class="s2">&quot;A HDF5 file which contains arrays at the first level or the second level.&quot;</span>
-        <span class="s2">&quot;</span><span class="se">\n\n</span><span class="s2">&quot;</span>
-        <span class="s2">&quot;   1-level HDF5 file example.</span><span class="se">\n</span><span class="s2">&quot;</span>
         <span class="s2">&quot;   &gt;&gt;&gt; f = h5py.File(&#39;file.h5&#39;)</span><span class="se">\n</span><span class="s2">&quot;</span>
         <span class="s2">&quot;   &gt;&gt;&gt; array1 = f[&#39;utterance_id_A&#39;]</span><span class="se">\n</span><span class="s2">&quot;</span>
-        <span class="s2">&quot;   &gt;&gt;&gt; array2 = f[&#39;utterance_id_B&#39;]</span><span class="se">\n</span><span class="s2">&quot;</span>
-        <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
-        <span class="s2">&quot;   2-level HDF5 file example.</span><span class="se">\n</span><span class="s2">&quot;</span>
-        <span class="s2">&quot;   &gt;&gt;&gt; f = h5py.File(&#39;file.h5&#39;)</span><span class="se">\n</span><span class="s2">&quot;</span>
-        <span class="s2">&quot;   &gt;&gt;&gt; values = f[&#39;utterance_id_A&#39;]</span><span class="se">\n</span><span class="s2">&quot;</span>
-        <span class="s2">&quot;   &gt;&gt;&gt; input_array = values[&#39;input&#39;]</span><span class="se">\n</span><span class="s2">&quot;</span>
-        <span class="s2">&quot;   &gt;&gt;&gt; target_array = values[&#39;target&#39;]&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;   &gt;&gt;&gt; array2 = f[&#39;utterance_id_B&#39;]</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span>
     <span class="p">),</span>
     <span class="s2">&quot;rand_float&quot;</span><span class="p">:</span> <span class="nb">dict</span><span class="p">(</span>
         <span class="n">func</span><span class="o">=</span><span class="n">FloatRandomGenerateDataset</span><span class="p">,</span>
@@ -504,25 +454,24 @@
         <span class="s2">&quot;   utterance_id_B 10,4</span><span class="se">\n</span><span class="s2">&quot;</span>
         <span class="s2">&quot;   ...&quot;</span><span class="p">,</span>
     <span class="p">),</span>
-    <span class="s2">&quot;imagefolder_</span><span class="se">\\</span><span class="s2">d+x</span><span class="se">\\</span><span class="s2">d+&quot;</span><span class="p">:</span> <span class="nb">dict</span><span class="p">(</span>
-        <span class="n">func</span><span class="o">=</span><span class="n">imagefolder_loader</span><span class="p">,</span>
-        <span class="n">kwargs</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;loader_type&quot;</span><span class="p">],</span>
-        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;e.g. &#39;imagefolder_32x32&#39;. Using torchvision.datasets.ImageFolder.&quot;</span><span class="p">,</span>
-    <span class="p">),</span>
-    <span class="s2">&quot;mnist_train_</span><span class="se">\\</span><span class="s2">d+x</span><span class="se">\\</span><span class="s2">d+&quot;</span><span class="p">:</span> <span class="nb">dict</span><span class="p">(</span>
-        <span class="n">func</span><span class="o">=</span><span class="n">mnist_loader</span><span class="p">,</span>
-        <span class="n">kwargs</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;loader_type&quot;</span><span class="p">],</span>
-        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;e.g. &#39;mnist_train_32x32&#39;. MNIST train data&quot;</span><span class="p">,</span>
-    <span class="p">),</span>
-    <span class="s2">&quot;mnist_test_</span><span class="se">\\</span><span class="s2">d+x</span><span class="se">\\</span><span class="s2">d+&quot;</span><span class="p">:</span> <span class="nb">dict</span><span class="p">(</span>
-        <span class="n">func</span><span class="o">=</span><span class="n">mnist_loader</span><span class="p">,</span>
-        <span class="n">kwargs</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;loader_type&quot;</span><span class="p">],</span>
-        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;e.g. &#39;mnist_test_32x32&#39;. MNIST test data&quot;</span><span class="p">,</span>
-    <span class="p">),</span>
 <span class="p">}</span>
 
 
-<div class="viewcode-block" id="ESPnetDataset"><a class="viewcode-back" href="../../../_gen/espnet2.train.html#espnet2.train.dataset.ESPnetDataset">[docs]</a><span class="k">class</span> <span class="nc">ESPnetDataset</span><span class="p">(</span><span class="n">Dataset</span><span class="p">):</span>
+<div class="viewcode-block" id="AbsDataset"><a class="viewcode-back" href="../../../_gen/espnet2.train.html#espnet2.train.dataset.AbsDataset">[docs]</a><span class="k">class</span> <span class="nc">AbsDataset</span><span class="p">(</span><span class="n">Dataset</span><span class="p">,</span> <span class="n">ABC</span><span class="p">):</span>
+<div class="viewcode-block" id="AbsDataset.has_name"><a class="viewcode-back" href="../../../_gen/espnet2.train.html#espnet2.train.dataset.AbsDataset.has_name">[docs]</a>    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">has_name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
+
+<div class="viewcode-block" id="AbsDataset.names"><a class="viewcode-back" href="../../../_gen/espnet2.train.html#espnet2.train.dataset.AbsDataset.names">[docs]</a>    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">names</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">]:</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
+
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">uid</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]]:</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
+
+
+<div class="viewcode-block" id="ESPnetDataset"><a class="viewcode-back" href="../../../_gen/espnet2.train.html#espnet2.train.dataset.ESPnetDataset">[docs]</a><span class="k">class</span> <span class="nc">ESPnetDataset</span><span class="p">(</span><span class="n">AbsDataset</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Pytorch Dataset class for ESPNet.</span>
 
 <span class="sd">    Examples:</span>
@@ -542,6 +491,7 @@
         <span class="n">float_dtype</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;float32&quot;</span><span class="p">,</span>
         <span class="n">int_dtype</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;long&quot;</span><span class="p">,</span>
         <span class="n">max_cache_size</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
+        <span class="n">max_cache_fd</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
     <span class="p">):</span>
         <span class="k">assert</span> <span class="n">check_argument_types</span><span class="p">()</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">path_name_type_list</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
@@ -554,6 +504,7 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">float_dtype</span> <span class="o">=</span> <span class="n">float_dtype</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">int_dtype</span> <span class="o">=</span> <span class="n">int_dtype</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">max_cache_fd</span> <span class="o">=</span> <span class="n">max_cache_fd</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">loader_dict</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">debug_info</span> <span class="o">=</span> <span class="p">{}</span>
@@ -579,18 +530,7 @@
 
     <span class="k">def</span> <span class="nf">_build_loader</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">loader_type</span><span class="p">:</span> <span class="nb">str</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Mapping</span><span class="p">[</span>
-        <span class="nb">str</span><span class="p">,</span>
-        <span class="n">Union</span><span class="p">[</span>
-            <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
-            <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span>
-            <span class="nb">str</span><span class="p">,</span>
-            <span class="n">numbers</span><span class="o">.</span><span class="n">Number</span><span class="p">,</span>
-            <span class="n">Tuple</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="n">numbers</span><span class="o">.</span><span class="n">Number</span><span class="p">]],</span>
-            <span class="n">List</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="n">numbers</span><span class="o">.</span><span class="n">Number</span><span class="p">]],</span>
-            <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="n">numbers</span><span class="o">.</span><span class="n">Number</span><span class="p">]],</span>
-        <span class="p">],</span>
-    <span class="p">]:</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="n">numbers</span><span class="o">.</span><span class="n">Number</span><span class="p">]]:</span>
         <span class="sd">&quot;&quot;&quot;Helper function to instantiate Loader.</span>
 
 <span class="sd">        Args:</span>
@@ -609,6 +549,8 @@
                         <span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;float_dtype&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">float_dtype</span>
                     <span class="k">elif</span> <span class="n">key2</span> <span class="o">==</span> <span class="s2">&quot;int_dtype&quot;</span><span class="p">:</span>
                         <span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;int_dtype&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">int_dtype</span>
+                    <span class="k">elif</span> <span class="n">key2</span> <span class="o">==</span> <span class="s2">&quot;max_cache_fd&quot;</span><span class="p">:</span>
+                        <span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;max_cache_fd&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_cache_fd</span>
                     <span class="k">else</span><span class="p">:</span>
                         <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Not implemented keyword argument: </span><span class="si">{</span><span class="n">key2</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
@@ -631,6 +573,9 @@
 <div class="viewcode-block" id="ESPnetDataset.names"><a class="viewcode-back" href="../../../_gen/espnet2.train.html#espnet2.train.dataset.ESPnetDataset.names">[docs]</a>    <span class="k">def</span> <span class="nf">names</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">]:</span>
         <span class="k">return</span> <span class="nb">tuple</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">loader_dict</span><span class="p">)</span></div>
 
+    <span class="k">def</span> <span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">iter</span><span class="p">(</span><span class="nb">next</span><span class="p">(</span><span class="nb">iter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">loader_dict</span><span class="o">.</span><span class="n">values</span><span class="p">())))</span>
+
     <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">_mes</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span>
         <span class="n">_mes</span> <span class="o">+=</span> <span class="s2">&quot;(&quot;</span>
@@ -639,16 +584,13 @@
         <span class="n">_mes</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">  preprocess: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">preprocess</span><span class="si">}</span><span class="s2">)&quot;</span>
         <span class="k">return</span> <span class="n">_mes</span>
 
-    <span class="k">def</span> <span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">loader_dict</span><span class="o">.</span><span class="n">values</span><span class="p">())[</span><span class="mi">0</span><span class="p">])</span>
-
-    <span class="c1"># NOTE(kamo):</span>
-    <span class="c1"># Typically pytorch&#39;s Dataset.__getitem__ accepts an inger index,</span>
-    <span class="c1"># however this Dataset handle a string, which represents a sample-id.</span>
-    <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">uid</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">],</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]]:</span>
+    <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">uid</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]]:</span>
         <span class="k">assert</span> <span class="n">check_argument_types</span><span class="p">()</span>
+
+        <span class="c1"># Change integer-id to string-id</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">uid</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+            <span class="n">d</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="nb">iter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">loader_dict</span><span class="o">.</span><span class="n">values</span><span class="p">()))</span>
+            <span class="n">uid</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">d</span><span class="p">)[</span><span class="n">uid</span><span class="p">]</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">cache</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">uid</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">cache</span><span class="p">:</span>
             <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cache</span><span class="p">[</span><span class="n">uid</span><span class="p">]</span>
@@ -659,25 +601,9 @@
         <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">loader</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">loader_dict</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
             <span class="k">try</span><span class="p">:</span>
                 <span class="n">value</span> <span class="o">=</span> <span class="n">loader</span><span class="p">[</span><span class="n">uid</span><span class="p">]</span>
-                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
-                    <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">value</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
-                        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span>
-                            <span class="n">v</span><span class="p">,</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="n">numbers</span><span class="o">.</span><span class="n">Number</span><span class="p">)</span>
-                        <span class="p">):</span>
-                            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
-                                <span class="sa">f</span><span class="s2">&quot;Must be ndarray, torch.Tensor, str or Number: &quot;</span>
-                                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">v</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
-                            <span class="p">)</span>
-                <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="p">(</span><span class="nb">tuple</span><span class="p">,</span> <span class="nb">list</span><span class="p">)):</span>
-                    <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">value</span><span class="p">:</span>
-                        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span>
-                            <span class="n">v</span><span class="p">,</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="n">numbers</span><span class="o">.</span><span class="n">Number</span><span class="p">)</span>
-                        <span class="p">):</span>
-                            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
-                                <span class="sa">f</span><span class="s2">&quot;Must be ndarray, torch.Tensor, str or Number: &quot;</span>
-                                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">v</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
-                            <span class="p">)</span>
-                <span class="k">elif</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)):</span>
+                    <span class="n">value</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span>
                     <span class="n">value</span><span class="p">,</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="n">numbers</span><span class="o">.</span><span class="n">Number</span><span class="p">)</span>
                 <span class="p">):</span>
                     <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
@@ -690,43 +616,12 @@
                 <span class="p">)</span>
                 <span class="k">raise</span>
 
-            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="n">numbers</span><span class="o">.</span><span class="n">Number</span><span class="p">)):</span>
-                <span class="c1"># torch.Tensor is converted to ndarray</span>
-                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">):</span>
-                    <span class="n">value</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span>
-                <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">numbers</span><span class="o">.</span><span class="n">Number</span><span class="p">):</span>
-                    <span class="n">value</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">value</span><span class="p">])</span>
-                <span class="n">data</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
-
-            <span class="c1"># The return value of ESPnet dataset must be a dict of ndarrays,</span>
-            <span class="c1"># so we need to parse a container of ndarrays</span>
-            <span class="c1"># if dict:</span>
-            <span class="c1">#   e.g. &quot;name&quot;: {&quot;foo&quot;: array, &quot;bar&quot;: arrray}</span>
-            <span class="c1">#   =&gt; &quot;name_foo&quot;, &quot;name_bar&quot;</span>
-            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
-                <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">value</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-                    <span class="n">new_key</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="s2">&quot;</span>
-                    <span class="k">if</span> <span class="n">new_key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">loader_dict</span><span class="p">:</span>
-                        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Use another name: </span><span class="si">{</span><span class="n">new_key</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-                    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">):</span>
-                        <span class="n">v</span> <span class="o">=</span> <span class="n">v</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span>
-                    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">numbers</span><span class="o">.</span><span class="n">Number</span><span class="p">):</span>
-                        <span class="n">v</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">v</span><span class="p">])</span>
-                    <span class="n">data</span><span class="p">[</span><span class="n">new_key</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span>
-
-            <span class="c1"># if tuple or list:</span>
-            <span class="c1">#   e.g. &quot;name&quot;: [array, array]</span>
-            <span class="c1">#   =&gt; &quot;name_0&quot;, &quot;name_1&quot;</span>
-            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="p">(</span><span class="nb">tuple</span><span class="p">,</span> <span class="nb">list</span><span class="p">)):</span>
-                <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
-                    <span class="n">new_key</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">&quot;</span>
-                    <span class="k">if</span> <span class="n">new_key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">loader_dict</span><span class="p">:</span>
-                        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Use another name: </span><span class="si">{</span><span class="n">new_key</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-                    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">):</span>
-                        <span class="n">v</span> <span class="o">=</span> <span class="n">v</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span>
-                    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">numbers</span><span class="o">.</span><span class="n">Number</span><span class="p">):</span>
-                        <span class="n">v</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">v</span><span class="p">])</span>
-                    <span class="n">data</span><span class="p">[</span><span class="n">new_key</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span>
+            <span class="c1"># torch.Tensor is converted to ndarray</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">):</span>
+                <span class="n">value</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span>
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">numbers</span><span class="o">.</span><span class="n">Number</span><span class="p">):</span>
+                <span class="n">value</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">value</span><span class="p">])</span>
+            <span class="n">data</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
 
         <span class="c1"># 2. [Option] Apply preprocessing</span>
         <span class="c1">#   e.g. espnet2.train.preprocessor:CommonPreprocessor</span>

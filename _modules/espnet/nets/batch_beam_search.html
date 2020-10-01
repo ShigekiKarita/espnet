@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>espnet.nets.batch_beam_search &mdash; ESPnet 0.7.0 documentation</title>
+  <title>espnet.nets.batch_beam_search &mdash; ESPnet 0.9.3 documentation</title>
   
 
   
@@ -61,7 +61,7 @@
             
             
               <div class="version">
-                0.7.0
+                0.9.3
               </div>
             
           
@@ -101,12 +101,22 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../espnet2_task.html">Task class and data input system for training</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../espnet2_distributed.html">Distributed training</a></li>
 </ul>
+<p class="caption"><span class="caption-text">Notebook:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebook/asr_cli.html">Speech Recognition (Recipe)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebook/asr_library.html">Speech Recognition (Library)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebook/tts_cli.html">Text-to-Speech (Recipe)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebook/pretrained.html">Pretrained Model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebook/tts_realtime_demo.html">ESPnet real time E2E-TTS demonstration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebook/st_demo.html">ESPnet Speech Translation Demonstration</a></li>
+</ul>
 <p class="caption"><span class="caption-text">Package Reference:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../_gen/espnet.scheduler.html">espnet.scheduler package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../_gen/espnet.lm.html">espnet.lm package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../_gen/espnet.asr.html">espnet.asr package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../_gen/espnet.optimizer.html">espnet.optimizer package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../_gen/espnet.vc.html">espnet.vc package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../_gen/espnet.tts.html">espnet.tts package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../_gen/espnet.st.html">espnet.st package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../_gen/espnet.nets.html">espnet.nets package</a></li>
@@ -114,12 +124,14 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../_gen/espnet.utils.html">espnet.utils package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../_gen/espnet.bin.html">espnet.bin package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../_gen/espnet.transform.html">espnet.transform package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../_gen/espnet2.fileio.html">espnet2.fileio package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../_gen/espnet2.optimizers.html">espnet2.optimizers package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../_gen/espnet2.schedulers.html">espnet2.schedulers package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../_gen/espnet2.lm.html">espnet2.lm package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../_gen/espnet2.asr.html">espnet2.asr package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../_gen/espnet2.main_funcs.html">espnet2.main_funcs package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../_gen/espnet2.tts.html">espnet2.tts package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../_gen/espnet2.enh.html">espnet2.enh package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../_gen/espnet2.samplers.html">espnet2.samplers package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../_gen/espnet2.torch_utils.html">espnet2.torch_utils package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../_gen/espnet2.train.html">espnet2.train package</a></li>
@@ -133,6 +145,7 @@
 <p class="caption"><span class="caption-text">Tool Reference:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../apis/espnet_bin.html">core tools</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../apis/espnet2_bin.html">core tools (espnet2)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../apis/utils_py.html">python utility tools</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../apis/utils_sh.html">bash utility tools</a></li>
 </ul>
@@ -300,18 +313,13 @@
 <span class="sd">                Their shapes are all `(self.beam_size,)`</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">do_pre_beam</span><span class="p">:</span>
-            <span class="n">top_ids</span> <span class="o">=</span> <span class="n">weighted_scores</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">topk</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">beam_size</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
-            <span class="c1"># Because of the flatten above, `top_ids` is organized as:</span>
-            <span class="c1"># [hyp1 * V + token1, hyp2 * V + token2, ..., hypK * V + tokenK],</span>
-            <span class="c1"># where V is `self.n_vocab` and K is `self.beam_size`</span>
-            <span class="n">prev_hyp_ids</span> <span class="o">=</span> <span class="n">top_ids</span> <span class="o">//</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_vocab</span>
-            <span class="n">new_token_ids</span> <span class="o">=</span> <span class="n">top_ids</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_vocab</span>
-            <span class="k">return</span> <span class="n">prev_hyp_ids</span><span class="p">,</span> <span class="n">new_token_ids</span><span class="p">,</span> <span class="n">prev_hyp_ids</span><span class="p">,</span> <span class="n">new_token_ids</span>
-
-        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span>
-            <span class="s2">&quot;batch decoding with PartialScorer is not supported yet.&quot;</span>
-        <span class="p">)</span></div>
+        <span class="n">top_ids</span> <span class="o">=</span> <span class="n">weighted_scores</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">topk</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">beam_size</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="c1"># Because of the flatten above, `top_ids` is organized as:</span>
+        <span class="c1"># [hyp1 * V + token1, hyp2 * V + token2, ..., hypK * V + tokenK],</span>
+        <span class="c1"># where V is `self.n_vocab` and K is `self.beam_size`</span>
+        <span class="n">prev_hyp_ids</span> <span class="o">=</span> <span class="n">top_ids</span> <span class="o">//</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_vocab</span>
+        <span class="n">new_token_ids</span> <span class="o">=</span> <span class="n">top_ids</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_vocab</span>
+        <span class="k">return</span> <span class="n">prev_hyp_ids</span><span class="p">,</span> <span class="n">new_token_ids</span><span class="p">,</span> <span class="n">prev_hyp_ids</span><span class="p">,</span> <span class="n">new_token_ids</span></div>
 
 <div class="viewcode-block" id="BatchBeamSearch.init_hyp"><a class="viewcode-back" href="../../../_gen/espnet.nets.html#espnet.nets.batch_beam_search.BatchBeamSearch.init_hyp">[docs]</a>    <span class="k">def</span> <span class="nf">init_hyp</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">BatchHypothesis</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Get an initial hypothesis data.</span>
@@ -323,7 +331,21 @@
 <span class="sd">            Hypothesis: The initial hypothesis.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">batchfy</span><span class="p">(</span><span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">init_hyp</span><span class="p">(</span><span class="n">x</span><span class="p">))</span></div>
+        <span class="n">init_states</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+        <span class="n">init_scores</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">d</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">scorers</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">init_states</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">batch_init_state</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+            <span class="n">init_scores</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">batchfy</span><span class="p">(</span>
+            <span class="p">[</span>
+                <span class="n">Hypothesis</span><span class="p">(</span>
+                    <span class="n">score</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
+                    <span class="n">scores</span><span class="o">=</span><span class="n">init_scores</span><span class="p">,</span>
+                    <span class="n">states</span><span class="o">=</span><span class="n">init_states</span><span class="p">,</span>
+                    <span class="n">yseq</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">sos</span><span class="p">],</span> <span class="n">device</span><span class="o">=</span><span class="n">x</span><span class="o">.</span><span class="n">device</span><span class="p">),</span>
+                <span class="p">)</span>
+            <span class="p">]</span>
+        <span class="p">)</span></div>
 
 <div class="viewcode-block" id="BatchBeamSearch.score_full"><a class="viewcode-back" href="../../../_gen/espnet.nets.html#espnet.nets.batch_beam_search.BatchBeamSearch.score_full">[docs]</a>    <span class="k">def</span> <span class="nf">score_full</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">hyp</span><span class="p">:</span> <span class="n">BatchHypothesis</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span>
@@ -348,6 +370,53 @@
             <span class="n">scores</span><span class="p">[</span><span class="n">k</span><span class="p">],</span> <span class="n">states</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">batch_score</span><span class="p">(</span><span class="n">hyp</span><span class="o">.</span><span class="n">yseq</span><span class="p">,</span> <span class="n">hyp</span><span class="o">.</span><span class="n">states</span><span class="p">[</span><span class="n">k</span><span class="p">],</span> <span class="n">x</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">scores</span><span class="p">,</span> <span class="n">states</span></div>
 
+<div class="viewcode-block" id="BatchBeamSearch.score_partial"><a class="viewcode-back" href="../../../_gen/espnet.nets.html#espnet.nets.batch_beam_search.BatchBeamSearch.score_partial">[docs]</a>    <span class="k">def</span> <span class="nf">score_partial</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">hyp</span><span class="p">:</span> <span class="n">BatchHypothesis</span><span class="p">,</span> <span class="n">ids</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">],</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]:</span>
+        <span class="sd">&quot;&quot;&quot;Score new hypothesis by `self.full_scorers`.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            hyp (Hypothesis): Hypothesis with prefix tokens to score</span>
+<span class="sd">            ids (torch.Tensor): 2D tensor of new partial tokens to score</span>
+<span class="sd">            x (torch.Tensor): Corresponding input feature</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Tuple[Dict[str, torch.Tensor], Dict[str, Any]]: Tuple of</span>
+<span class="sd">                score dict of `hyp` that has string keys of `self.full_scorers`</span>
+<span class="sd">                and tensor score values of shape: `(self.n_vocab,)`,</span>
+<span class="sd">                and state dict that has string keys</span>
+<span class="sd">                and state values of `self.full_scorers`</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">scores</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+        <span class="n">states</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">d</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">part_scorers</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">scores</span><span class="p">[</span><span class="n">k</span><span class="p">],</span> <span class="n">states</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">batch_score_partial</span><span class="p">(</span>
+                <span class="n">hyp</span><span class="o">.</span><span class="n">yseq</span><span class="p">,</span> <span class="n">ids</span><span class="p">,</span> <span class="n">hyp</span><span class="o">.</span><span class="n">states</span><span class="p">[</span><span class="n">k</span><span class="p">],</span> <span class="n">x</span>
+            <span class="p">)</span>
+        <span class="k">return</span> <span class="n">scores</span><span class="p">,</span> <span class="n">states</span></div>
+
+<div class="viewcode-block" id="BatchBeamSearch.merge_states"><a class="viewcode-back" href="../../../_gen/espnet.nets.html#espnet.nets.batch_beam_search.BatchBeamSearch.merge_states">[docs]</a>    <span class="k">def</span> <span class="nf">merge_states</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">states</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">part_states</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">part_idx</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Merge states for new hypothesis.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            states: states of `self.full_scorers`</span>
+<span class="sd">            part_states: states of `self.part_scorers`</span>
+<span class="sd">            part_idx (int): The new token id for `part_scores`</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Dict[str, torch.Tensor]: The new score dict.</span>
+<span class="sd">                Its keys are names of `self.full_scorers` and `self.part_scorers`.</span>
+<span class="sd">                Its values are states of the scorers.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">new_states</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">states</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">new_states</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span>
+        <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">part_states</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">new_states</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span>
+        <span class="k">return</span> <span class="n">new_states</span></div>
+
 <div class="viewcode-block" id="BatchBeamSearch.search"><a class="viewcode-back" href="../../../_gen/espnet.nets.html#espnet.nets.batch_beam_search.BatchBeamSearch.search">[docs]</a>    <span class="k">def</span> <span class="nf">search</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">running_hyps</span><span class="p">:</span> <span class="n">BatchHypothesis</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">BatchHypothesis</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Search new tokens for running hypotheses and encoded speech x.</span>
 
@@ -360,27 +429,29 @@
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">n_batch</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">running_hyps</span><span class="p">)</span>
-
+        <span class="n">part_ids</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># no pre-beam</span>
         <span class="c1"># batch scoring</span>
-        <span class="n">scores</span><span class="p">,</span> <span class="n">states</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">score_full</span><span class="p">(</span><span class="n">running_hyps</span><span class="p">,</span> <span class="n">x</span><span class="o">.</span><span class="n">expand</span><span class="p">(</span><span class="n">n_batch</span><span class="p">,</span> <span class="o">*</span><span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">))</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">do_pre_beam</span><span class="p">:</span>
-            <span class="n">part_ids</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">topk</span><span class="p">(</span>
-                <span class="n">scores</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">pre_beam_score_key</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">pre_beam_size</span><span class="p">,</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span>
-            <span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">part_ids</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_vocab</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">x</span><span class="o">.</span><span class="n">device</span><span class="p">)</span><span class="o">.</span><span class="n">expand</span><span class="p">(</span>
-                <span class="n">n_batch</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_vocab</span>
-            <span class="p">)</span>
-        <span class="n">part_scores</span><span class="p">,</span> <span class="n">part_states</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">score_partial</span><span class="p">(</span><span class="n">running_hyps</span><span class="p">,</span> <span class="n">part_ids</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
-
-        <span class="c1"># weighted sum scores</span>
         <span class="n">weighted_scores</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span>
             <span class="n">n_batch</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_vocab</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">x</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">x</span><span class="o">.</span><span class="n">device</span>
         <span class="p">)</span>
+        <span class="n">scores</span><span class="p">,</span> <span class="n">states</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">score_full</span><span class="p">(</span><span class="n">running_hyps</span><span class="p">,</span> <span class="n">x</span><span class="o">.</span><span class="n">expand</span><span class="p">(</span><span class="n">n_batch</span><span class="p">,</span> <span class="o">*</span><span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">))</span>
         <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">full_scorers</span><span class="p">:</span>
             <span class="n">weighted_scores</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">weights</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">*</span> <span class="n">scores</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
+        <span class="c1"># partial scoring</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">do_pre_beam</span><span class="p">:</span>
+            <span class="n">pre_beam_scores</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="n">weighted_scores</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">pre_beam_score_key</span> <span class="o">==</span> <span class="s2">&quot;full&quot;</span>
+                <span class="k">else</span> <span class="n">scores</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">pre_beam_score_key</span><span class="p">]</span>
+            <span class="p">)</span>
+            <span class="n">part_ids</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">topk</span><span class="p">(</span><span class="n">pre_beam_scores</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">pre_beam_size</span><span class="p">,</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="c1"># NOTE(takaaki-hori): Unlike BeamSearch, we assume that score_partial returns</span>
+        <span class="c1"># full-size score matrices, which has non-zero scores for part_ids and zeros</span>
+        <span class="c1"># for others.</span>
+        <span class="n">part_scores</span><span class="p">,</span> <span class="n">part_states</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">score_partial</span><span class="p">(</span><span class="n">running_hyps</span><span class="p">,</span> <span class="n">part_ids</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">part_scorers</span><span class="p">:</span>
-            <span class="n">weighted_scores</span><span class="p">[</span><span class="n">part_ids</span><span class="p">]</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">weights</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">*</span> <span class="n">part_scores</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
+            <span class="n">weighted_scores</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">weights</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">*</span> <span class="n">part_scores</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
+        <span class="c1"># add previous hyp scores</span>
         <span class="n">weighted_scores</span> <span class="o">+=</span> <span class="n">running_hyps</span><span class="o">.</span><span class="n">score</span><span class="o">.</span><span class="n">to</span><span class="p">(</span>
             <span class="n">dtype</span><span class="o">=</span><span class="n">x</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">x</span><span class="o">.</span><span class="n">device</span>
         <span class="p">)</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
@@ -414,7 +485,9 @@
                             <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">states</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
                         <span class="p">},</span>
                         <span class="p">{</span>
-                            <span class="n">k</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">part_scorers</span><span class="p">[</span><span class="n">k</span><span class="p">]</span><span class="o">.</span><span class="n">select_state</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">part_prev_hyp_id</span><span class="p">)</span>
+                            <span class="n">k</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">part_scorers</span><span class="p">[</span><span class="n">k</span><span class="p">]</span><span class="o">.</span><span class="n">select_state</span><span class="p">(</span>
+                                <span class="n">v</span><span class="p">,</span> <span class="n">part_prev_hyp_id</span><span class="p">,</span> <span class="n">part_new_token_id</span>
+                            <span class="p">)</span>
                             <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">part_states</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
                         <span class="p">},</span>
                         <span class="n">part_new_token_id</span><span class="p">,</span>
@@ -444,7 +517,7 @@
 <span class="sd">            BatchHypothesis: The new running hypotheses.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">n_batch</span><span class="p">,</span> <span class="n">maxlen</span> <span class="o">=</span> <span class="n">running_hyps</span><span class="o">.</span><span class="n">yseq</span><span class="o">.</span><span class="n">shape</span>
+        <span class="n">n_batch</span> <span class="o">=</span> <span class="n">running_hyps</span><span class="o">.</span><span class="n">yseq</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
         <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;the number of running hypothes: </span><span class="si">{</span><span class="n">n_batch</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">token_list</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
@@ -459,9 +532,21 @@
         <span class="c1"># add eos in the final loop to avoid that there are no ended hyps</span>
         <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="n">maxlen</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span>
             <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;adding &lt;eos&gt; in the last position in the loop&quot;</span><span class="p">)</span>
-            <span class="n">running_hyps</span><span class="o">.</span><span class="n">yseq</span><span class="o">.</span><span class="n">resize_</span><span class="p">(</span><span class="n">n_batch</span><span class="p">,</span> <span class="n">maxlen</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
-            <span class="n">running_hyps</span><span class="o">.</span><span class="n">yseq</span><span class="p">[:,</span> <span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">eos</span>
-            <span class="n">running_hyps</span><span class="o">.</span><span class="n">yseq</span><span class="o">.</span><span class="n">index_fill_</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">running_hyps</span><span class="o">.</span><span class="n">length</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">eos</span><span class="p">)</span>
+            <span class="n">yseq_eos</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">(</span>
+                <span class="p">(</span>
+                    <span class="n">running_hyps</span><span class="o">.</span><span class="n">yseq</span><span class="p">,</span>
+                    <span class="n">torch</span><span class="o">.</span><span class="n">full</span><span class="p">(</span>
+                        <span class="p">(</span><span class="n">n_batch</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">eos</span><span class="p">,</span>
+                        <span class="n">device</span><span class="o">=</span><span class="n">running_hyps</span><span class="o">.</span><span class="n">yseq</span><span class="o">.</span><span class="n">device</span><span class="p">,</span>
+                        <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">int64</span><span class="p">,</span>
+                    <span class="p">),</span>
+                <span class="p">),</span>
+                <span class="mi">1</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="n">running_hyps</span><span class="o">.</span><span class="n">yseq</span><span class="o">.</span><span class="n">resize_as_</span><span class="p">(</span><span class="n">yseq_eos</span><span class="p">)</span>
+            <span class="n">running_hyps</span><span class="o">.</span><span class="n">yseq</span><span class="p">[:]</span> <span class="o">=</span> <span class="n">yseq_eos</span>
+            <span class="n">running_hyps</span><span class="o">.</span><span class="n">length</span><span class="p">[:]</span> <span class="o">=</span> <span class="n">yseq_eos</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
 
         <span class="c1"># add ended hypotheses to a final list, and removed them from current hypotheses</span>
         <span class="c1"># (this will be a probmlem, number of hyps &lt; beam)</span>

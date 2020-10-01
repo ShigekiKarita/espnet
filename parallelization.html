@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Using Job scheduling system &mdash; ESPnet 0.7.0 documentation</title>
+  <title>Using Job scheduling system &mdash; ESPnet 0.9.3 documentation</title>
   
 
   
@@ -63,7 +63,7 @@
             
             
               <div class="version">
-                0.7.0
+                0.9.3
               </div>
             
           
@@ -94,7 +94,7 @@
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Using Job scheduling system</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#select-job-scheduler">Select Job scheduler</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#usage-of-run-pl">Usage of run.pl</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#queue-partition-setting">Queue/Partition setting</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#configuration">Configuration</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="faq.html">FAQ</a></li>
@@ -108,12 +108,22 @@
 <li class="toctree-l1"><a class="reference internal" href="espnet2_task.html">Task class and data input system for training</a></li>
 <li class="toctree-l1"><a class="reference internal" href="espnet2_distributed.html">Distributed training</a></li>
 </ul>
+<p class="caption"><span class="caption-text">Notebook:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="notebook/asr_cli.html">Speech Recognition (Recipe)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="notebook/asr_library.html">Speech Recognition (Library)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="notebook/tts_cli.html">Text-to-Speech (Recipe)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="notebook/pretrained.html">Pretrained Model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="notebook/tts_realtime_demo.html">ESPnet real time E2E-TTS demonstration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="notebook/st_demo.html">ESPnet Speech Translation Demonstration</a></li>
+</ul>
 <p class="caption"><span class="caption-text">Package Reference:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="_gen/espnet.scheduler.html">espnet.scheduler package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="_gen/espnet.lm.html">espnet.lm package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="_gen/espnet.asr.html">espnet.asr package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="_gen/espnet.optimizer.html">espnet.optimizer package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="_gen/espnet.vc.html">espnet.vc package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="_gen/espnet.tts.html">espnet.tts package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="_gen/espnet.st.html">espnet.st package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="_gen/espnet.nets.html">espnet.nets package</a></li>
@@ -121,12 +131,14 @@
 <li class="toctree-l1"><a class="reference internal" href="_gen/espnet.utils.html">espnet.utils package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="_gen/espnet.bin.html">espnet.bin package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="_gen/espnet.transform.html">espnet.transform package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="_gen/espnet2.fileio.html">espnet2.fileio package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="_gen/espnet2.optimizers.html">espnet2.optimizers package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="_gen/espnet2.schedulers.html">espnet2.schedulers package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="_gen/espnet2.lm.html">espnet2.lm package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="_gen/espnet2.asr.html">espnet2.asr package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="_gen/espnet2.main_funcs.html">espnet2.main_funcs package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="_gen/espnet2.tts.html">espnet2.tts package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="_gen/espnet2.enh.html">espnet2.enh package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="_gen/espnet2.samplers.html">espnet2.samplers package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="_gen/espnet2.torch_utils.html">espnet2.torch_utils package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="_gen/espnet2.train.html">espnet2.train package</a></li>
@@ -140,6 +152,7 @@
 <p class="caption"><span class="caption-text">Tool Reference:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="apis/espnet_bin.html">core tools</a></li>
+<li class="toctree-l1"><a class="reference internal" href="apis/espnet2_bin.html">core tools (espnet2)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="apis/utils_py.html">python utility tools</a></li>
 <li class="toctree-l1"><a class="reference internal" href="apis/utils_sh.html">bash utility tools</a></li>
 </ul>
@@ -234,10 +247,9 @@
 <h1>Using Job scheduling system<a class="headerlink" href="#using-job-scheduling-system" title="Permalink to this headline">¶</a></h1>
 <p>Our recipes support some Job scheduling systems, SGE, PBS/Torque,
 and Slurm, according to <a class="reference external" href="https://kaldi-asr.org/doc/queue.html">Parallelization in Kaldi</a>.
-By default, the feature extraction and decoding run at the local machine with multiprocessing,
-but if there are any Job scheduling systems in your environment,
-you can submit more number of Jobs with multiple machines.
-Please ask the administrator to install it.</p>
+By default, the job runs at local machine. If there are any Job scheduling systems in your environment,
+you can submit more number of Jobs with multiple machines.</p>
+<p>Please ask the administrator to install it if you have multiple machines.</p>
 <div class="section" id="select-job-scheduler">
 <h2>Select Job scheduler<a class="headerlink" href="#select-job-scheduler" title="Permalink to this headline">¶</a></h2>
 <p><code class="docutils literal notranslate"><span class="pre">cmd.sh</span></code> is a configuration file and it’s used by <code class="docutils literal notranslate"><span class="pre">run.sh</span></code> to set some shell variables. These shell variables should be set as one of following perl scripts:</p>
@@ -298,8 +310,8 @@ i.e. The following commands are almost equivalent to the above:</p>
 </pre></div>
 </div>
 </div>
-<div class="section" id="queue-partition-setting">
-<h2>Queue/Partition setting<a class="headerlink" href="#queue-partition-setting" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="configuration">
+<h2>Configuration<a class="headerlink" href="#configuration" title="Permalink to this headline">¶</a></h2>
 <p>You also need to modify the configuration file for a specific job scheduler to change command-line options to submit jobs e.g. queue setting, resource request, etc.</p>
 <p>The following text is an example of <code class="docutils literal notranslate"><span class="pre">conf/queue.conf</span></code>.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span># Default configuration
@@ -314,12 +326,16 @@ option gpu=0
 option gpu=* -l gpu=$0 -q g.q
 </pre></div>
 </div>
+<p>Note that the queue/partition name, <code class="docutils literal notranslate"><span class="pre">-q</span> <span class="pre">g.q</span></code>, is an example, so you must change it to the existing queue/partition in your cluster.</p>
+<p>You can’t use the specific options depending on each system in our scripts,
+e.g. you can’t use <code class="docutils literal notranslate"><span class="pre">-q</span></code> option for <code class="docutils literal notranslate"><span class="pre">queue.pl</span></code> directly.
+Instead, you can use <code class="docutils literal notranslate"><span class="pre">--mem</span></code>, <code class="docutils literal notranslate"><span class="pre">--num_threads</span></code>, <code class="docutils literal notranslate"><span class="pre">--max_jobs_run</span></code>, and <code class="docutils literal notranslate"><span class="pre">--gpu</span></code> in this case.</p>
 <p>Take a look at the following:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>option gpu=* -l gpu=$0 -q g.q
 </pre></div>
 </div>
 <p>This line means that the optional argument specified by the second column, <code class="docutils literal notranslate"><span class="pre">gpu=*</span></code>,
-will be changed the options after it, <code class="docutils literal notranslate"><span class="pre">gpu=$0</span> <span class="pre">-q</span> <span class="pre">g.q</span></code>:</p>
+will be converted to the options after it: <code class="docutils literal notranslate"><span class="pre">-l</span> <span class="pre">gpu=$0</span> <span class="pre">-q</span> <span class="pre">g.q</span></code>:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>queue.pl --gpu <span class="m">2</span>
 </pre></div>
 </div>
@@ -327,7 +343,10 @@ will be changed the options after it, <code class="docutils literal notranslate"
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>qsub -v PATH -cwd -S /bin/bash -j y -l <span class="nv">arch</span><span class="o">=</span>*64* -l <span class="nv">gpu</span><span class="o">=</span><span class="m">2</span> -q g.q
 </pre></div>
 </div>
-<p>Thanks to this system, our shell script can switch any job scheduling system with unified options.</p>
+<p>You can also add a new option for your system using this syntax.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>option foo=* --bar $0
+</pre></div>
+</div>
 </div>
 </div>
 

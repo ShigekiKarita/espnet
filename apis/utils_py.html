@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>python utility tools &mdash; ESPnet 0.7.0 documentation</title>
+  <title>python utility tools &mdash; ESPnet 0.9.3 documentation</title>
   
 
   
@@ -39,7 +39,7 @@
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="bash utility tools" href="utils_sh.html" />
-    <link rel="prev" title="core tools" href="espnet_bin.html" /> 
+    <link rel="prev" title="core tools (espnet2)" href="espnet2_bin.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -63,7 +63,7 @@
             
             
               <div class="version">
-                0.7.0
+                0.9.3
               </div>
             
           
@@ -103,12 +103,22 @@
 <li class="toctree-l1"><a class="reference internal" href="../espnet2_task.html">Task class and data input system for training</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../espnet2_distributed.html">Distributed training</a></li>
 </ul>
+<p class="caption"><span class="caption-text">Notebook:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../notebook/asr_cli.html">Speech Recognition (Recipe)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notebook/asr_library.html">Speech Recognition (Library)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notebook/tts_cli.html">Text-to-Speech (Recipe)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notebook/pretrained.html">Pretrained Model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notebook/tts_realtime_demo.html">ESPnet real time E2E-TTS demonstration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notebook/st_demo.html">ESPnet Speech Translation Demonstration</a></li>
+</ul>
 <p class="caption"><span class="caption-text">Package Reference:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../_gen/espnet.scheduler.html">espnet.scheduler package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../_gen/espnet.lm.html">espnet.lm package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../_gen/espnet.asr.html">espnet.asr package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../_gen/espnet.optimizer.html">espnet.optimizer package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../_gen/espnet.vc.html">espnet.vc package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../_gen/espnet.tts.html">espnet.tts package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../_gen/espnet.st.html">espnet.st package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../_gen/espnet.nets.html">espnet.nets package</a></li>
@@ -116,12 +126,14 @@
 <li class="toctree-l1"><a class="reference internal" href="../_gen/espnet.utils.html">espnet.utils package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../_gen/espnet.bin.html">espnet.bin package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../_gen/espnet.transform.html">espnet.transform package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../_gen/espnet2.fileio.html">espnet2.fileio package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../_gen/espnet2.optimizers.html">espnet2.optimizers package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../_gen/espnet2.schedulers.html">espnet2.schedulers package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../_gen/espnet2.lm.html">espnet2.lm package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../_gen/espnet2.asr.html">espnet2.asr package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../_gen/espnet2.main_funcs.html">espnet2.main_funcs package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../_gen/espnet2.tts.html">espnet2.tts package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../_gen/espnet2.enh.html">espnet2.enh package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../_gen/espnet2.samplers.html">espnet2.samplers package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../_gen/espnet2.torch_utils.html">espnet2.torch_utils package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../_gen/espnet2.train.html">espnet2.train package</a></li>
@@ -135,6 +147,7 @@
 <p class="caption"><span class="caption-text">Tool Reference:</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="espnet_bin.html">core tools</a></li>
+<li class="toctree-l1"><a class="reference internal" href="espnet2_bin.html">core tools (espnet2)</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">python utility tools</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#addjson-py">addjson.py</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#Positional Arguments">Positional Arguments</a></li>
@@ -242,6 +255,14 @@
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#json2trn-wo-dict-py">json2trn_wo_dict.py</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#Positional Arguments">Positional Arguments</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#Named Arguments">Named Arguments</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#make-pair-json-py">make_pair_json.py</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#Named Arguments">Named Arguments</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#mcd-calculate-py">mcd_calculate.py</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#Named Arguments">Named Arguments</a></li>
 </ul>
 </li>
@@ -412,6 +433,8 @@
 <li><p><a class="reference internal" href="#json2trn-mt-py"><span class="std std-ref">json2trn_mt.py</span></a>: convert json to machine translation transcription</p></li>
 <li><p><a class="reference internal" href="#json2trn-py"><span class="std std-ref">json2trn.py</span></a>: convert a json to a transcription file with a token dictionary</p></li>
 <li><p><a class="reference internal" href="#json2trn-wo-dict-py"><span class="std std-ref">json2trn_wo_dict.py</span></a>: convert a json to a transcription file with a token dictionary</p></li>
+<li><p><a class="reference internal" href="#make-pair-json-py"><span class="std std-ref">make_pair_json.py</span></a>: Merge source and target data.json files into one json file.</p></li>
+<li><p><a class="reference internal" href="#mcd-calculate-py"><span class="std std-ref">mcd_calculate.py</span></a>: calculate MCD.</p></li>
 <li><p><a class="reference internal" href="#mergejson-py"><span class="std std-ref">mergejson.py</span></a>: merge json files</p></li>
 <li><p><a class="reference internal" href="#merge-scp2json-py"><span class="std std-ref">merge_scp2json.py</span></a>: Given each file paths with such format as &lt;key&gt;:&lt;file&gt;:&lt;type&gt;. type&gt; can be omitted and the default is “str”. e.g. ../doc/argparse2rst.py –input-scps feat:data/feats.scp shape:data/utt2feat_shape:shape –input-scps feat:data/feats2.scp shape:data/utt2feat2_shape:shape –output-scps text:data/text shape:data/utt2text_shape:shape –scps utt2spk:data/utt2spk</p></li>
 <li><p><a class="reference internal" href="#mix-mono-wav-scp-py"><span class="std std-ref">mix-mono-wav-scp.py</span></a>: Mixing wav.scp files into a multi-channel wav.scp using sox.</p></li>
@@ -544,6 +567,7 @@
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">usage</span><span class="p">:</span> <span class="n">average_checkpoints</span><span class="o">.</span><span class="n">py</span> <span class="p">[</span><span class="o">-</span><span class="n">h</span><span class="p">]</span> <span class="o">--</span><span class="n">snapshots</span> <span class="n">SNAPSHOTS</span> <span class="p">[</span><span class="n">SNAPSHOTS</span> <span class="o">...</span><span class="p">]</span> <span class="o">--</span><span class="n">out</span>
                               <span class="n">OUT</span> <span class="p">[</span><span class="o">--</span><span class="n">num</span> <span class="n">NUM</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">backend</span> <span class="n">BACKEND</span><span class="p">]</span>
                               <span class="p">[</span><span class="o">--</span><span class="n">log</span> <span class="p">[</span><span class="n">LOG</span><span class="p">]]</span>
+                              <span class="p">[</span><span class="o">--</span><span class="n">metric</span> <span class="p">[{</span><span class="n">acc</span><span class="p">,</span><span class="n">bleu</span><span class="p">,</span><span class="n">cer_ctc</span><span class="p">,</span><span class="n">loss</span><span class="p">,</span><span class="n">perplexity</span><span class="p">}]]</span>
 </pre></div>
 </div>
 <div class="section" id="Named Arguments">
@@ -561,6 +585,10 @@
 </dd>
 <dt><kbd>--log</kbd></dt>
 <dd></dd>
+<dt><kbd>--metric</kbd></dt>
+<dd><p>Possible choices: acc, bleu, cer_ctc, loss, perplexity</p>
+<p>Default: “”</p>
+</dd>
 </dl>
 </div>
 </div>
@@ -738,8 +766,8 @@
 <span id="id8"></span><h2>compute-stft-feats.py<a class="headerlink" href="#compute-stft-feats-py" title="Permalink to this headline">¶</a></h2>
 <p><p>compute STFT feature from WAV</p>
 </p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">usage</span><span class="p">:</span> <span class="n">compute</span><span class="o">-</span><span class="n">stft</span><span class="o">-</span><span class="n">feats</span><span class="o">.</span><span class="n">py</span> <span class="p">[</span><span class="o">-</span><span class="n">h</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">n_fft</span> <span class="n">N_FFT</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">n_shift</span> <span class="n">N_SHIFT</span><span class="p">]</span>
-                             <span class="p">[</span><span class="o">--</span><span class="n">win_length</span> <span class="p">[</span><span class="n">WIN_LENGTH</span><span class="p">]]</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">usage</span><span class="p">:</span> <span class="n">compute</span><span class="o">-</span><span class="n">stft</span><span class="o">-</span><span class="n">feats</span><span class="o">.</span><span class="n">py</span> <span class="p">[</span><span class="o">-</span><span class="n">h</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">fs</span> <span class="n">FS</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">n_fft</span> <span class="n">N_FFT</span><span class="p">]</span>
+                             <span class="p">[</span><span class="o">--</span><span class="n">n_shift</span> <span class="n">N_SHIFT</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">win_length</span> <span class="p">[</span><span class="n">WIN_LENGTH</span><span class="p">]]</span>
                              <span class="p">[</span><span class="o">--</span><span class="n">window</span> <span class="p">{</span><span class="n">hann</span><span class="p">,</span><span class="n">hamming</span><span class="p">}]</span>
                              <span class="p">[</span><span class="o">--</span><span class="n">write</span><span class="o">-</span><span class="n">num</span><span class="o">-</span><span class="n">frames</span> <span class="n">WRITE_NUM_FRAMES</span><span class="p">]</span>
                              <span class="p">[</span><span class="o">--</span><span class="n">filetype</span> <span class="p">{</span><span class="n">mat</span><span class="p">,</span><span class="n">hdf5</span><span class="p">}]</span> <span class="p">[</span><span class="o">--</span><span class="n">compress</span> <span class="n">COMPRESS</span><span class="p">]</span>
@@ -763,6 +791,9 @@
 <div class="section" id="Named Arguments">
 <h3>Named Arguments<a class="headerlink" href="#Named Arguments" title="Permalink to this headline">¶</a></h3>
 <dl class="option-list">
+<dt><kbd>--fs</kbd></dt>
+<dd><p>Sampling frequency</p>
+</dd>
 <dt><kbd>--n_fft</kbd></dt>
 <dd><p>FFT length in point</p>
 <p>Default: 1024</p>
@@ -1430,8 +1461,87 @@
 </dl>
 </div>
 </div>
+<div class="section" id="make-pair-json-py">
+<span id="id25"></span><h2>make_pair_json.py<a class="headerlink" href="#make-pair-json-py" title="Permalink to this headline">¶</a></h2>
+<p><p>Merge source and target data.json files into one json file.</p>
+</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">usage</span><span class="p">:</span> <span class="n">make_pair_json</span><span class="o">.</span><span class="n">py</span> <span class="p">[</span><span class="o">-</span><span class="n">h</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">src</span><span class="o">-</span><span class="n">json</span> <span class="n">SRC_JSON</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">trg</span><span class="o">-</span><span class="n">json</span> <span class="n">TRG_JSON</span><span class="p">]</span>
+                         <span class="p">[</span><span class="o">--</span><span class="n">num_utts</span> <span class="n">NUM_UTTS</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">verbose</span> <span class="n">VERBOSE</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">out</span> <span class="n">OUT</span><span class="p">]</span>
+</pre></div>
+</div>
+<div class="section" id="Named Arguments">
+<h3>Named Arguments<a class="headerlink" href="#Named Arguments" title="Permalink to this headline">¶</a></h3>
+<dl class="option-list">
+<dt><kbd>--src-json</kbd></dt>
+<dd><p>Json file for the source speaker</p>
+</dd>
+<dt><kbd>--trg-json</kbd></dt>
+<dd><p>Json file for the target speaker. If not specified, use source only.</p>
+</dd>
+<dt><kbd>--num_utts</kbd></dt>
+<dd><p>Number of utterances (take from head)</p>
+<p>Default: -1</p>
+</dd>
+<dt><kbd>--verbose, -V</kbd></dt>
+<dd><p>Verbose option</p>
+<p>Default: 1</p>
+</dd>
+<dt><kbd>--out, -O</kbd></dt>
+<dd><p>The output filename. If omitted, then output to sys.stdout</p>
+</dd>
+</dl>
+</div>
+</div>
+<div class="section" id="mcd-calculate-py">
+<span id="id26"></span><h2>mcd_calculate.py<a class="headerlink" href="#mcd-calculate-py" title="Permalink to this headline">¶</a></h2>
+<p><p>calculate MCD.</p>
+</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">usage</span><span class="p">:</span> <span class="n">mcd_calculate</span><span class="o">.</span><span class="n">py</span> <span class="p">[</span><span class="o">-</span><span class="n">h</span><span class="p">]</span> <span class="o">--</span><span class="n">wavdir</span> <span class="n">WAVDIR</span> <span class="o">--</span><span class="n">gtwavdir</span> <span class="n">GTWAVDIR</span>
+                        <span class="p">[</span><span class="o">--</span><span class="n">mcep_dim</span> <span class="n">MCEP_DIM</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">mcep_alpha</span> <span class="n">MCEP_ALPHA</span><span class="p">]</span>
+                        <span class="p">[</span><span class="o">--</span><span class="n">fftl</span> <span class="n">FFTL</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">shiftms</span> <span class="n">SHIFTMS</span><span class="p">]</span> <span class="o">--</span><span class="n">f0min</span> <span class="n">F0MIN</span>
+                        <span class="o">--</span><span class="n">f0max</span> <span class="n">F0MAX</span> <span class="p">[</span><span class="o">--</span><span class="n">n_jobs</span> <span class="n">N_JOBS</span><span class="p">]</span>
+</pre></div>
+</div>
+<div class="section" id="Named Arguments">
+<h3>Named Arguments<a class="headerlink" href="#Named Arguments" title="Permalink to this headline">¶</a></h3>
+<dl class="option-list">
+<dt><kbd>--wavdir</kbd></dt>
+<dd><p>path of directory for converted waveforms</p>
+</dd>
+<dt><kbd>--gtwavdir</kbd></dt>
+<dd><p>path of directory for ground truth waveforms</p>
+</dd>
+<dt><kbd>--mcep_dim</kbd></dt>
+<dd><p>dimension of mel cepstrum coefficient</p>
+<p>Default: 41</p>
+</dd>
+<dt><kbd>--mcep_alpha</kbd></dt>
+<dd><p>all pass constant</p>
+<p>Default: 0.41</p>
+</dd>
+<dt><kbd>--fftl</kbd></dt>
+<dd><p>fft length</p>
+<p>Default: 1024</p>
+</dd>
+<dt><kbd>--shiftms</kbd></dt>
+<dd><p>frame shift (ms)</p>
+<p>Default: 5</p>
+</dd>
+<dt><kbd>--f0min</kbd></dt>
+<dd><p>fo search range (min)</p>
+</dd>
+<dt><kbd>--f0max</kbd></dt>
+<dd><p>fo search range (max)</p>
+</dd>
+<dt><kbd>--n_jobs</kbd></dt>
+<dd><p>number of parallel jobs</p>
+<p>Default: 40</p>
+</dd>
+</dl>
+</div>
+</div>
 <div class="section" id="mergejson-py">
-<span id="id25"></span><h2>mergejson.py<a class="headerlink" href="#mergejson-py" title="Permalink to this headline">¶</a></h2>
+<span id="id27"></span><h2>mergejson.py<a class="headerlink" href="#mergejson-py" title="Permalink to this headline">¶</a></h2>
 <p><p>merge json files</p>
 </p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">usage</span><span class="p">:</span> <span class="n">mergejson</span><span class="o">.</span><span class="n">py</span> <span class="p">[</span><span class="o">-</span><span class="n">h</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="nb">input</span><span class="o">-</span><span class="n">jsons</span> <span class="n">INPUT_JSONS</span> <span class="p">[</span><span class="n">INPUT_JSONS</span> <span class="o">...</span><span class="p">]]</span>
@@ -1466,7 +1576,7 @@
 </div>
 </div>
 <div class="section" id="merge-scp2json-py">
-<span id="id26"></span><h2>merge_scp2json.py<a class="headerlink" href="#merge-scp2json-py" title="Permalink to this headline">¶</a></h2>
+<span id="id28"></span><h2>merge_scp2json.py<a class="headerlink" href="#merge-scp2json-py" title="Permalink to this headline">¶</a></h2>
 <p><p>Given each file paths with such format as &lt;key&gt;:&lt;file&gt;:&lt;type&gt;. type&gt; can be omitted and the default is “str”. e.g. /home/karita/repos/espnet/tools/venv/bin/travis-sphinx –input-scps feat:data/feats.scp shape:data/utt2feat_shape:shape –input-scps feat:data/feats2.scp shape:data/utt2feat2_shape:shape –output-scps text:data/text shape:data/utt2text_shape:shape –scps utt2spk:data/utt2spk</p>
 </p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">usage</span><span class="p">:</span> <span class="n">merge_scp2json</span><span class="o">.</span><span class="n">py</span> <span class="p">[</span><span class="o">-</span><span class="n">h</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="nb">input</span><span class="o">-</span><span class="n">scps</span> <span class="p">[</span><span class="n">INPUT_SCPS</span> <span class="p">[</span><span class="n">INPUT_SCPS</span> <span class="o">...</span><span class="p">]]]</span>
@@ -1505,7 +1615,7 @@
 </div>
 </div>
 <div class="section" id="mix-mono-wav-scp-py">
-<span id="id27"></span><h2>mix-mono-wav-scp.py<a class="headerlink" href="#mix-mono-wav-scp-py" title="Permalink to this headline">¶</a></h2>
+<span id="id29"></span><h2>mix-mono-wav-scp.py<a class="headerlink" href="#mix-mono-wav-scp-py" title="Permalink to this headline">¶</a></h2>
 <p><p>Mixing wav.scp files into a multi-channel wav.scp using sox.</p>
 </p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">usage</span><span class="p">:</span> <span class="n">mix</span><span class="o">-</span><span class="n">mono</span><span class="o">-</span><span class="n">wav</span><span class="o">-</span><span class="n">scp</span><span class="o">.</span><span class="n">py</span> <span class="p">[</span><span class="o">-</span><span class="n">h</span><span class="p">]</span> <span class="n">scp</span> <span class="p">[</span><span class="n">scp</span> <span class="o">...</span><span class="p">]</span> <span class="p">[</span><span class="n">out</span><span class="p">]</span>
@@ -1519,13 +1629,13 @@
 </dd>
 <dt><kbd>out</kbd></dt>
 <dd><p>The output filename. If omitted, then output to sys.stdout</p>
-<p>Default: &lt;encodings.utf_8.StreamWriter object at 0x7f584ab543c8&gt;</p>
+<p>Default: &lt;encodings.utf_8.StreamWriter object at 0x7fd90f1c6630&gt;</p>
 </dd>
 </dl>
 </div>
 </div>
 <div class="section" id="result2json-py">
-<span id="id28"></span><h2>result2json.py<a class="headerlink" href="#result2json-py" title="Permalink to this headline">¶</a></h2>
+<span id="id30"></span><h2>result2json.py<a class="headerlink" href="#result2json-py" title="Permalink to this headline">¶</a></h2>
 <p><p>convert sclite’s result.txt file to json</p>
 </p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">usage</span><span class="p">:</span> <span class="n">result2json</span><span class="o">.</span><span class="n">py</span> <span class="p">[</span><span class="o">-</span><span class="n">h</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">key</span> <span class="n">KEY</span><span class="p">]</span>
@@ -1541,7 +1651,7 @@
 </div>
 </div>
 <div class="section" id="scp2json-py">
-<span id="id29"></span><h2>scp2json.py<a class="headerlink" href="#scp2json-py" title="Permalink to this headline">¶</a></h2>
+<span id="id31"></span><h2>scp2json.py<a class="headerlink" href="#scp2json-py" title="Permalink to this headline">¶</a></h2>
 <p><p>convert scp to json</p>
 </p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">usage</span><span class="p">:</span> <span class="n">scp2json</span><span class="o">.</span><span class="n">py</span> <span class="p">[</span><span class="o">-</span><span class="n">h</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">key</span> <span class="n">KEY</span><span class="p">]</span>
@@ -1557,7 +1667,7 @@
 </div>
 </div>
 <div class="section" id="splitjson-py">
-<span id="id30"></span><h2>splitjson.py<a class="headerlink" href="#splitjson-py" title="Permalink to this headline">¶</a></h2>
+<span id="id32"></span><h2>splitjson.py<a class="headerlink" href="#splitjson-py" title="Permalink to this headline">¶</a></h2>
 <p><p>split a json file for parallel processing</p>
 </p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">usage</span><span class="p">:</span> <span class="n">splitjson</span><span class="o">.</span><span class="n">py</span> <span class="p">[</span><span class="o">-</span><span class="n">h</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">parts</span> <span class="n">PARTS</span><span class="p">]</span> <span class="n">json</span>
@@ -1582,7 +1692,7 @@
 </div>
 </div>
 <div class="section" id="text2token-py">
-<span id="id31"></span><h2>text2token.py<a class="headerlink" href="#text2token-py" title="Permalink to this headline">¶</a></h2>
+<span id="id33"></span><h2>text2token.py<a class="headerlink" href="#text2token-py" title="Permalink to this headline">¶</a></h2>
 <p><p>convert raw text to tokenized text</p>
 </p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">usage</span><span class="p">:</span> <span class="n">text2token</span><span class="o">.</span><span class="n">py</span> <span class="p">[</span><span class="o">-</span><span class="n">h</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">nchar</span> <span class="n">NCHAR</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">skip</span><span class="o">-</span><span class="n">ncols</span> <span class="n">SKIP_NCOLS</span><span class="p">]</span>
@@ -1634,7 +1744,7 @@ sil t er n ih sil t ih v sil”</p>
 </div>
 </div>
 <div class="section" id="text2vocabulary-py">
-<span id="id32"></span><h2>text2vocabulary.py<a class="headerlink" href="#text2vocabulary-py" title="Permalink to this headline">¶</a></h2>
+<span id="id34"></span><h2>text2vocabulary.py<a class="headerlink" href="#text2vocabulary-py" title="Permalink to this headline">¶</a></h2>
 <p><p>create a vocabulary file from text files</p>
 </p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">usage</span><span class="p">:</span> <span class="n">text2vocabulary</span><span class="o">.</span><span class="n">py</span> <span class="p">[</span><span class="o">-</span><span class="n">h</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">output</span> <span class="n">OUTPUT</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">cutoff</span> <span class="n">CUTOFF</span><span class="p">]</span>
@@ -1669,7 +1779,7 @@ sil t er n ih sil t ih v sil”</p>
 </div>
 </div>
 <div class="section" id="trim-silence-py">
-<span id="id33"></span><h2>trim_silence.py<a class="headerlink" href="#trim-silence-py" title="Permalink to this headline">¶</a></h2>
+<span id="id35"></span><h2>trim_silence.py<a class="headerlink" href="#trim-silence-py" title="Permalink to this headline">¶</a></h2>
 <p><p>Trim slience with simple power thresholding and make segments file.</p>
 </p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">usage</span><span class="p">:</span> <span class="n">trim_silence</span><span class="o">.</span><span class="n">py</span> <span class="p">[</span><span class="o">-</span><span class="n">h</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">fs</span> <span class="n">FS</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">threshold</span> <span class="n">THRESHOLD</span><span class="p">]</span>
@@ -1728,7 +1838,7 @@ sil t er n ih sil t ih v sil”</p>
 </div>
 </div>
 <div class="section" id="trn2ctm-py">
-<span id="id34"></span><h2>trn2ctm.py<a class="headerlink" href="#trn2ctm-py" title="Permalink to this headline">¶</a></h2>
+<span id="id36"></span><h2>trn2ctm.py<a class="headerlink" href="#trn2ctm-py" title="Permalink to this headline">¶</a></h2>
 <p><p>convert trn to ctm</p>
 </p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">usage</span><span class="p">:</span> <span class="n">trn2ctm</span><span class="o">.</span><span class="n">py</span> <span class="p">[</span><span class="o">-</span><span class="n">h</span><span class="p">]</span> <span class="p">[</span><span class="n">trn</span><span class="p">]</span> <span class="p">[</span><span class="n">ctm</span><span class="p">]</span>
@@ -1747,7 +1857,7 @@ sil t er n ih sil t ih v sil”</p>
 </div>
 </div>
 <div class="section" id="trn2stm-py">
-<span id="id35"></span><h2>trn2stm.py<a class="headerlink" href="#trn2stm-py" title="Permalink to this headline">¶</a></h2>
+<span id="id37"></span><h2>trn2stm.py<a class="headerlink" href="#trn2stm-py" title="Permalink to this headline">¶</a></h2>
 <p><p>convert trn to stm</p>
 </p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">usage</span><span class="p">:</span> <span class="n">trn2stm</span><span class="o">.</span><span class="n">py</span> <span class="p">[</span><span class="o">-</span><span class="n">h</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">orig</span><span class="o">-</span><span class="n">stm</span> <span class="p">[</span><span class="n">ORIG_STM</span><span class="p">]]</span> <span class="p">[</span><span class="n">trn</span><span class="p">]</span> <span class="p">[</span><span class="n">stm</span><span class="p">]</span>
@@ -1786,7 +1896,7 @@ sil t er n ih sil t ih v sil”</p>
         <a href="utils_sh.html" class="btn btn-neutral float-right" title="bash utility tools" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="espnet_bin.html" class="btn btn-neutral float-left" title="core tools" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="espnet2_bin.html" class="btn btn-neutral float-left" title="core tools (espnet2)" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   

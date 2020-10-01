@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>espnet.nets.pytorch_backend.rnn.attentions &mdash; ESPnet 0.7.0 documentation</title>
+  <title>espnet.nets.pytorch_backend.rnn.attentions &mdash; ESPnet 0.9.3 documentation</title>
   
 
   
@@ -61,7 +61,7 @@
             
             
               <div class="version">
-                0.7.0
+                0.9.3
               </div>
             
           
@@ -101,12 +101,22 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../../../espnet2_task.html">Task class and data input system for training</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../../espnet2_distributed.html">Distributed training</a></li>
 </ul>
+<p class="caption"><span class="caption-text">Notebook:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../notebook/asr_cli.html">Speech Recognition (Recipe)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../notebook/asr_library.html">Speech Recognition (Library)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../notebook/tts_cli.html">Text-to-Speech (Recipe)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../notebook/pretrained.html">Pretrained Model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../notebook/tts_realtime_demo.html">ESPnet real time E2E-TTS demonstration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../notebook/st_demo.html">ESPnet Speech Translation Demonstration</a></li>
+</ul>
 <p class="caption"><span class="caption-text">Package Reference:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../../../_gen/espnet.scheduler.html">espnet.scheduler package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../../_gen/espnet.lm.html">espnet.lm package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../../_gen/espnet.asr.html">espnet.asr package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../../_gen/espnet.optimizer.html">espnet.optimizer package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../_gen/espnet.vc.html">espnet.vc package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../../_gen/espnet.tts.html">espnet.tts package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../../_gen/espnet.st.html">espnet.st package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../../_gen/espnet.nets.html">espnet.nets package</a></li>
@@ -114,12 +124,14 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../../../_gen/espnet.utils.html">espnet.utils package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../../_gen/espnet.bin.html">espnet.bin package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../../_gen/espnet.transform.html">espnet.transform package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../_gen/espnet2.fileio.html">espnet2.fileio package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../../_gen/espnet2.optimizers.html">espnet2.optimizers package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../../_gen/espnet2.schedulers.html">espnet2.schedulers package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../../_gen/espnet2.lm.html">espnet2.lm package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../../_gen/espnet2.asr.html">espnet2.asr package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../../_gen/espnet2.main_funcs.html">espnet2.main_funcs package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../../_gen/espnet2.tts.html">espnet2.tts package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../_gen/espnet2.enh.html">espnet2.enh package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../../_gen/espnet2.samplers.html">espnet2.samplers package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../../_gen/espnet2.torch_utils.html">espnet2.torch_utils package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../../_gen/espnet2.train.html">espnet2.train package</a></li>
@@ -133,6 +145,7 @@
 <p class="caption"><span class="caption-text">Tool Reference:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../../../apis/espnet_bin.html">core tools</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../apis/espnet2_bin.html">core tools (espnet2)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../../apis/utils_py.html">python utility tools</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../../apis/utils_sh.html">bash utility tools</a></li>
 </ul>
@@ -357,7 +370,7 @@
 
         <span class="c1"># NOTE consider zero padding when compute w.</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">mask</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">mask</span> <span class="o">=</span> <span class="n">to_device</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">make_pad_mask</span><span class="p">(</span><span class="n">enc_hs_len</span><span class="p">))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">mask</span> <span class="o">=</span> <span class="n">to_device</span><span class="p">(</span><span class="n">enc_hs_pad</span><span class="p">,</span> <span class="n">make_pad_mask</span><span class="p">(</span><span class="n">enc_hs_len</span><span class="p">))</span>
         <span class="n">e</span><span class="o">.</span><span class="n">masked_fill_</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mask</span><span class="p">,</span> <span class="o">-</span><span class="nb">float</span><span class="p">(</span><span class="s2">&quot;inf&quot;</span><span class="p">))</span>
         <span class="n">w</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">softmax</span><span class="p">(</span><span class="n">scaling</span> <span class="o">*</span> <span class="n">e</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
 
@@ -435,7 +448,7 @@
 
         <span class="c1"># NOTE consider zero padding when compute w.</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">mask</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">mask</span> <span class="o">=</span> <span class="n">to_device</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">make_pad_mask</span><span class="p">(</span><span class="n">enc_hs_len</span><span class="p">))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">mask</span> <span class="o">=</span> <span class="n">to_device</span><span class="p">(</span><span class="n">enc_hs_pad</span><span class="p">,</span> <span class="n">make_pad_mask</span><span class="p">(</span><span class="n">enc_hs_len</span><span class="p">))</span>
         <span class="n">e</span><span class="o">.</span><span class="n">masked_fill_</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mask</span><span class="p">,</span> <span class="o">-</span><span class="nb">float</span><span class="p">(</span><span class="s2">&quot;inf&quot;</span><span class="p">))</span>
         <span class="n">w</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">softmax</span><span class="p">(</span><span class="n">scaling</span> <span class="o">*</span> <span class="n">e</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
 
@@ -562,7 +575,7 @@
 
         <span class="c1"># NOTE: consider zero padding when compute w.</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">mask</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">mask</span> <span class="o">=</span> <span class="n">to_device</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">make_pad_mask</span><span class="p">(</span><span class="n">enc_hs_len</span><span class="p">))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">mask</span> <span class="o">=</span> <span class="n">to_device</span><span class="p">(</span><span class="n">enc_hs_pad</span><span class="p">,</span> <span class="n">make_pad_mask</span><span class="p">(</span><span class="n">enc_hs_len</span><span class="p">))</span>
         <span class="n">e</span><span class="o">.</span><span class="n">masked_fill_</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mask</span><span class="p">,</span> <span class="o">-</span><span class="nb">float</span><span class="p">(</span><span class="s2">&quot;inf&quot;</span><span class="p">))</span>
 
         <span class="c1"># apply monotonic attention constraint (mainly for TTS)</span>
@@ -646,7 +659,9 @@
         <span class="c1"># initialize attention weight with uniform dist.</span>
         <span class="k">if</span> <span class="n">att_prev_list</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="c1"># if no bias, 0 0-pad goes 0</span>
-            <span class="n">att_prev_list</span> <span class="o">=</span> <span class="n">to_device</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">-</span> <span class="n">make_pad_mask</span><span class="p">(</span><span class="n">enc_hs_len</span><span class="p">)</span><span class="o">.</span><span class="n">float</span><span class="p">()))</span>
+            <span class="n">att_prev_list</span> <span class="o">=</span> <span class="n">to_device</span><span class="p">(</span>
+                <span class="n">enc_hs_pad</span><span class="p">,</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">-</span> <span class="n">make_pad_mask</span><span class="p">(</span><span class="n">enc_hs_len</span><span class="p">)</span><span class="o">.</span><span class="n">float</span><span class="p">())</span>
+            <span class="p">)</span>
             <span class="n">att_prev_list</span> <span class="o">=</span> <span class="p">[</span>
                 <span class="n">att_prev_list</span> <span class="o">/</span> <span class="n">att_prev_list</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">enc_hs_len</span><span class="p">)</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
             <span class="p">]</span>
@@ -667,7 +682,7 @@
 
         <span class="c1"># NOTE consider zero padding when compute w.</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">mask</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">mask</span> <span class="o">=</span> <span class="n">to_device</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">make_pad_mask</span><span class="p">(</span><span class="n">enc_hs_len</span><span class="p">))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">mask</span> <span class="o">=</span> <span class="n">to_device</span><span class="p">(</span><span class="n">enc_hs_pad</span><span class="p">,</span> <span class="n">make_pad_mask</span><span class="p">(</span><span class="n">enc_hs_len</span><span class="p">))</span>
         <span class="n">e</span><span class="o">.</span><span class="n">masked_fill_</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mask</span><span class="p">,</span> <span class="o">-</span><span class="nb">float</span><span class="p">(</span><span class="s2">&quot;inf&quot;</span><span class="p">))</span>
         <span class="n">w</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">softmax</span><span class="p">(</span><span class="n">scaling</span> <span class="o">*</span> <span class="n">e</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
         <span class="n">att_prev_list</span> <span class="o">+=</span> <span class="p">[</span><span class="n">w</span><span class="p">]</span>
@@ -762,7 +777,7 @@
         <span class="k">if</span> <span class="n">att_prev</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="c1"># B * [Li x att_win]</span>
             <span class="c1"># if no bias, 0 0-pad goes 0</span>
-            <span class="n">att_prev</span> <span class="o">=</span> <span class="n">to_device</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">-</span> <span class="n">make_pad_mask</span><span class="p">(</span><span class="n">enc_hs_len</span><span class="p">)</span><span class="o">.</span><span class="n">float</span><span class="p">()))</span>
+            <span class="n">att_prev</span> <span class="o">=</span> <span class="n">to_device</span><span class="p">(</span><span class="n">enc_hs_pad</span><span class="p">,</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">-</span> <span class="n">make_pad_mask</span><span class="p">(</span><span class="n">enc_hs_len</span><span class="p">)</span><span class="o">.</span><span class="n">float</span><span class="p">()))</span>
             <span class="n">att_prev</span> <span class="o">=</span> <span class="n">att_prev</span> <span class="o">/</span> <span class="n">att_prev</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">enc_hs_len</span><span class="p">)</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
             <span class="n">att_prev</span> <span class="o">=</span> <span class="n">att_prev</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">expand</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">att_win</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
 
@@ -784,7 +799,7 @@
 
         <span class="c1"># NOTE consider zero padding when compute w.</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">mask</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">mask</span> <span class="o">=</span> <span class="n">to_device</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">make_pad_mask</span><span class="p">(</span><span class="n">enc_hs_len</span><span class="p">))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">mask</span> <span class="o">=</span> <span class="n">to_device</span><span class="p">(</span><span class="n">enc_hs_pad</span><span class="p">,</span> <span class="n">make_pad_mask</span><span class="p">(</span><span class="n">enc_hs_len</span><span class="p">))</span>
         <span class="n">e</span><span class="o">.</span><span class="n">masked_fill_</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mask</span><span class="p">,</span> <span class="o">-</span><span class="nb">float</span><span class="p">(</span><span class="s2">&quot;inf&quot;</span><span class="p">))</span>
         <span class="n">w</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">softmax</span><span class="p">(</span><span class="n">scaling</span> <span class="o">*</span> <span class="n">e</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
 
@@ -881,7 +896,7 @@
         <span class="k">if</span> <span class="n">att_prev_states</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="c1"># initialize attention weight with uniform dist.</span>
             <span class="c1"># if no bias, 0 0-pad goes 0</span>
-            <span class="n">att_prev</span> <span class="o">=</span> <span class="n">to_device</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">-</span> <span class="n">make_pad_mask</span><span class="p">(</span><span class="n">enc_hs_len</span><span class="p">)</span><span class="o">.</span><span class="n">float</span><span class="p">()))</span>
+            <span class="n">att_prev</span> <span class="o">=</span> <span class="n">to_device</span><span class="p">(</span><span class="n">enc_hs_pad</span><span class="p">,</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">-</span> <span class="n">make_pad_mask</span><span class="p">(</span><span class="n">enc_hs_len</span><span class="p">)</span><span class="o">.</span><span class="n">float</span><span class="p">()))</span>
             <span class="n">att_prev</span> <span class="o">=</span> <span class="n">att_prev</span> <span class="o">/</span> <span class="n">att_prev</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">enc_hs_len</span><span class="p">)</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
 
             <span class="c1"># initialize lstm states</span>
@@ -912,7 +927,7 @@
 
         <span class="c1"># NOTE consider zero padding when compute w.</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">mask</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">mask</span> <span class="o">=</span> <span class="n">to_device</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">make_pad_mask</span><span class="p">(</span><span class="n">enc_hs_len</span><span class="p">))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">mask</span> <span class="o">=</span> <span class="n">to_device</span><span class="p">(</span><span class="n">enc_hs_pad</span><span class="p">,</span> <span class="n">make_pad_mask</span><span class="p">(</span><span class="n">enc_hs_len</span><span class="p">))</span>
         <span class="n">e</span><span class="o">.</span><span class="n">masked_fill_</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mask</span><span class="p">,</span> <span class="o">-</span><span class="nb">float</span><span class="p">(</span><span class="s2">&quot;inf&quot;</span><span class="p">))</span>
         <span class="n">w</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">softmax</span><span class="p">(</span><span class="n">scaling</span> <span class="o">*</span> <span class="n">e</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
 
@@ -1002,7 +1017,9 @@
         <span class="k">if</span> <span class="n">att_prev_list</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="c1"># if no bias, 0 0-pad goes 0</span>
             <span class="n">mask</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">-</span> <span class="n">make_pad_mask</span><span class="p">(</span><span class="n">enc_hs_len</span><span class="p">)</span><span class="o">.</span><span class="n">float</span><span class="p">()</span>
-            <span class="n">att_prev_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">to_device</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mask</span> <span class="o">/</span> <span class="n">mask</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">enc_hs_len</span><span class="p">)</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">))]</span>
+            <span class="n">att_prev_list</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="n">to_device</span><span class="p">(</span><span class="n">enc_hs_pad</span><span class="p">,</span> <span class="n">mask</span> <span class="o">/</span> <span class="n">mask</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">enc_hs_len</span><span class="p">)</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">))</span>
+            <span class="p">]</span>
 
         <span class="c1"># att_prev_list: L&#39; * [B x T] =&gt; cov_vec B x T</span>
         <span class="n">cov_vec</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">att_prev_list</span><span class="p">)</span>
@@ -1025,7 +1042,7 @@
 
         <span class="c1"># NOTE consider zero padding when compute w.</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">mask</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">mask</span> <span class="o">=</span> <span class="n">to_device</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">make_pad_mask</span><span class="p">(</span><span class="n">enc_hs_len</span><span class="p">))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">mask</span> <span class="o">=</span> <span class="n">to_device</span><span class="p">(</span><span class="n">enc_hs_pad</span><span class="p">,</span> <span class="n">make_pad_mask</span><span class="p">(</span><span class="n">enc_hs_len</span><span class="p">))</span>
         <span class="n">e</span><span class="o">.</span><span class="n">masked_fill_</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mask</span><span class="p">,</span> <span class="o">-</span><span class="nb">float</span><span class="p">(</span><span class="s2">&quot;inf&quot;</span><span class="p">))</span>
         <span class="n">w</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">softmax</span><span class="p">(</span><span class="n">scaling</span> <span class="o">*</span> <span class="n">e</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
         <span class="n">att_prev_list</span> <span class="o">+=</span> <span class="p">[</span><span class="n">w</span><span class="p">]</span>
@@ -1132,7 +1149,7 @@
 
             <span class="c1"># NOTE consider zero padding when compute w.</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">mask</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">mask</span> <span class="o">=</span> <span class="n">to_device</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">make_pad_mask</span><span class="p">(</span><span class="n">enc_hs_len</span><span class="p">))</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">mask</span> <span class="o">=</span> <span class="n">to_device</span><span class="p">(</span><span class="n">enc_hs_pad</span><span class="p">,</span> <span class="n">make_pad_mask</span><span class="p">(</span><span class="n">enc_hs_len</span><span class="p">))</span>
             <span class="n">e</span><span class="o">.</span><span class="n">masked_fill_</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mask</span><span class="p">,</span> <span class="o">-</span><span class="nb">float</span><span class="p">(</span><span class="s2">&quot;inf&quot;</span><span class="p">))</span>
             <span class="n">w</span> <span class="o">+=</span> <span class="p">[</span><span class="n">F</span><span class="o">.</span><span class="n">softmax</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">scaling</span> <span class="o">*</span> <span class="n">e</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)]</span>
 
@@ -1249,7 +1266,7 @@
 
             <span class="c1"># NOTE consider zero padding when compute w.</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">mask</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">mask</span> <span class="o">=</span> <span class="n">to_device</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">make_pad_mask</span><span class="p">(</span><span class="n">enc_hs_len</span><span class="p">))</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">mask</span> <span class="o">=</span> <span class="n">to_device</span><span class="p">(</span><span class="n">enc_hs_pad</span><span class="p">,</span> <span class="n">make_pad_mask</span><span class="p">(</span><span class="n">enc_hs_len</span><span class="p">))</span>
             <span class="n">e</span><span class="o">.</span><span class="n">masked_fill_</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mask</span><span class="p">,</span> <span class="o">-</span><span class="nb">float</span><span class="p">(</span><span class="s2">&quot;inf&quot;</span><span class="p">))</span>
             <span class="n">w</span> <span class="o">+=</span> <span class="p">[</span><span class="n">F</span><span class="o">.</span><span class="n">softmax</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">scaling</span> <span class="o">*</span> <span class="n">e</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)]</span>
 
@@ -1385,7 +1402,9 @@
             <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">six</span><span class="o">.</span><span class="n">moves</span><span class="o">.</span><span class="n">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">aheads</span><span class="p">):</span>
                 <span class="c1"># if no bias, 0 0-pad goes 0</span>
                 <span class="n">mask</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">-</span> <span class="n">make_pad_mask</span><span class="p">(</span><span class="n">enc_hs_len</span><span class="p">)</span><span class="o">.</span><span class="n">float</span><span class="p">()</span>
-                <span class="n">att_prev</span> <span class="o">+=</span> <span class="p">[</span><span class="n">to_device</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mask</span> <span class="o">/</span> <span class="n">mask</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">enc_hs_len</span><span class="p">)</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">))]</span>
+                <span class="n">att_prev</span> <span class="o">+=</span> <span class="p">[</span>
+                    <span class="n">to_device</span><span class="p">(</span><span class="n">enc_hs_pad</span><span class="p">,</span> <span class="n">mask</span> <span class="o">/</span> <span class="n">mask</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">enc_hs_len</span><span class="p">)</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">))</span>
+                <span class="p">]</span>
 
         <span class="n">c</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="n">w</span> <span class="o">=</span> <span class="p">[]</span>
@@ -1404,7 +1423,7 @@
 
             <span class="c1"># NOTE consider zero padding when compute w.</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">mask</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">mask</span> <span class="o">=</span> <span class="n">to_device</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">make_pad_mask</span><span class="p">(</span><span class="n">enc_hs_len</span><span class="p">))</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">mask</span> <span class="o">=</span> <span class="n">to_device</span><span class="p">(</span><span class="n">enc_hs_pad</span><span class="p">,</span> <span class="n">make_pad_mask</span><span class="p">(</span><span class="n">enc_hs_len</span><span class="p">))</span>
             <span class="n">e</span><span class="o">.</span><span class="n">masked_fill_</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mask</span><span class="p">,</span> <span class="o">-</span><span class="nb">float</span><span class="p">(</span><span class="s2">&quot;inf&quot;</span><span class="p">))</span>
             <span class="n">w</span> <span class="o">+=</span> <span class="p">[</span><span class="n">F</span><span class="o">.</span><span class="n">softmax</span><span class="p">(</span><span class="n">scaling</span> <span class="o">*</span> <span class="n">e</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)]</span>
 
@@ -1539,7 +1558,9 @@
             <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">six</span><span class="o">.</span><span class="n">moves</span><span class="o">.</span><span class="n">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">aheads</span><span class="p">):</span>
                 <span class="c1"># if no bias, 0 0-pad goes 0</span>
                 <span class="n">mask</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">-</span> <span class="n">make_pad_mask</span><span class="p">(</span><span class="n">enc_hs_len</span><span class="p">)</span><span class="o">.</span><span class="n">float</span><span class="p">()</span>
-                <span class="n">att_prev</span> <span class="o">+=</span> <span class="p">[</span><span class="n">to_device</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mask</span> <span class="o">/</span> <span class="n">mask</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">enc_hs_len</span><span class="p">)</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">))]</span>
+                <span class="n">att_prev</span> <span class="o">+=</span> <span class="p">[</span>
+                    <span class="n">to_device</span><span class="p">(</span><span class="n">enc_hs_pad</span><span class="p">,</span> <span class="n">mask</span> <span class="o">/</span> <span class="n">mask</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">enc_hs_len</span><span class="p">)</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">))</span>
+                <span class="p">]</span>
 
         <span class="n">c</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="n">w</span> <span class="o">=</span> <span class="p">[]</span>
@@ -1558,7 +1579,7 @@
 
             <span class="c1"># NOTE consider zero padding when compute w.</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">mask</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">mask</span> <span class="o">=</span> <span class="n">to_device</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">make_pad_mask</span><span class="p">(</span><span class="n">enc_hs_len</span><span class="p">))</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">mask</span> <span class="o">=</span> <span class="n">to_device</span><span class="p">(</span><span class="n">enc_hs_pad</span><span class="p">,</span> <span class="n">make_pad_mask</span><span class="p">(</span><span class="n">enc_hs_len</span><span class="p">))</span>
             <span class="n">e</span><span class="o">.</span><span class="n">masked_fill_</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mask</span><span class="p">,</span> <span class="o">-</span><span class="nb">float</span><span class="p">(</span><span class="s2">&quot;inf&quot;</span><span class="p">))</span>
             <span class="n">w</span> <span class="o">+=</span> <span class="p">[</span><span class="n">F</span><span class="o">.</span><span class="n">softmax</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">scaling</span> <span class="o">*</span> <span class="n">e</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)]</span>
 
@@ -1682,7 +1703,7 @@
 
         <span class="c1"># NOTE: consider zero padding when compute w.</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">mask</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">mask</span> <span class="o">=</span> <span class="n">to_device</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">make_pad_mask</span><span class="p">(</span><span class="n">enc_hs_len</span><span class="p">))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">mask</span> <span class="o">=</span> <span class="n">to_device</span><span class="p">(</span><span class="n">enc_hs_pad</span><span class="p">,</span> <span class="n">make_pad_mask</span><span class="p">(</span><span class="n">enc_hs_len</span><span class="p">))</span>
         <span class="n">e</span><span class="o">.</span><span class="n">masked_fill_</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mask</span><span class="p">,</span> <span class="o">-</span><span class="nb">float</span><span class="p">(</span><span class="s2">&quot;inf&quot;</span><span class="p">))</span>
 
         <span class="c1"># apply monotonic attention constraint (mainly for TTS)</span>
@@ -1817,7 +1838,7 @@
 
         <span class="c1"># NOTE consider zero padding when compute w.</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">mask</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">mask</span> <span class="o">=</span> <span class="n">to_device</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">make_pad_mask</span><span class="p">(</span><span class="n">enc_hs_len</span><span class="p">))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">mask</span> <span class="o">=</span> <span class="n">to_device</span><span class="p">(</span><span class="n">enc_hs_pad</span><span class="p">,</span> <span class="n">make_pad_mask</span><span class="p">(</span><span class="n">enc_hs_len</span><span class="p">))</span>
         <span class="n">e</span><span class="o">.</span><span class="n">masked_fill_</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mask</span><span class="p">,</span> <span class="o">-</span><span class="nb">float</span><span class="p">(</span><span class="s2">&quot;inf&quot;</span><span class="p">))</span>
 
         <span class="c1"># apply monotonic attention constraint (mainly for TTS)</span>

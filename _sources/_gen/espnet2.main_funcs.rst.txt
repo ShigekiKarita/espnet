@@ -26,6 +26,17 @@ espnet2.main_funcs.average_nbest_models
     :show-inheritance:
 
 
+.. _espnet2.main_funcs.pack_funcs:
+
+espnet2.main_funcs.pack_funcs
+-----------------------------
+
+.. automodule:: espnet2.main_funcs.pack_funcs
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+
 .. _espnet2.main_funcs.__init__:
 
 espnet2.main_funcs.__init__

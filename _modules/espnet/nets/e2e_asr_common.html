@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>espnet.nets.e2e_asr_common &mdash; ESPnet 0.7.0 documentation</title>
+  <title>espnet.nets.e2e_asr_common &mdash; ESPnet 0.9.3 documentation</title>
   
 
   
@@ -61,7 +61,7 @@
             
             
               <div class="version">
-                0.7.0
+                0.9.3
               </div>
             
           
@@ -101,12 +101,22 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../espnet2_task.html">Task class and data input system for training</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../espnet2_distributed.html">Distributed training</a></li>
 </ul>
+<p class="caption"><span class="caption-text">Notebook:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebook/asr_cli.html">Speech Recognition (Recipe)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebook/asr_library.html">Speech Recognition (Library)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebook/tts_cli.html">Text-to-Speech (Recipe)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebook/pretrained.html">Pretrained Model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebook/tts_realtime_demo.html">ESPnet real time E2E-TTS demonstration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebook/st_demo.html">ESPnet Speech Translation Demonstration</a></li>
+</ul>
 <p class="caption"><span class="caption-text">Package Reference:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../_gen/espnet.scheduler.html">espnet.scheduler package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../_gen/espnet.lm.html">espnet.lm package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../_gen/espnet.asr.html">espnet.asr package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../_gen/espnet.optimizer.html">espnet.optimizer package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../_gen/espnet.vc.html">espnet.vc package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../_gen/espnet.tts.html">espnet.tts package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../_gen/espnet.st.html">espnet.st package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../_gen/espnet.nets.html">espnet.nets package</a></li>
@@ -114,12 +124,14 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../_gen/espnet.utils.html">espnet.utils package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../_gen/espnet.bin.html">espnet.bin package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../_gen/espnet.transform.html">espnet.transform package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../_gen/espnet2.fileio.html">espnet2.fileio package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../_gen/espnet2.optimizers.html">espnet2.optimizers package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../_gen/espnet2.schedulers.html">espnet2.schedulers package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../_gen/espnet2.lm.html">espnet2.lm package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../_gen/espnet2.asr.html">espnet2.asr package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../_gen/espnet2.main_funcs.html">espnet2.main_funcs package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../_gen/espnet2.tts.html">espnet2.tts package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../_gen/espnet2.enh.html">espnet2.enh package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../_gen/espnet2.samplers.html">espnet2.samplers package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../_gen/espnet2.torch_utils.html">espnet2.torch_utils package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../_gen/espnet2.train.html">espnet2.train package</a></li>
@@ -133,6 +145,7 @@
 <p class="caption"><span class="caption-text">Tool Reference:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../apis/espnet_bin.html">core tools</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../apis/espnet2_bin.html">core tools (espnet2)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../apis/utils_py.html">python utility tools</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../apis/utils_sh.html">bash utility tools</a></li>
 </ul>
@@ -199,21 +212,23 @@
             
   <h1>Source code for espnet.nets.e2e_asr_common</h1><div class="highlight"><pre>
 <span></span><span class="ch">#!/usr/bin/env python3</span>
+<span class="c1"># encoding: utf-8</span>
 
 <span class="c1"># Copyright 2017 Johns Hopkins University (Shinji Watanabe)</span>
 <span class="c1">#  Apache 2.0  (http://www.apache.org/licenses/LICENSE-2.0)</span>
 
 <span class="sd">&quot;&quot;&quot;Common functions for ASR.&quot;&quot;&quot;</span>
 
-<span class="kn">import</span> <span class="nn">argparse</span>
-<span class="kn">import</span> <span class="nn">editdistance</span>
 <span class="kn">import</span> <span class="nn">json</span>
 <span class="kn">import</span> <span class="nn">logging</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">import</span> <span class="nn">six</span>
 <span class="kn">import</span> <span class="nn">sys</span>
 
+<span class="kn">import</span> <span class="nn">editdistance</span>
 <span class="kn">from</span> <span class="nn">itertools</span> <span class="kn">import</span> <span class="n">groupby</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">six</span>
+
+<span class="kn">from</span> <span class="nn">espnet.nets.beam_search_transducer</span> <span class="kn">import</span> <span class="n">BeamSearchTransducer</span>
 
 
 <div class="viewcode-block" id="end_detect"><a class="viewcode-back" href="../../../_gen/espnet.nets.html#espnet.nets.e2e_asr_common.end_detect">[docs]</a><span class="k">def</span> <span class="nf">end_detect</span><span class="p">(</span><span class="n">ended_hyps</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">M</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">D_end</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">1</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="mi">10</span><span class="p">))):</span>
@@ -398,11 +413,9 @@
         <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">y_hat</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">ys_hat</span><span class="p">):</span>
             <span class="n">y_true</span> <span class="o">=</span> <span class="n">ys_pad</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
             <span class="n">eos_true</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">y_true</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
-            <span class="n">eos_true</span> <span class="o">=</span> <span class="n">eos_true</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">eos_true</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="nb">len</span><span class="p">(</span><span class="n">y_true</span><span class="p">)</span>
-            <span class="c1"># To avoid wrong higher WER than the one obtained from the decoding</span>
-            <span class="c1"># eos from y_true is used to mark the eos in y_hat</span>
-            <span class="c1"># because of that y_hats has not padded outs with -1.</span>
-            <span class="n">seq_hat</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">char_list</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">idx</span><span class="p">)]</span> <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="n">y_hat</span><span class="p">[:</span><span class="n">eos_true</span><span class="p">]]</span>
+            <span class="n">ymax</span> <span class="o">=</span> <span class="n">eos_true</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">eos_true</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="nb">len</span><span class="p">(</span><span class="n">y_true</span><span class="p">)</span>
+            <span class="c1"># NOTE: padding index (-1) in y_true is used to pad y_hat</span>
+            <span class="n">seq_hat</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">char_list</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">idx</span><span class="p">)]</span> <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="n">y_hat</span><span class="p">[:</span><span class="n">ymax</span><span class="p">]]</span>
             <span class="n">seq_true</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">char_list</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">idx</span><span class="p">)]</span> <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="n">y_true</span> <span class="k">if</span> <span class="nb">int</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">1</span><span class="p">]</span>
             <span class="n">seq_hat_text</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">seq_hat</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">space</span><span class="p">,</span> <span class="s2">&quot; &quot;</span><span class="p">)</span>
             <span class="n">seq_hat_text</span> <span class="o">=</span> <span class="n">seq_hat_text</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">blank</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
@@ -446,38 +459,44 @@
         <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="nb">sum</span><span class="p">(</span><span class="n">word_eds</span><span class="p">))</span> <span class="o">/</span> <span class="nb">sum</span><span class="p">(</span><span class="n">word_ref_lens</span><span class="p">)</span></div></div>
 
 
-<div class="viewcode-block" id="ErrorCalculatorTrans"><a class="viewcode-back" href="../../../_gen/espnet.nets.html#espnet.nets.e2e_asr_common.ErrorCalculatorTrans">[docs]</a><span class="k">class</span> <span class="nc">ErrorCalculatorTrans</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<div class="viewcode-block" id="ErrorCalculatorTransducer"><a class="viewcode-back" href="../../../_gen/espnet.nets.html#espnet.nets.e2e_asr_common.ErrorCalculatorTransducer">[docs]</a><span class="k">class</span> <span class="nc">ErrorCalculatorTransducer</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Calculate CER and WER for transducer models.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        decoder (nn.Module): decoder module</span>
-<span class="sd">        args (Namespace): argument Namespace containing options</span>
+<span class="sd">        decoder (AbsDecoder): decoder module</span>
+<span class="sd">        token_list (list): list of tokens</span>
+<span class="sd">        sym_space (str): space symbol</span>
+<span class="sd">        sym_blank (str): blank symbol</span>
 <span class="sd">        report_cer (boolean): compute CER option</span>
 <span class="sd">        report_wer (boolean): compute WER option</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">decoder</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">report_cer</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">report_wer</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">decoder</span><span class="p">,</span>
+        <span class="n">token_list</span><span class="p">,</span>
+        <span class="n">sym_space</span><span class="p">,</span>
+        <span class="n">sym_blank</span><span class="p">,</span>
+        <span class="n">report_cer</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">report_wer</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Construct an ErrorCalculator object for transducer model.&quot;&quot;&quot;</span>
-        <span class="nb">super</span><span class="p">(</span><span class="n">ErrorCalculatorTrans</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">dec</span> <span class="o">=</span> <span class="n">decoder</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">beam_search</span> <span class="o">=</span> <span class="n">BeamSearchTransducer</span><span class="p">(</span>
+            <span class="n">decoder</span><span class="o">=</span><span class="n">decoder</span><span class="p">,</span>
+            <span class="n">beam_size</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+        <span class="p">)</span>
 
-        <span class="n">recog_args</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="s2">&quot;beam_size&quot;</span><span class="p">:</span> <span class="n">args</span><span class="o">.</span><span class="n">beam_size</span><span class="p">,</span>
-            <span class="s2">&quot;nbest&quot;</span><span class="p">:</span> <span class="n">args</span><span class="o">.</span><span class="n">nbest</span><span class="p">,</span>
-            <span class="s2">&quot;space&quot;</span><span class="p">:</span> <span class="n">args</span><span class="o">.</span><span class="n">sym_space</span><span class="p">,</span>
-            <span class="s2">&quot;score_norm_transducer&quot;</span><span class="p">:</span> <span class="n">args</span><span class="o">.</span><span class="n">score_norm_transducer</span><span class="p">,</span>
-        <span class="p">}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">decoder</span> <span class="o">=</span> <span class="n">decoder</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">recog_args</span> <span class="o">=</span> <span class="n">argparse</span><span class="o">.</span><span class="n">Namespace</span><span class="p">(</span><span class="o">**</span><span class="n">recog_args</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">token_list</span> <span class="o">=</span> <span class="n">token_list</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">space</span> <span class="o">=</span> <span class="n">sym_space</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">blank</span> <span class="o">=</span> <span class="n">sym_blank</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">char_list</span> <span class="o">=</span> <span class="n">args</span><span class="o">.</span><span class="n">char_list</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">space</span> <span class="o">=</span> <span class="n">args</span><span class="o">.</span><span class="n">sym_space</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">blank</span> <span class="o">=</span> <span class="n">args</span><span class="o">.</span><span class="n">sym_blank</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">report_cer</span> <span class="o">=</span> <span class="n">args</span><span class="o">.</span><span class="n">report_cer</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">report_wer</span> <span class="o">=</span> <span class="n">args</span><span class="o">.</span><span class="n">report_wer</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">report_cer</span> <span class="o">=</span> <span class="n">report_cer</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">report_wer</span> <span class="o">=</span> <span class="n">report_wer</span>
 
     <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hs_pad</span><span class="p">,</span> <span class="n">ys_pad</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Calculate sentence-level WER/CER score for transducer models.</span>
@@ -499,14 +518,13 @@
         <span class="n">batchsize</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">hs_pad</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span>
         <span class="n">batch_nbest</span> <span class="o">=</span> <span class="p">[]</span>
 
+        <span class="n">hs_pad</span> <span class="o">=</span> <span class="n">hs_pad</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="nb">next</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">decoder</span><span class="o">.</span><span class="n">parameters</span><span class="p">())</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
+
         <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="n">six</span><span class="o">.</span><span class="n">moves</span><span class="o">.</span><span class="n">range</span><span class="p">(</span><span class="n">batchsize</span><span class="p">):</span>
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">recog_args</span><span class="o">.</span><span class="n">beam_size</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-                <span class="n">nbest_hyps</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dec</span><span class="o">.</span><span class="n">recognize</span><span class="p">(</span><span class="n">hs_pad</span><span class="p">[</span><span class="n">b</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">recog_args</span><span class="p">)</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="n">nbest_hyps</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dec</span><span class="o">.</span><span class="n">recognize_beam</span><span class="p">(</span><span class="n">hs_pad</span><span class="p">[</span><span class="n">b</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">recog_args</span><span class="p">)</span>
+            <span class="n">nbest_hyps</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">beam_search</span><span class="p">(</span><span class="n">hs_pad</span><span class="p">[</span><span class="n">b</span><span class="p">])</span>
             <span class="n">batch_nbest</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">nbest_hyps</span><span class="p">)</span>
 
-        <span class="n">ys_hat</span> <span class="o">=</span> <span class="p">[</span><span class="n">nbest_hyp</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;yseq&quot;</span><span class="p">][</span><span class="mi">1</span><span class="p">:]</span> <span class="k">for</span> <span class="n">nbest_hyp</span> <span class="ow">in</span> <span class="n">batch_nbest</span><span class="p">]</span>
+        <span class="n">ys_hat</span> <span class="o">=</span> <span class="p">[</span><span class="n">nbest_hyp</span><span class="o">.</span><span class="n">yseq</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span> <span class="k">for</span> <span class="n">nbest_hyp</span> <span class="ow">in</span> <span class="n">batch_nbest</span><span class="p">]</span>
 
         <span class="n">seqs_hat</span><span class="p">,</span> <span class="n">seqs_true</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">convert_to_char</span><span class="p">(</span><span class="n">ys_hat</span><span class="p">,</span> <span class="n">ys_pad</span><span class="o">.</span><span class="n">cpu</span><span class="p">())</span>
 
@@ -518,7 +536,7 @@
 
         <span class="k">return</span> <span class="n">cer</span><span class="p">,</span> <span class="n">wer</span>
 
-<div class="viewcode-block" id="ErrorCalculatorTrans.convert_to_char"><a class="viewcode-back" href="../../../_gen/espnet.nets.html#espnet.nets.e2e_asr_common.ErrorCalculatorTrans.convert_to_char">[docs]</a>    <span class="k">def</span> <span class="nf">convert_to_char</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ys_hat</span><span class="p">,</span> <span class="n">ys_pad</span><span class="p">):</span>
+<div class="viewcode-block" id="ErrorCalculatorTransducer.convert_to_char"><a class="viewcode-back" href="../../../_gen/espnet.nets.html#espnet.nets.e2e_asr_common.ErrorCalculatorTransducer.convert_to_char">[docs]</a>    <span class="k">def</span> <span class="nf">convert_to_char</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ys_hat</span><span class="p">,</span> <span class="n">ys_pad</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Convert index to character.</span>
 
 <span class="sd">        Args:</span>
@@ -538,8 +556,8 @@
             <span class="n">eos_true</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">y_true</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
             <span class="n">eos_true</span> <span class="o">=</span> <span class="n">eos_true</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">eos_true</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="nb">len</span><span class="p">(</span><span class="n">y_true</span><span class="p">)</span>
 
-            <span class="n">seq_hat</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">char_list</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">idx</span><span class="p">)]</span> <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="n">y_hat</span><span class="p">[:</span><span class="n">eos_true</span><span class="p">]]</span>
-            <span class="n">seq_true</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">char_list</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">idx</span><span class="p">)]</span> <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="n">y_true</span> <span class="k">if</span> <span class="nb">int</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+            <span class="n">seq_hat</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">token_list</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">idx</span><span class="p">)]</span> <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="n">y_hat</span><span class="p">[:</span><span class="n">eos_true</span><span class="p">]]</span>
+            <span class="n">seq_true</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">token_list</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">idx</span><span class="p">)]</span> <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="n">y_true</span> <span class="k">if</span> <span class="nb">int</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">1</span><span class="p">]</span>
 
             <span class="n">seq_hat_text</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">seq_hat</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">space</span><span class="p">,</span> <span class="s2">&quot; &quot;</span><span class="p">)</span>
             <span class="n">seq_hat_text</span> <span class="o">=</span> <span class="n">seq_hat_text</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">blank</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
@@ -550,7 +568,7 @@
 
         <span class="k">return</span> <span class="n">seqs_hat</span><span class="p">,</span> <span class="n">seqs_true</span></div>
 
-<div class="viewcode-block" id="ErrorCalculatorTrans.calculate_cer"><a class="viewcode-back" href="../../../_gen/espnet.nets.html#espnet.nets.e2e_asr_common.ErrorCalculatorTrans.calculate_cer">[docs]</a>    <span class="k">def</span> <span class="nf">calculate_cer</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">seqs_hat</span><span class="p">,</span> <span class="n">seqs_true</span><span class="p">):</span>
+<div class="viewcode-block" id="ErrorCalculatorTransducer.calculate_cer"><a class="viewcode-back" href="../../../_gen/espnet.nets.html#espnet.nets.e2e_asr_common.ErrorCalculatorTransducer.calculate_cer">[docs]</a>    <span class="k">def</span> <span class="nf">calculate_cer</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">seqs_hat</span><span class="p">,</span> <span class="n">seqs_true</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Calculate sentence-level CER score for transducer model.</span>
 
 <span class="sd">        Args:</span>
@@ -573,7 +591,7 @@
 
         <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="nb">sum</span><span class="p">(</span><span class="n">char_eds</span><span class="p">))</span> <span class="o">/</span> <span class="nb">sum</span><span class="p">(</span><span class="n">char_ref_lens</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="ErrorCalculatorTrans.calculate_wer"><a class="viewcode-back" href="../../../_gen/espnet.nets.html#espnet.nets.e2e_asr_common.ErrorCalculatorTrans.calculate_wer">[docs]</a>    <span class="k">def</span> <span class="nf">calculate_wer</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">seqs_hat</span><span class="p">,</span> <span class="n">seqs_true</span><span class="p">):</span>
+<div class="viewcode-block" id="ErrorCalculatorTransducer.calculate_wer"><a class="viewcode-back" href="../../../_gen/espnet.nets.html#espnet.nets.e2e_asr_common.ErrorCalculatorTransducer.calculate_wer">[docs]</a>    <span class="k">def</span> <span class="nf">calculate_wer</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">seqs_hat</span><span class="p">,</span> <span class="n">seqs_true</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Calculate sentence-level WER score for transducer model.</span>
 
 <span class="sd">        Args:</span>

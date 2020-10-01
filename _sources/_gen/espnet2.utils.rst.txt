@@ -4,17 +4,6 @@ espnet2.utils package
 
 
 
-.. _espnet2.utils.fileio:
-
-espnet2.utils.fileio
---------------------
-
-.. automodule:: espnet2.utils.fileio
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-
 .. _espnet2.utils.yaml_no_alias_safe_dump:
 
 espnet2.utils.yaml_no_alias_safe_dump
@@ -48,6 +37,17 @@ espnet2.utils.types
     :show-inheritance:
 
 
+.. _espnet2.utils.config_argparse:
+
+espnet2.utils.config_argparse
+-----------------------------
+
+.. automodule:: espnet2.utils.config_argparse
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+
 .. _espnet2.utils.sized_dict:
 
 espnet2.utils.sized_dict
@@ -70,17 +70,6 @@ espnet2.utils.get_default_kwargs
     :show-inheritance:
 
 
-.. _espnet2.utils.pack_funcs:
-
-espnet2.utils.pack_funcs
-------------------------
-
-.. automodule:: espnet2.utils.pack_funcs
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-
 .. _espnet2.utils.__init__:
 
 espnet2.utils.__init__
@@ -98,17 +87,6 @@ espnet2.utils.griffin_lim
 -------------------------
 
 .. automodule:: espnet2.utils.griffin_lim
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-
-.. _espnet2.utils.rand_gen_dataset:
-
-espnet2.utils.rand_gen_dataset
-------------------------------
-
-.. automodule:: espnet2.utils.rand_gen_dataset
     :members:
     :undoc-members:
     :show-inheritance:

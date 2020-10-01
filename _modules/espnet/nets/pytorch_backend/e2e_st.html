@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>espnet.nets.pytorch_backend.e2e_st &mdash; ESPnet 0.7.0 documentation</title>
+  <title>espnet.nets.pytorch_backend.e2e_st &mdash; ESPnet 0.9.3 documentation</title>
   
 
   
@@ -61,7 +61,7 @@
             
             
               <div class="version">
-                0.7.0
+                0.9.3
               </div>
             
           
@@ -101,12 +101,22 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../../espnet2_task.html">Task class and data input system for training</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../espnet2_distributed.html">Distributed training</a></li>
 </ul>
+<p class="caption"><span class="caption-text">Notebook:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../notebook/asr_cli.html">Speech Recognition (Recipe)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../notebook/asr_library.html">Speech Recognition (Library)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../notebook/tts_cli.html">Text-to-Speech (Recipe)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../notebook/pretrained.html">Pretrained Model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../notebook/tts_realtime_demo.html">ESPnet real time E2E-TTS demonstration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../notebook/st_demo.html">ESPnet Speech Translation Demonstration</a></li>
+</ul>
 <p class="caption"><span class="caption-text">Package Reference:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../../_gen/espnet.scheduler.html">espnet.scheduler package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../_gen/espnet.lm.html">espnet.lm package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../_gen/espnet.asr.html">espnet.asr package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../_gen/espnet.optimizer.html">espnet.optimizer package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../_gen/espnet.vc.html">espnet.vc package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../_gen/espnet.tts.html">espnet.tts package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../_gen/espnet.st.html">espnet.st package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../_gen/espnet.nets.html">espnet.nets package</a></li>
@@ -114,12 +124,14 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../../_gen/espnet.utils.html">espnet.utils package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../_gen/espnet.bin.html">espnet.bin package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../_gen/espnet.transform.html">espnet.transform package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../_gen/espnet2.fileio.html">espnet2.fileio package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../_gen/espnet2.optimizers.html">espnet2.optimizers package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../_gen/espnet2.schedulers.html">espnet2.schedulers package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../_gen/espnet2.lm.html">espnet2.lm package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../_gen/espnet2.asr.html">espnet2.asr package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../_gen/espnet2.main_funcs.html">espnet2.main_funcs package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../_gen/espnet2.tts.html">espnet2.tts package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../_gen/espnet2.enh.html">espnet2.enh package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../_gen/espnet2.samplers.html">espnet2.samplers package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../_gen/espnet2.torch_utils.html">espnet2.torch_utils package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../_gen/espnet2.train.html">espnet2.train package</a></li>
@@ -133,6 +145,7 @@
 <p class="caption"><span class="caption-text">Tool Reference:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../../apis/espnet_bin.html">core tools</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apis/espnet2_bin.html">core tools (espnet2)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../apis/utils_py.html">python utility tools</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../apis/utils_sh.html">bash utility tools</a></li>
 </ul>
@@ -198,15 +211,13 @@
            <div itemprop="articleBody">
             
   <h1>Source code for espnet.nets.pytorch_backend.e2e_st</h1><div class="highlight"><pre>
-<span></span><span class="ch">#!/usr/bin/env python</span>
+<span></span><span class="ch">#!/usr/bin/env python3</span>
 <span class="c1"># encoding: utf-8</span>
 
 <span class="c1"># Copyright 2019 Kyoto University (Hirofumi Inaguma)</span>
 <span class="c1">#  Apache 2.0  (http://www.apache.org/licenses/LICENSE-2.0)</span>
 
 <span class="sd">&quot;&quot;&quot;RNN sequence-to-sequence speech translation model (pytorch).&quot;&quot;&quot;</span>
-
-<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">division</span>
 
 <span class="kn">import</span> <span class="nn">argparse</span>
 <span class="kn">import</span> <span class="nn">copy</span>
@@ -234,10 +245,16 @@
 <span class="kn">from</span> <span class="nn">espnet.nets.pytorch_backend.nets_utils</span> <span class="kn">import</span> <span class="n">pad_list</span>
 <span class="kn">from</span> <span class="nn">espnet.nets.pytorch_backend.nets_utils</span> <span class="kn">import</span> <span class="n">to_device</span>
 <span class="kn">from</span> <span class="nn">espnet.nets.pytorch_backend.nets_utils</span> <span class="kn">import</span> <span class="n">to_torch_tensor</span>
+<span class="kn">from</span> <span class="nn">espnet.nets.pytorch_backend.rnn.argument</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">add_arguments_rnn_encoder_common</span><span class="p">,</span>  <span class="c1"># noqa: H301</span>
+    <span class="n">add_arguments_rnn_decoder_common</span><span class="p">,</span>  <span class="c1"># noqa: H301</span>
+    <span class="n">add_arguments_rnn_attention_common</span><span class="p">,</span>  <span class="c1"># noqa: H301</span>
+<span class="p">)</span>
 <span class="kn">from</span> <span class="nn">espnet.nets.pytorch_backend.rnn.attentions</span> <span class="kn">import</span> <span class="n">att_for</span>
 <span class="kn">from</span> <span class="nn">espnet.nets.pytorch_backend.rnn.decoders</span> <span class="kn">import</span> <span class="n">decoder_for</span>
 <span class="kn">from</span> <span class="nn">espnet.nets.pytorch_backend.rnn.encoders</span> <span class="kn">import</span> <span class="n">encoder_for</span>
 <span class="kn">from</span> <span class="nn">espnet.nets.st_interface</span> <span class="kn">import</span> <span class="n">STInterface</span>
+<span class="kn">from</span> <span class="nn">espnet.utils.fill_missing_args</span> <span class="kn">import</span> <span class="n">fill_missing_args</span>
 
 <span class="n">CTC_LOSS_THRESHOLD</span> <span class="o">=</span> <span class="mi">10000</span>
 
@@ -295,158 +312,21 @@
     <span class="k">def</span> <span class="nf">encoder_add_arguments</span><span class="p">(</span><span class="n">parser</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Add arguments for the encoder.&quot;&quot;&quot;</span>
         <span class="n">group</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">add_argument_group</span><span class="p">(</span><span class="s2">&quot;E2E encoder setting&quot;</span><span class="p">)</span>
-        <span class="c1"># encoder</span>
-        <span class="n">group</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-            <span class="s2">&quot;--etype&quot;</span><span class="p">,</span>
-            <span class="n">default</span><span class="o">=</span><span class="s2">&quot;blstmp&quot;</span><span class="p">,</span>
-            <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span>
-            <span class="n">choices</span><span class="o">=</span><span class="p">[</span>
-                <span class="s2">&quot;lstm&quot;</span><span class="p">,</span>
-                <span class="s2">&quot;blstm&quot;</span><span class="p">,</span>
-                <span class="s2">&quot;lstmp&quot;</span><span class="p">,</span>
-                <span class="s2">&quot;blstmp&quot;</span><span class="p">,</span>
-                <span class="s2">&quot;vgglstmp&quot;</span><span class="p">,</span>
-                <span class="s2">&quot;vggblstmp&quot;</span><span class="p">,</span>
-                <span class="s2">&quot;vgglstm&quot;</span><span class="p">,</span>
-                <span class="s2">&quot;vggblstm&quot;</span><span class="p">,</span>
-                <span class="s2">&quot;gru&quot;</span><span class="p">,</span>
-                <span class="s2">&quot;bgru&quot;</span><span class="p">,</span>
-                <span class="s2">&quot;grup&quot;</span><span class="p">,</span>
-                <span class="s2">&quot;bgrup&quot;</span><span class="p">,</span>
-                <span class="s2">&quot;vgggrup&quot;</span><span class="p">,</span>
-                <span class="s2">&quot;vggbgrup&quot;</span><span class="p">,</span>
-                <span class="s2">&quot;vgggru&quot;</span><span class="p">,</span>
-                <span class="s2">&quot;vggbgru&quot;</span><span class="p">,</span>
-            <span class="p">],</span>
-            <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Type of encoder network architecture&quot;</span><span class="p">,</span>
-        <span class="p">)</span>
-        <span class="n">group</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-            <span class="s2">&quot;--elayers&quot;</span><span class="p">,</span>
-            <span class="n">default</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span>
-            <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span>
-            <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Number of encoder layers (for shared recognition part &quot;</span>
-            <span class="s2">&quot;in multi-speaker asr mode)&quot;</span><span class="p">,</span>
-        <span class="p">)</span>
-        <span class="n">group</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-            <span class="s2">&quot;--eunits&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;-u&quot;</span><span class="p">,</span>
-            <span class="n">default</span><span class="o">=</span><span class="mi">300</span><span class="p">,</span>
-            <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span>
-            <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Number of encoder hidden units&quot;</span><span class="p">,</span>
-        <span class="p">)</span>
-        <span class="n">group</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-            <span class="s2">&quot;--eprojs&quot;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">320</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Number of encoder projection units&quot;</span>
-        <span class="p">)</span>
-        <span class="n">group</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-            <span class="s2">&quot;--subsample&quot;</span><span class="p">,</span>
-            <span class="n">default</span><span class="o">=</span><span class="s2">&quot;1&quot;</span><span class="p">,</span>
-            <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span>
-            <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Subsample input frames x_y_z means &quot;</span>
-            <span class="s2">&quot;subsample every x frame at 1st layer, &quot;</span>
-            <span class="s2">&quot;every y frame at 2nd layer etc.&quot;</span><span class="p">,</span>
-        <span class="p">)</span>
+        <span class="n">group</span> <span class="o">=</span> <span class="n">add_arguments_rnn_encoder_common</span><span class="p">(</span><span class="n">group</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">parser</span></div>
 
 <div class="viewcode-block" id="E2E.attention_add_arguments"><a class="viewcode-back" href="../../../../_gen/espnet.nets.html#espnet.nets.pytorch_backend.e2e_st.E2E.attention_add_arguments">[docs]</a>    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">attention_add_arguments</span><span class="p">(</span><span class="n">parser</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Add arguments for the attention.&quot;&quot;&quot;</span>
         <span class="n">group</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">add_argument_group</span><span class="p">(</span><span class="s2">&quot;E2E attention setting&quot;</span><span class="p">)</span>
-        <span class="c1"># attention</span>
-        <span class="n">group</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-            <span class="s2">&quot;--atype&quot;</span><span class="p">,</span>
-            <span class="n">default</span><span class="o">=</span><span class="s2">&quot;dot&quot;</span><span class="p">,</span>
-            <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span>
-            <span class="n">choices</span><span class="o">=</span><span class="p">[</span>
-                <span class="s2">&quot;noatt&quot;</span><span class="p">,</span>
-                <span class="s2">&quot;dot&quot;</span><span class="p">,</span>
-                <span class="s2">&quot;add&quot;</span><span class="p">,</span>
-                <span class="s2">&quot;location&quot;</span><span class="p">,</span>
-                <span class="s2">&quot;coverage&quot;</span><span class="p">,</span>
-                <span class="s2">&quot;coverage_location&quot;</span><span class="p">,</span>
-                <span class="s2">&quot;location2d&quot;</span><span class="p">,</span>
-                <span class="s2">&quot;location_recurrent&quot;</span><span class="p">,</span>
-                <span class="s2">&quot;multi_head_dot&quot;</span><span class="p">,</span>
-                <span class="s2">&quot;multi_head_add&quot;</span><span class="p">,</span>
-                <span class="s2">&quot;multi_head_loc&quot;</span><span class="p">,</span>
-                <span class="s2">&quot;multi_head_multi_res_loc&quot;</span><span class="p">,</span>
-            <span class="p">],</span>
-            <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Type of attention architecture&quot;</span><span class="p">,</span>
-        <span class="p">)</span>
-        <span class="n">group</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-            <span class="s2">&quot;--adim&quot;</span><span class="p">,</span>
-            <span class="n">default</span><span class="o">=</span><span class="mi">320</span><span class="p">,</span>
-            <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span>
-            <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Number of attention transformation dimensions&quot;</span><span class="p">,</span>
-        <span class="p">)</span>
-        <span class="n">group</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-            <span class="s2">&quot;--awin&quot;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Window size for location2d attention&quot;</span>
-        <span class="p">)</span>
-        <span class="n">group</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-            <span class="s2">&quot;--aheads&quot;</span><span class="p">,</span>
-            <span class="n">default</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span>
-            <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span>
-            <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Number of heads for multi head attention&quot;</span><span class="p">,</span>
-        <span class="p">)</span>
-        <span class="n">group</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-            <span class="s2">&quot;--aconv-chans&quot;</span><span class="p">,</span>
-            <span class="n">default</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span>
-            <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span>
-            <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Number of attention convolution channels </span><span class="se">\</span>
-<span class="s2">                           (negative value indicates no location-aware attention)&quot;</span><span class="p">,</span>
-        <span class="p">)</span>
-        <span class="n">group</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-            <span class="s2">&quot;--aconv-filts&quot;</span><span class="p">,</span>
-            <span class="n">default</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
-            <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span>
-            <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Number of attention convolution filters </span><span class="se">\</span>
-<span class="s2">                           (negative value indicates no location-aware attention)&quot;</span><span class="p">,</span>
-        <span class="p">)</span>
-        <span class="n">group</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-            <span class="s2">&quot;--dropout-rate&quot;</span><span class="p">,</span>
-            <span class="n">default</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
-            <span class="nb">type</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span>
-            <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Dropout rate for the encoder&quot;</span><span class="p">,</span>
-        <span class="p">)</span>
+        <span class="n">group</span> <span class="o">=</span> <span class="n">add_arguments_rnn_attention_common</span><span class="p">(</span><span class="n">group</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">parser</span></div>
 
 <div class="viewcode-block" id="E2E.decoder_add_arguments"><a class="viewcode-back" href="../../../../_gen/espnet.nets.html#espnet.nets.pytorch_backend.e2e_st.E2E.decoder_add_arguments">[docs]</a>    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">decoder_add_arguments</span><span class="p">(</span><span class="n">parser</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Add arguments for the decoder.&quot;&quot;&quot;</span>
-        <span class="n">group</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">add_argument_group</span><span class="p">(</span><span class="s2">&quot;E2E encoder setting&quot;</span><span class="p">)</span>
-        <span class="n">group</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-            <span class="s2">&quot;--dtype&quot;</span><span class="p">,</span>
-            <span class="n">default</span><span class="o">=</span><span class="s2">&quot;lstm&quot;</span><span class="p">,</span>
-            <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span>
-            <span class="n">choices</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;lstm&quot;</span><span class="p">,</span> <span class="s2">&quot;gru&quot;</span><span class="p">],</span>
-            <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Type of decoder network architecture&quot;</span><span class="p">,</span>
-        <span class="p">)</span>
-        <span class="n">group</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-            <span class="s2">&quot;--dlayers&quot;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Number of decoder layers&quot;</span>
-        <span class="p">)</span>
-        <span class="n">group</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-            <span class="s2">&quot;--dunits&quot;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">320</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Number of decoder hidden units&quot;</span>
-        <span class="p">)</span>
-        <span class="n">group</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-            <span class="s2">&quot;--dropout-rate-decoder&quot;</span><span class="p">,</span>
-            <span class="n">default</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
-            <span class="nb">type</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span>
-            <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Dropout rate for the decoder&quot;</span><span class="p">,</span>
-        <span class="p">)</span>
-        <span class="n">group</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-            <span class="s2">&quot;--sampling-probability&quot;</span><span class="p">,</span>
-            <span class="n">default</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
-            <span class="nb">type</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span>
-            <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Ratio of predicted labels fed back to decoder&quot;</span><span class="p">,</span>
-        <span class="p">)</span>
-        <span class="n">group</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-            <span class="s2">&quot;--lsm-type&quot;</span><span class="p">,</span>
-            <span class="n">const</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
-            <span class="n">default</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
-            <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span>
-            <span class="n">nargs</span><span class="o">=</span><span class="s2">&quot;?&quot;</span><span class="p">,</span>
-            <span class="n">choices</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="s2">&quot;unigram&quot;</span><span class="p">],</span>
-            <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Apply label smoothing with a specified distribution type&quot;</span><span class="p">,</span>
-        <span class="p">)</span>
+        <span class="n">group</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">add_argument_group</span><span class="p">(</span><span class="s2">&quot;E2E decoder setting&quot;</span><span class="p">)</span>
+        <span class="n">group</span> <span class="o">=</span> <span class="n">add_arguments_rnn_decoder_common</span><span class="p">(</span><span class="n">group</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">parser</span></div>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">idim</span><span class="p">,</span> <span class="n">odim</span><span class="p">,</span> <span class="n">args</span><span class="p">):</span>
@@ -458,8 +338,12 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">E2E</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
         <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">asr_weight</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="s2">&quot;asr_weight&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">mt_weight</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="s2">&quot;mt_weight&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+
+        <span class="c1"># fill missing arguments for compatibility</span>
+        <span class="n">args</span> <span class="o">=</span> <span class="n">fill_missing_args</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">add_arguments</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">asr_weight</span> <span class="o">=</span> <span class="n">args</span><span class="o">.</span><span class="n">asr_weight</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mt_weight</span> <span class="o">=</span> <span class="n">args</span><span class="o">.</span><span class="n">mt_weight</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">mtlalpha</span> <span class="o">=</span> <span class="n">args</span><span class="o">.</span><span class="n">mtlalpha</span>
         <span class="k">assert</span> <span class="mf">0.0</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">asr_weight</span> <span class="o">&lt;</span> <span class="mf">1.0</span><span class="p">,</span> <span class="s2">&quot;asr_weight should be [0.0, 1.0)&quot;</span>
         <span class="k">assert</span> <span class="mf">0.0</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mt_weight</span> <span class="o">&lt;</span> <span class="mf">1.0</span><span class="p">,</span> <span class="s2">&quot;mt_weight should be [0.0, 1.0)&quot;</span>
@@ -480,7 +364,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">eos</span> <span class="o">=</span> <span class="n">odim</span> <span class="o">-</span> <span class="mi">1</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">pad</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="c1"># NOTE: we reserve index:0 for &lt;pad&gt; although this is reserved for a blank class</span>
-        <span class="c1"># in ASR. However, blank labels are not used in NMT.</span>
+        <span class="c1"># in ASR. However, blank labels are not used in MT.</span>
         <span class="c1"># To keep the vocabulary size,</span>
         <span class="c1"># we use index:0 for padding instead of adding one more class.</span>
 
@@ -496,9 +380,8 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="n">labeldist</span> <span class="o">=</span> <span class="kc">None</span>
 
-        <span class="c1"># multilingual E2E-ST related</span>
+        <span class="c1"># multilingual related</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">multilingual</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="s2">&quot;multilingual&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">joint_asr</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="s2">&quot;joint_asr&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">replace_sos</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="s2">&quot;replace_sos&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
 
         <span class="c1"># encoder</span>
@@ -612,8 +495,7 @@
 
 <span class="sd">        :param torch.Tensor xs_pad: batch of padded input sequences (B, Tmax, idim)</span>
 <span class="sd">        :param torch.Tensor ilens: batch of lengths of input sequences (B)</span>
-<span class="sd">        :param torch.Tensor ys_pad:</span>
-<span class="sd">            batch of padded character id sequence tensor (B, Lmax)</span>
+<span class="sd">        :param torch.Tensor ys_pad: batch of padded token id sequence tensor (B, Lmax)</span>
 <span class="sd">        :return: loss value</span>
 <span class="sd">        :rtype: torch.Tensor</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -628,132 +510,29 @@
         <span class="n">hs_pad</span><span class="p">,</span> <span class="n">hlens</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">enc</span><span class="p">(</span><span class="n">xs_pad</span><span class="p">,</span> <span class="n">ilens</span><span class="p">)</span>
 
         <span class="c1"># 2. ST attention loss</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">loss_st</span><span class="p">,</span> <span class="n">acc</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dec</span><span class="p">(</span><span class="n">hs_pad</span><span class="p">,</span> <span class="n">hlens</span><span class="p">,</span> <span class="n">ys_pad</span><span class="p">,</span> <span class="n">lang_ids</span><span class="o">=</span><span class="n">tgt_lang_ids</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">acc</span> <span class="o">=</span> <span class="n">acc</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">loss_st</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">acc</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dec</span><span class="p">(</span>
+            <span class="n">hs_pad</span><span class="p">,</span> <span class="n">hlens</span><span class="p">,</span> <span class="n">ys_pad</span><span class="p">,</span> <span class="n">lang_ids</span><span class="o">=</span><span class="n">tgt_lang_ids</span>
+        <span class="p">)</span>
 
-        <span class="c1"># 2. ASR CTC loss</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">asr_weight</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">mtlalpha</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">loss_ctc</span> <span class="o">=</span> <span class="mf">0.0</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">loss_ctc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ctc</span><span class="p">(</span><span class="n">hs_pad</span><span class="p">,</span> <span class="n">hlens</span><span class="p">,</span> <span class="n">ys_pad_src</span><span class="p">)</span>
+        <span class="c1"># 3. ASR loss</span>
+        <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">loss_asr_att</span><span class="p">,</span>
+            <span class="n">acc_asr</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">loss_asr_ctc</span><span class="p">,</span>
+            <span class="n">cer_ctc</span><span class="p">,</span>
+            <span class="n">cer</span><span class="p">,</span>
+            <span class="n">wer</span><span class="p">,</span>
+        <span class="p">)</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">forward_asr</span><span class="p">(</span><span class="n">hs_pad</span><span class="p">,</span> <span class="n">hlens</span><span class="p">,</span> <span class="n">ys_pad_src</span><span class="p">)</span>
 
-        <span class="c1"># 3. ASR attention loss</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">asr_weight</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">mtlalpha</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">loss_asr</span> <span class="o">=</span> <span class="mf">0.0</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">acc_asr</span> <span class="o">=</span> <span class="mf">0.0</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">loss_asr</span><span class="p">,</span> <span class="n">acc_asr</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dec_asr</span><span class="p">(</span><span class="n">hs_pad</span><span class="p">,</span> <span class="n">hlens</span><span class="p">,</span> <span class="n">ys_pad_src</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">acc_asr</span> <span class="o">=</span> <span class="n">acc_asr</span>
+        <span class="c1"># 4. MT attention loss</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">loss_mt</span><span class="p">,</span> <span class="n">acc_mt</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">forward_mt</span><span class="p">(</span><span class="n">ys_pad</span><span class="p">,</span> <span class="n">ys_pad_src</span><span class="p">)</span>
 
-        <span class="c1"># 3. MT attention loss</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">mt_weight</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">loss_mt</span> <span class="o">=</span> <span class="mf">0.0</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">acc_mt</span> <span class="o">=</span> <span class="mf">0.0</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="c1"># ys_pad_src, ys_pad = self.target_forcing(ys_pad_src, ys_pad)</span>
-            <span class="n">ilens_mt</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">ys_pad_src</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span>
-            <span class="c1"># NOTE: ys_pad_src is padded with -1</span>
-            <span class="n">ys_src</span> <span class="o">=</span> <span class="p">[</span><span class="n">y</span><span class="p">[</span><span class="n">y</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">y</span> <span class="ow">in</span> <span class="n">ys_pad_src</span><span class="p">]</span>  <span class="c1"># parse padded ys_src</span>
-            <span class="n">ys_zero_pad_src</span> <span class="o">=</span> <span class="n">pad_list</span><span class="p">(</span><span class="n">ys_src</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">pad</span><span class="p">)</span>  <span class="c1"># re-pad with zero</span>
-            <span class="n">hs_pad_mt</span><span class="p">,</span> <span class="n">hlens_mt</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">enc_mt</span><span class="p">(</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">dropout_mt</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">embed_mt</span><span class="p">(</span><span class="n">ys_zero_pad_src</span><span class="p">)),</span> <span class="n">ilens_mt</span>
-            <span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">loss_mt</span><span class="p">,</span> <span class="n">acc_mt</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dec</span><span class="p">(</span><span class="n">hs_pad_mt</span><span class="p">,</span> <span class="n">hlens_mt</span><span class="p">,</span> <span class="n">ys_pad</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">acc_mt</span> <span class="o">=</span> <span class="n">acc_mt</span>
-
-        <span class="c1"># 4. compute cer without beam search</span>
-        <span class="k">if</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">asr_weight</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">mtlalpha</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">char_list</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">cer_ctc</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">cers</span> <span class="o">=</span> <span class="p">[]</span>
-
-            <span class="n">y_hats</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ctc</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">hs_pad</span><span class="p">)</span><span class="o">.</span><span class="n">data</span>
-            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">y</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">y_hats</span><span class="p">):</span>
-                <span class="n">y_hat</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">groupby</span><span class="p">(</span><span class="n">y</span><span class="p">)]</span>
-                <span class="n">y_true</span> <span class="o">=</span> <span class="n">ys_pad_src</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
-
-                <span class="n">seq_hat</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">char_list</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">idx</span><span class="p">)]</span> <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="n">y_hat</span> <span class="k">if</span> <span class="nb">int</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">1</span><span class="p">]</span>
-                <span class="n">seq_true</span> <span class="o">=</span> <span class="p">[</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">char_list</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">idx</span><span class="p">)]</span> <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="n">y_true</span> <span class="k">if</span> <span class="nb">int</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">1</span>
-                <span class="p">]</span>
-                <span class="n">seq_hat_text</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">seq_hat</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">space</span><span class="p">,</span> <span class="s2">&quot; &quot;</span><span class="p">)</span>
-                <span class="n">seq_hat_text</span> <span class="o">=</span> <span class="n">seq_hat_text</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">blank</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
-                <span class="n">seq_true_text</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">seq_true</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">space</span><span class="p">,</span> <span class="s2">&quot; &quot;</span><span class="p">)</span>
-
-                <span class="n">hyp_chars</span> <span class="o">=</span> <span class="n">seq_hat_text</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
-                <span class="n">ref_chars</span> <span class="o">=</span> <span class="n">seq_true_text</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
-                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">ref_chars</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-                    <span class="n">cers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
-                        <span class="n">editdistance</span><span class="o">.</span><span class="n">eval</span><span class="p">(</span><span class="n">hyp_chars</span><span class="p">,</span> <span class="n">ref_chars</span><span class="p">)</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">ref_chars</span><span class="p">)</span>
-                    <span class="p">)</span>
-
-            <span class="n">cer_ctc</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">cers</span><span class="p">)</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">cers</span><span class="p">)</span> <span class="k">if</span> <span class="n">cers</span> <span class="k">else</span> <span class="kc">None</span>
-
-        <span class="c1"># 5. compute cer/wer</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">training</span> <span class="ow">or</span> <span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">asr_weight</span> <span class="o">==</span> <span class="mi">0</span>
-            <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">mtlalpha</span> <span class="o">==</span> <span class="mi">1</span>
-            <span class="ow">or</span> <span class="ow">not</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">report_cer</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">report_wer</span><span class="p">)</span>
-        <span class="p">):</span>
-            <span class="n">cer</span><span class="p">,</span> <span class="n">wer</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span>
-            <span class="c1"># oracle_cer, oracle_wer = 0.0, 0.0</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">if</span> <span class="p">(</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">asr_weight</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">mtlalpha</span> <span class="o">&gt;</span> <span class="mi">0</span>
-            <span class="p">)</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">recog_args</span><span class="o">.</span><span class="n">ctc_weight</span> <span class="o">&gt;</span> <span class="mf">0.0</span><span class="p">:</span>
-                <span class="n">lpz</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ctc</span><span class="o">.</span><span class="n">log_softmax</span><span class="p">(</span><span class="n">hs_pad</span><span class="p">)</span><span class="o">.</span><span class="n">data</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="n">lpz</span> <span class="o">=</span> <span class="kc">None</span>
-
-            <span class="n">word_eds</span><span class="p">,</span> <span class="n">word_ref_lens</span><span class="p">,</span> <span class="n">char_eds</span><span class="p">,</span> <span class="n">char_ref_lens</span> <span class="o">=</span> <span class="p">[],</span> <span class="p">[],</span> <span class="p">[],</span> <span class="p">[]</span>
-            <span class="n">nbest_hyps_asr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dec_asr</span><span class="o">.</span><span class="n">recognize_beam_batch</span><span class="p">(</span>
-                <span class="n">hs_pad</span><span class="p">,</span>
-                <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">hlens</span><span class="p">),</span>
-                <span class="n">lpz</span><span class="p">,</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">recog_args</span><span class="p">,</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">char_list</span><span class="p">,</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">rnnlm</span><span class="p">,</span>
-            <span class="p">)</span>
-            <span class="c1"># remove &lt;sos&gt; and &lt;eos&gt;</span>
-            <span class="n">y_hats</span> <span class="o">=</span> <span class="p">[</span><span class="n">nbest_hyp</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;yseq&quot;</span><span class="p">][</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">nbest_hyp</span> <span class="ow">in</span> <span class="n">nbest_hyps_asr</span><span class="p">]</span>
-            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">y_hat</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">y_hats</span><span class="p">):</span>
-                <span class="n">y_true</span> <span class="o">=</span> <span class="n">ys_pad</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
-
-                <span class="n">seq_hat</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">char_list</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">idx</span><span class="p">)]</span> <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="n">y_hat</span> <span class="k">if</span> <span class="nb">int</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">1</span><span class="p">]</span>
-                <span class="n">seq_true</span> <span class="o">=</span> <span class="p">[</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">char_list</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">idx</span><span class="p">)]</span> <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="n">y_true</span> <span class="k">if</span> <span class="nb">int</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">1</span>
-                <span class="p">]</span>
-                <span class="n">seq_hat_text</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">seq_hat</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">recog_args</span><span class="o">.</span><span class="n">space</span><span class="p">,</span> <span class="s2">&quot; &quot;</span><span class="p">)</span>
-                <span class="n">seq_hat_text</span> <span class="o">=</span> <span class="n">seq_hat_text</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">recog_args</span><span class="o">.</span><span class="n">blank</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
-                <span class="n">seq_true_text</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">seq_true</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">recog_args</span><span class="o">.</span><span class="n">space</span><span class="p">,</span> <span class="s2">&quot; &quot;</span><span class="p">)</span>
-
-                <span class="n">hyp_words</span> <span class="o">=</span> <span class="n">seq_hat_text</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
-                <span class="n">ref_words</span> <span class="o">=</span> <span class="n">seq_true_text</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
-                <span class="n">word_eds</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">editdistance</span><span class="o">.</span><span class="n">eval</span><span class="p">(</span><span class="n">hyp_words</span><span class="p">,</span> <span class="n">ref_words</span><span class="p">))</span>
-                <span class="n">word_ref_lens</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">ref_words</span><span class="p">))</span>
-                <span class="n">hyp_chars</span> <span class="o">=</span> <span class="n">seq_hat_text</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
-                <span class="n">ref_chars</span> <span class="o">=</span> <span class="n">seq_true_text</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
-                <span class="n">char_eds</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">editdistance</span><span class="o">.</span><span class="n">eval</span><span class="p">(</span><span class="n">hyp_chars</span><span class="p">,</span> <span class="n">ref_chars</span><span class="p">))</span>
-                <span class="n">char_ref_lens</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">ref_chars</span><span class="p">))</span>
-
-            <span class="n">wer</span> <span class="o">=</span> <span class="p">(</span>
-                <span class="mf">0.0</span>
-                <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">report_wer</span>
-                <span class="k">else</span> <span class="nb">float</span><span class="p">(</span><span class="nb">sum</span><span class="p">(</span><span class="n">word_eds</span><span class="p">))</span> <span class="o">/</span> <span class="nb">sum</span><span class="p">(</span><span class="n">word_ref_lens</span><span class="p">)</span>
-            <span class="p">)</span>
-            <span class="n">cer</span> <span class="o">=</span> <span class="p">(</span>
-                <span class="mf">0.0</span>
-                <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">report_cer</span>
-                <span class="k">else</span> <span class="nb">float</span><span class="p">(</span><span class="nb">sum</span><span class="p">(</span><span class="n">char_eds</span><span class="p">))</span> <span class="o">/</span> <span class="nb">sum</span><span class="p">(</span><span class="n">char_ref_lens</span><span class="p">)</span>
-            <span class="p">)</span>
-
-        <span class="c1"># 6. compute bleu</span>
+        <span class="c1"># 5. Compute BLEU</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">training</span> <span class="ow">or</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">report_bleu</span><span class="p">:</span>
-            <span class="n">bleu</span> <span class="o">=</span> <span class="mf">0.0</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">bleu</span> <span class="o">=</span> <span class="mf">0.0</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">lpz</span> <span class="o">=</span> <span class="kc">None</span>
 
-            <span class="n">bleus</span> <span class="o">=</span> <span class="p">[]</span>
             <span class="n">nbest_hyps</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dec</span><span class="o">.</span><span class="n">recognize_beam_batch</span><span class="p">(</span>
                 <span class="n">hs_pad</span><span class="p">,</span>
                 <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">hlens</span><span class="p">),</span>
@@ -766,6 +545,8 @@
                 <span class="k">else</span> <span class="kc">None</span><span class="p">,</span>
             <span class="p">)</span>
             <span class="c1"># remove &lt;sos&gt; and &lt;eos&gt;</span>
+            <span class="n">list_of_refs</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">hyps</span> <span class="o">=</span> <span class="p">[]</span>
             <span class="n">y_hats</span> <span class="o">=</span> <span class="p">[</span><span class="n">nbest_hyp</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;yseq&quot;</span><span class="p">][</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">nbest_hyp</span> <span class="ow">in</span> <span class="n">nbest_hyps</span><span class="p">]</span>
             <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">y_hat</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">y_hats</span><span class="p">):</span>
                 <span class="n">y_true</span> <span class="o">=</span> <span class="n">ys_pad</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
@@ -778,41 +559,182 @@
                 <span class="n">seq_hat_text</span> <span class="o">=</span> <span class="n">seq_hat_text</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">trans_args</span><span class="o">.</span><span class="n">blank</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
                 <span class="n">seq_true_text</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">seq_true</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">trans_args</span><span class="o">.</span><span class="n">space</span><span class="p">,</span> <span class="s2">&quot; &quot;</span><span class="p">)</span>
 
-                <span class="n">bleu</span> <span class="o">=</span> <span class="p">(</span>
-                    <span class="n">nltk</span><span class="o">.</span><span class="n">bleu_score</span><span class="o">.</span><span class="n">sentence_bleu</span><span class="p">([</span><span class="n">seq_true_text</span><span class="p">],</span> <span class="n">seq_hat_text</span><span class="p">)</span> <span class="o">*</span> <span class="mi">100</span>
-                <span class="p">)</span>
-                <span class="n">bleus</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">bleu</span><span class="p">)</span>
+                <span class="n">hyps</span> <span class="o">+=</span> <span class="p">[</span><span class="n">seq_hat_text</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">)]</span>
+                <span class="n">list_of_refs</span> <span class="o">+=</span> <span class="p">[[</span><span class="n">seq_true_text</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">)]]</span>
 
-            <span class="n">bleu</span> <span class="o">=</span> <span class="mf">0.0</span> <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">report_bleu</span> <span class="k">else</span> <span class="nb">sum</span><span class="p">(</span><span class="n">bleus</span><span class="p">)</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">bleus</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">bleu</span> <span class="o">=</span> <span class="n">nltk</span><span class="o">.</span><span class="n">bleu_score</span><span class="o">.</span><span class="n">corpus_bleu</span><span class="p">(</span><span class="n">list_of_refs</span><span class="p">,</span> <span class="n">hyps</span><span class="p">)</span> <span class="o">*</span> <span class="mi">100</span>
 
-        <span class="n">alpha</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mtlalpha</span>
+        <span class="n">asr_ctc_weight</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mtlalpha</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">loss_asr</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">asr_ctc_weight</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">loss_asr_ctc</span>
+            <span class="o">+</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">asr_ctc_weight</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">loss_asr_att</span>
+        <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">loss</span> <span class="o">=</span> <span class="p">(</span>
             <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">asr_weight</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">mt_weight</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">loss_st</span>
-            <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">asr_weight</span> <span class="o">*</span> <span class="p">(</span><span class="n">alpha</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">loss_ctc</span> <span class="o">+</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">alpha</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">loss_asr</span><span class="p">)</span>
+            <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">asr_weight</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">loss_asr</span>
             <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">mt_weight</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">loss_mt</span>
         <span class="p">)</span>
         <span class="n">loss_st_data</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">loss_st</span><span class="p">)</span>
-        <span class="n">loss_asr_data</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">alpha</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">loss_ctc</span> <span class="o">+</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">alpha</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">loss_asr</span><span class="p">)</span>
-        <span class="n">loss_mt_data</span> <span class="o">=</span> <span class="kc">None</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">mt_weight</span> <span class="o">==</span> <span class="mi">0</span> <span class="k">else</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">loss_mt</span><span class="p">)</span>
-
+        <span class="n">loss_asr_data</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">loss_asr</span><span class="p">)</span>
+        <span class="n">loss_mt_data</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">loss_mt</span><span class="p">)</span>
         <span class="n">loss_data</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">loss</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">loss_data</span> <span class="o">&lt;</span> <span class="n">CTC_LOSS_THRESHOLD</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">math</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">loss_data</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">reporter</span><span class="o">.</span><span class="n">report</span><span class="p">(</span>
                 <span class="n">loss_asr_data</span><span class="p">,</span>
                 <span class="n">loss_mt_data</span><span class="p">,</span>
                 <span class="n">loss_st_data</span><span class="p">,</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">acc_asr</span><span class="p">,</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">acc_mt</span><span class="p">,</span>
-                <span class="n">acc</span><span class="p">,</span>
+                <span class="n">acc_asr</span><span class="p">,</span>
+                <span class="n">acc_mt</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">acc</span><span class="p">,</span>
                 <span class="n">cer_ctc</span><span class="p">,</span>
                 <span class="n">cer</span><span class="p">,</span>
                 <span class="n">wer</span><span class="p">,</span>
-                <span class="n">bleu</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">bleu</span><span class="p">,</span>
                 <span class="n">loss_data</span><span class="p">,</span>
             <span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">logging</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;loss (=</span><span class="si">%f</span><span class="s2">) is not correct&quot;</span><span class="p">,</span> <span class="n">loss_data</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">loss</span></div>
+
+<div class="viewcode-block" id="E2E.forward_asr"><a class="viewcode-back" href="../../../../_gen/espnet.nets.html#espnet.nets.pytorch_backend.e2e_st.E2E.forward_asr">[docs]</a>    <span class="k">def</span> <span class="nf">forward_asr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hs_pad</span><span class="p">,</span> <span class="n">hlens</span><span class="p">,</span> <span class="n">ys_pad</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Forward pass in the auxiliary ASR task.</span>
+
+<span class="sd">        :param torch.Tensor hs_pad: batch of padded source sequences (B, Tmax, idim)</span>
+<span class="sd">        :param torch.Tensor hlens: batch of lengths of input sequences (B)</span>
+<span class="sd">        :param torch.Tensor ys_pad: batch of padded target sequences (B, Lmax)</span>
+<span class="sd">        :return: ASR attention loss value</span>
+<span class="sd">        :rtype: torch.Tensor</span>
+<span class="sd">        :return: accuracy in ASR attention decoder</span>
+<span class="sd">        :rtype: float</span>
+<span class="sd">        :return: ASR CTC loss value</span>
+<span class="sd">        :rtype: torch.Tensor</span>
+<span class="sd">        :return: character error rate from CTC prediction</span>
+<span class="sd">        :rtype: float</span>
+<span class="sd">        :return: character error rate from attetion decoder prediction</span>
+<span class="sd">        :rtype: float</span>
+<span class="sd">        :return: word error rate from attetion decoder prediction</span>
+<span class="sd">        :rtype: float</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">loss_att</span><span class="p">,</span> <span class="n">loss_ctc</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span>
+        <span class="n">acc</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">cer</span><span class="p">,</span> <span class="n">wer</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span>
+        <span class="n">cer_ctc</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">asr_weight</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">loss_att</span><span class="p">,</span> <span class="n">acc</span><span class="p">,</span> <span class="n">loss_ctc</span><span class="p">,</span> <span class="n">cer_ctc</span><span class="p">,</span> <span class="n">cer</span><span class="p">,</span> <span class="n">wer</span>
+
+        <span class="c1"># attention</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">mtlalpha</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">loss_asr</span><span class="p">,</span> <span class="n">acc_asr</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dec_asr</span><span class="p">(</span><span class="n">hs_pad</span><span class="p">,</span> <span class="n">hlens</span><span class="p">,</span> <span class="n">ys_pad</span><span class="p">)</span>
+
+            <span class="c1"># Compute wer and cer</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">training</span> <span class="ow">and</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">report_cer</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">report_wer</span><span class="p">):</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">mtlalpha</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">recog_args</span><span class="o">.</span><span class="n">ctc_weight</span> <span class="o">&gt;</span> <span class="mf">0.0</span><span class="p">:</span>
+                    <span class="n">lpz</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ctc</span><span class="o">.</span><span class="n">log_softmax</span><span class="p">(</span><span class="n">hs_pad</span><span class="p">)</span><span class="o">.</span><span class="n">data</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">lpz</span> <span class="o">=</span> <span class="kc">None</span>
+
+                <span class="n">word_eds</span><span class="p">,</span> <span class="n">word_ref_lens</span><span class="p">,</span> <span class="n">char_eds</span><span class="p">,</span> <span class="n">char_ref_lens</span> <span class="o">=</span> <span class="p">[],</span> <span class="p">[],</span> <span class="p">[],</span> <span class="p">[]</span>
+                <span class="n">nbest_hyps_asr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dec_asr</span><span class="o">.</span><span class="n">recognize_beam_batch</span><span class="p">(</span>
+                    <span class="n">hs_pad</span><span class="p">,</span>
+                    <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">hlens</span><span class="p">),</span>
+                    <span class="n">lpz</span><span class="p">,</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">recog_args</span><span class="p">,</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">char_list</span><span class="p">,</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">rnnlm</span><span class="p">,</span>
+                <span class="p">)</span>
+                <span class="c1"># remove &lt;sos&gt; and &lt;eos&gt;</span>
+                <span class="n">y_hats</span> <span class="o">=</span> <span class="p">[</span><span class="n">nbest_hyp</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;yseq&quot;</span><span class="p">][</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">nbest_hyp</span> <span class="ow">in</span> <span class="n">nbest_hyps_asr</span><span class="p">]</span>
+                <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">y_hat</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">y_hats</span><span class="p">):</span>
+                    <span class="n">y_true</span> <span class="o">=</span> <span class="n">ys_pad</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+
+                    <span class="n">seq_hat</span> <span class="o">=</span> <span class="p">[</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">char_list</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">idx</span><span class="p">)]</span> <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="n">y_hat</span> <span class="k">if</span> <span class="nb">int</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">1</span>
+                    <span class="p">]</span>
+                    <span class="n">seq_true</span> <span class="o">=</span> <span class="p">[</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">char_list</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">idx</span><span class="p">)]</span> <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="n">y_true</span> <span class="k">if</span> <span class="nb">int</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">1</span>
+                    <span class="p">]</span>
+                    <span class="n">seq_hat_text</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">seq_hat</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">recog_args</span><span class="o">.</span><span class="n">space</span><span class="p">,</span> <span class="s2">&quot; &quot;</span><span class="p">)</span>
+                    <span class="n">seq_hat_text</span> <span class="o">=</span> <span class="n">seq_hat_text</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">recog_args</span><span class="o">.</span><span class="n">blank</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+                    <span class="n">seq_true_text</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">seq_true</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">recog_args</span><span class="o">.</span><span class="n">space</span><span class="p">,</span> <span class="s2">&quot; &quot;</span>
+                    <span class="p">)</span>
+
+                    <span class="n">hyp_words</span> <span class="o">=</span> <span class="n">seq_hat_text</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+                    <span class="n">ref_words</span> <span class="o">=</span> <span class="n">seq_true_text</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+                    <span class="n">word_eds</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">editdistance</span><span class="o">.</span><span class="n">eval</span><span class="p">(</span><span class="n">hyp_words</span><span class="p">,</span> <span class="n">ref_words</span><span class="p">))</span>
+                    <span class="n">word_ref_lens</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">ref_words</span><span class="p">))</span>
+                    <span class="n">hyp_chars</span> <span class="o">=</span> <span class="n">seq_hat_text</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+                    <span class="n">ref_chars</span> <span class="o">=</span> <span class="n">seq_true_text</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+                    <span class="n">char_eds</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">editdistance</span><span class="o">.</span><span class="n">eval</span><span class="p">(</span><span class="n">hyp_chars</span><span class="p">,</span> <span class="n">ref_chars</span><span class="p">))</span>
+                    <span class="n">char_ref_lens</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">ref_chars</span><span class="p">))</span>
+
+                <span class="n">wer</span> <span class="o">=</span> <span class="p">(</span>
+                    <span class="mf">0.0</span>
+                    <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">report_wer</span>
+                    <span class="k">else</span> <span class="nb">float</span><span class="p">(</span><span class="nb">sum</span><span class="p">(</span><span class="n">word_eds</span><span class="p">))</span> <span class="o">/</span> <span class="nb">sum</span><span class="p">(</span><span class="n">word_ref_lens</span><span class="p">)</span>
+                <span class="p">)</span>
+                <span class="n">cer</span> <span class="o">=</span> <span class="p">(</span>
+                    <span class="mf">0.0</span>
+                    <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">report_cer</span>
+                    <span class="k">else</span> <span class="nb">float</span><span class="p">(</span><span class="nb">sum</span><span class="p">(</span><span class="n">char_eds</span><span class="p">))</span> <span class="o">/</span> <span class="nb">sum</span><span class="p">(</span><span class="n">char_ref_lens</span><span class="p">)</span>
+                <span class="p">)</span>
+
+        <span class="c1"># CTC</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">mtlalpha</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">loss_ctc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ctc</span><span class="p">(</span><span class="n">hs_pad</span><span class="p">,</span> <span class="n">hlens</span><span class="p">,</span> <span class="n">ys_pad</span><span class="p">)</span>
+
+            <span class="c1"># Compute cer with CTC prediction</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">char_list</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">cers</span> <span class="o">=</span> <span class="p">[]</span>
+                <span class="n">y_hats</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ctc</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">hs_pad</span><span class="p">)</span><span class="o">.</span><span class="n">data</span>
+                <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">y</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">y_hats</span><span class="p">):</span>
+                    <span class="n">y_hat</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">groupby</span><span class="p">(</span><span class="n">y</span><span class="p">)]</span>
+                    <span class="n">y_true</span> <span class="o">=</span> <span class="n">ys_pad</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+
+                    <span class="n">seq_hat</span> <span class="o">=</span> <span class="p">[</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">char_list</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">idx</span><span class="p">)]</span> <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="n">y_hat</span> <span class="k">if</span> <span class="nb">int</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">1</span>
+                    <span class="p">]</span>
+                    <span class="n">seq_true</span> <span class="o">=</span> <span class="p">[</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">char_list</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">idx</span><span class="p">)]</span> <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="n">y_true</span> <span class="k">if</span> <span class="nb">int</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">1</span>
+                    <span class="p">]</span>
+                    <span class="n">seq_hat_text</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">seq_hat</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">space</span><span class="p">,</span> <span class="s2">&quot; &quot;</span><span class="p">)</span>
+                    <span class="n">seq_hat_text</span> <span class="o">=</span> <span class="n">seq_hat_text</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">blank</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+                    <span class="n">seq_true_text</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">seq_true</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">space</span><span class="p">,</span> <span class="s2">&quot; &quot;</span><span class="p">)</span>
+
+                    <span class="n">hyp_chars</span> <span class="o">=</span> <span class="n">seq_hat_text</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+                    <span class="n">ref_chars</span> <span class="o">=</span> <span class="n">seq_true_text</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">ref_chars</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                        <span class="n">cers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                            <span class="n">editdistance</span><span class="o">.</span><span class="n">eval</span><span class="p">(</span><span class="n">hyp_chars</span><span class="p">,</span> <span class="n">ref_chars</span><span class="p">)</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">ref_chars</span><span class="p">)</span>
+                        <span class="p">)</span>
+                <span class="n">cer_ctc</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">cers</span><span class="p">)</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">cers</span><span class="p">)</span> <span class="k">if</span> <span class="n">cers</span> <span class="k">else</span> <span class="kc">None</span>
+
+        <span class="k">return</span> <span class="n">loss_att</span><span class="p">,</span> <span class="n">acc</span><span class="p">,</span> <span class="n">loss_ctc</span><span class="p">,</span> <span class="n">cer_ctc</span><span class="p">,</span> <span class="n">cer</span><span class="p">,</span> <span class="n">wer</span></div>
+
+<div class="viewcode-block" id="E2E.forward_mt"><a class="viewcode-back" href="../../../../_gen/espnet.nets.html#espnet.nets.pytorch_backend.e2e_st.E2E.forward_mt">[docs]</a>    <span class="k">def</span> <span class="nf">forward_mt</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xs_pad</span><span class="p">,</span> <span class="n">ys_pad</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Forward pass in the auxiliary MT task.</span>
+
+<span class="sd">        :param torch.Tensor xs_pad: batch of padded source sequences (B, Tmax, idim)</span>
+<span class="sd">        :param torch.Tensor ys_pad: batch of padded target sequences (B, Lmax)</span>
+<span class="sd">        :return: MT loss value</span>
+<span class="sd">        :rtype: torch.Tensor</span>
+<span class="sd">        :return: accuracy in MT decoder</span>
+<span class="sd">        :rtype: float</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">loss</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="n">acc</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">mt_weight</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">loss</span><span class="p">,</span> <span class="n">acc</span>
+
+        <span class="n">ilens</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">xs_pad</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span>
+        <span class="c1"># NOTE: xs_pad is padded with -1</span>
+        <span class="n">ys_src</span> <span class="o">=</span> <span class="p">[</span><span class="n">y</span><span class="p">[</span><span class="n">y</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">y</span> <span class="ow">in</span> <span class="n">xs_pad</span><span class="p">]</span>  <span class="c1"># parse padded ys_src</span>
+        <span class="n">xs_zero_pad</span> <span class="o">=</span> <span class="n">pad_list</span><span class="p">(</span><span class="n">ys_src</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">pad</span><span class="p">)</span>  <span class="c1"># re-pad with zero</span>
+        <span class="n">hs_pad</span><span class="p">,</span> <span class="n">hlens</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">enc_mt</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">dropout_mt</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">embed_mt</span><span class="p">(</span><span class="n">xs_zero_pad</span><span class="p">)),</span> <span class="n">ilens</span>
+        <span class="p">)</span>
+        <span class="n">loss</span><span class="p">,</span> <span class="n">acc</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dec</span><span class="p">(</span><span class="n">hs_pad</span><span class="p">,</span> <span class="n">hlens</span><span class="p">,</span> <span class="n">ys_pad</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">loss</span><span class="p">,</span> <span class="n">acc</span></div>
 
 <div class="viewcode-block" id="E2E.scorers"><a class="viewcode-back" href="../../../../_gen/espnet.nets.html#espnet.nets.pytorch_backend.e2e_st.E2E.scorers">[docs]</a>    <span class="k">def</span> <span class="nf">scorers</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Scorers.&quot;&quot;&quot;</span>
@@ -850,15 +772,14 @@
 <span class="sd">        :rtype: list</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">hs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
-        <span class="n">lpz</span> <span class="o">=</span> <span class="kc">None</span>
 
         <span class="c1"># 2. Decoder</span>
         <span class="c1"># decode the first utterance</span>
-        <span class="n">y</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dec</span><span class="o">.</span><span class="n">recognize_beam</span><span class="p">(</span><span class="n">hs</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">lpz</span><span class="p">,</span> <span class="n">trans_args</span><span class="p">,</span> <span class="n">char_list</span><span class="p">,</span> <span class="n">rnnlm</span><span class="p">)</span>
+        <span class="n">y</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dec</span><span class="o">.</span><span class="n">recognize_beam</span><span class="p">(</span><span class="n">hs</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="kc">None</span><span class="p">,</span> <span class="n">trans_args</span><span class="p">,</span> <span class="n">char_list</span><span class="p">,</span> <span class="n">rnnlm</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">y</span></div>
 
 <div class="viewcode-block" id="E2E.translate_batch"><a class="viewcode-back" href="../../../../_gen/espnet.nets.html#espnet.nets.pytorch_backend.e2e_st.E2E.translate_batch">[docs]</a>    <span class="k">def</span> <span class="nf">translate_batch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xs</span><span class="p">,</span> <span class="n">trans_args</span><span class="p">,</span> <span class="n">char_list</span><span class="p">,</span> <span class="n">rnnlm</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;E2E beam search.</span>
+        <span class="sd">&quot;&quot;&quot;E2E batch beam search.</span>
 
 <span class="sd">        :param list xs: list of input acoustic feature arrays [(T_1, D), (T_2, D), ...]</span>
 <span class="sd">        :param Namespace trans_args: argument Namespace containing options</span>
@@ -878,12 +799,11 @@
 
         <span class="c1"># 1. Encoder</span>
         <span class="n">hs_pad</span><span class="p">,</span> <span class="n">hlens</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">enc</span><span class="p">(</span><span class="n">xs_pad</span><span class="p">,</span> <span class="n">ilens</span><span class="p">)</span>
-        <span class="n">lpz</span> <span class="o">=</span> <span class="kc">None</span>
 
         <span class="c1"># 2. Decoder</span>
         <span class="n">hlens</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="n">hlens</span><span class="p">)))</span>  <span class="c1"># make sure hlens is tensor</span>
         <span class="n">y</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dec</span><span class="o">.</span><span class="n">recognize_beam_batch</span><span class="p">(</span>
-            <span class="n">hs_pad</span><span class="p">,</span> <span class="n">hlens</span><span class="p">,</span> <span class="n">lpz</span><span class="p">,</span> <span class="n">trans_args</span><span class="p">,</span> <span class="n">char_list</span><span class="p">,</span> <span class="n">rnnlm</span>
+            <span class="n">hs_pad</span><span class="p">,</span> <span class="n">hlens</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="n">trans_args</span><span class="p">,</span> <span class="n">char_list</span><span class="p">,</span> <span class="n">rnnlm</span>
         <span class="p">)</span>
 
         <span class="k">if</span> <span class="n">prev</span><span class="p">:</span>
@@ -895,13 +815,15 @@
 
 <span class="sd">        :param torch.Tensor xs_pad: batch of padded input sequences (B, Tmax, idim)</span>
 <span class="sd">        :param torch.Tensor ilens: batch of lengths of input sequences (B)</span>
-<span class="sd">        :param torch.Tensor ys_pad:</span>
-<span class="sd">            batch of padded character id sequence tensor (B, Lmax)</span>
+<span class="sd">        :param torch.Tensor ys_pad: batch of padded token id sequence tensor (B, Lmax)</span>
+<span class="sd">        :param torch.Tensor ys_pad_src:</span>
+<span class="sd">            batch of padded token id sequence tensor (B, Lmax)</span>
 <span class="sd">        :return: attention weights with the following shape,</span>
 <span class="sd">            1) multi-head case =&gt; attention weights (B, H, Lmax, Tmax),</span>
 <span class="sd">            2) other case =&gt; attention weights (B, Lmax, Tmax).</span>
 <span class="sd">        :rtype: float ndarray</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">eval</span><span class="p">()</span>
         <span class="k">with</span> <span class="n">torch</span><span class="o">.</span><span class="n">no_grad</span><span class="p">():</span>
             <span class="c1"># 1. Encoder</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">multilingual</span><span class="p">:</span>
@@ -915,8 +837,33 @@
             <span class="n">att_ws</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dec</span><span class="o">.</span><span class="n">calculate_all_attentions</span><span class="p">(</span>
                 <span class="n">hpad</span><span class="p">,</span> <span class="n">hlens</span><span class="p">,</span> <span class="n">ys_pad</span><span class="p">,</span> <span class="n">lang_ids</span><span class="o">=</span><span class="n">tgt_lang_ids</span>
             <span class="p">)</span>
-
+        <span class="bp">self</span><span class="o">.</span><span class="n">train</span><span class="p">()</span>
         <span class="k">return</span> <span class="n">att_ws</span></div>
+
+<div class="viewcode-block" id="E2E.calculate_all_ctc_probs"><a class="viewcode-back" href="../../../../_gen/espnet.nets.html#espnet.nets.pytorch_backend.e2e_st.E2E.calculate_all_ctc_probs">[docs]</a>    <span class="k">def</span> <span class="nf">calculate_all_ctc_probs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xs_pad</span><span class="p">,</span> <span class="n">ilens</span><span class="p">,</span> <span class="n">ys_pad</span><span class="p">,</span> <span class="n">ys_pad_src</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;E2E CTC probability calculation.</span>
+
+<span class="sd">        :param torch.Tensor xs_pad: batch of padded input sequences (B, Tmax)</span>
+<span class="sd">        :param torch.Tensor ilens: batch of lengths of input sequences (B)</span>
+<span class="sd">        :param torch.Tensor ys_pad: batch of padded token id sequence tensor (B, Lmax)</span>
+<span class="sd">        :param torch.Tensor</span>
+<span class="sd">            ys_pad_src: batch of padded token id sequence tensor (B, Lmax)</span>
+<span class="sd">        :return: CTC probability (B, Tmax, vocab)</span>
+<span class="sd">        :rtype: float ndarray</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">probs</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">asr_weight</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">mtlalpha</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">probs</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">eval</span><span class="p">()</span>
+        <span class="k">with</span> <span class="n">torch</span><span class="o">.</span><span class="n">no_grad</span><span class="p">():</span>
+            <span class="c1"># 1. Encoder</span>
+            <span class="n">hpad</span><span class="p">,</span> <span class="n">hlens</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">enc</span><span class="p">(</span><span class="n">xs_pad</span><span class="p">,</span> <span class="n">ilens</span><span class="p">)</span>
+
+            <span class="c1"># 2. CTC probs</span>
+            <span class="n">probs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ctc</span><span class="o">.</span><span class="n">softmax</span><span class="p">(</span><span class="n">hpad</span><span class="p">)</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">train</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">probs</span></div>
 
 <div class="viewcode-block" id="E2E.subsample_frames"><a class="viewcode-back" href="../../../../_gen/espnet.nets.html#espnet.nets.pytorch_backend.e2e_st.E2E.subsample_frames">[docs]</a>    <span class="k">def</span> <span class="nf">subsample_frames</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Subsample speeh frames in the encoder.&quot;&quot;&quot;</span>

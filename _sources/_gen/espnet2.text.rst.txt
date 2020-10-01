@@ -15,6 +15,28 @@ espnet2.text.char_tokenizer
     :show-inheritance:
 
 
+.. _espnet2.text.cleaner:
+
+espnet2.text.cleaner
+--------------------
+
+.. automodule:: espnet2.text.cleaner
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+
+.. _espnet2.text.phoneme_tokenizer:
+
+espnet2.text.phoneme_tokenizer
+------------------------------
+
+.. automodule:: espnet2.text.phoneme_tokenizer
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+
 .. _espnet2.text.build_tokenizer:
 
 espnet2.text.build_tokenizer

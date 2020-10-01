@@ -37,12 +37,34 @@ espnet2.tasks.abs_task
     :show-inheritance:
 
 
+.. _espnet2.tasks.enh:
+
+espnet2.tasks.enh
+-----------------
+
+.. automodule:: espnet2.tasks.enh
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+
 .. _espnet2.tasks.asr:
 
 espnet2.tasks.asr
 -----------------
 
 .. automodule:: espnet2.tasks.asr
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+
+.. _espnet2.tasks.enh_asr:
+
+espnet2.tasks.enh_asr
+---------------------
+
+.. automodule:: espnet2.tasks.enh_asr
     :members:
     :undoc-members:
     :show-inheritance:
